@@ -5,24 +5,20 @@ Single active-slice board. Update this file at the start and end of each slice.
 | Field | Value |
 | --- | --- |
 | Mission | First Piano Journey |
-| Active slice | **MP-00** Mission and lesson specification |
-| Slice status | **verified** (docs complete) |
-| Run ID | `piany-mp00-20260908-1823ET` |
-| Branch | `piany/mp-00-mission-foundation` |
-| Base | `main` @ `2385bd72a176c140aaf4a50849d197adea69579b` |
-| Start time | 2026-09-08 18:23 ET |
-| Last evidence | [`../evidence/first-piano-journey/mp-00.md`](../evidence/first-piano-journey/mp-00.md) |
+| Active slice | **MP-01** Playable `/learn` + L01 |
+| Slice status | **working** |
+| Run ID | `piany-mp01-20260908-2230UTC` |
+| Branch | `piany/mp-01-learn-l01` |
+| Base | `piany/mp-00-mission-foundation` @ `1cf494ffb73ca33d037b7b47ced6d74d5161d5e5` |
+| Start time | 2026-09-08 22:30 UTC |
+| Last evidence | [`../evidence/first-piano-journey/mp-01.md`](../evidence/first-piano-journey/mp-01.md) |
 | Blockers | None |
-| Next action | Start **MP-01** after Mitch’s merge-or-stack decision |
-| Next eligible slice | MP-01 — playable `/learn` + L01 |
+| Next action | Verify browser L01 path, then mark MP-01 verified |
+| Next eligible slice | MP-02 — teaching-loop engine |
 
 ## Notes
 
-- MP-00 is documentation only. Production `https://meetpiano.app` is unchanged by this branch.
+- `/learn` is a static `dist/learn/index.html` surface. `vercel.json` rewrites `/learn` and `/learn/` to that file. Marketing home at `/` is unchanged in purpose.
+- Progress key: `localStorage` `meetpiano:beginner-v1`. Device-local only. Demo playback cannot earn progress.
 - Branch `cursor/setup-cloud-agent-env-d108` was left untouched.
-- Hourly resume routines are **not** configured.
-- Piany may push branches and prepare PRs. Mitch approval is required to merge or deploy production.
-
-## Decision needed
-
-Merge MP-00 to `main`, or stack MP-01 on this branch? Either is enough to start MP-01. Production deploy is not required for MP-01 preview work.
+- Production deploy is not part of this slice. Mitch approval is required to merge or deploy production.
