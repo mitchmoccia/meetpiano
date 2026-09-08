@@ -90,9 +90,16 @@
           </section>
         </div>
         <div class="game-bottomline">
-          <div>
-            <button type="button" id="midi-button"><svg class="icon"><use href="#keyboard"/></svg> Have a compatible keyboard? Try connecting it <span aria-hidden="true">↗</span></button>
-            <span id="midi-status" role="status"></span>
+          <div class="midi-setup">
+            <div class="midi-setup-row">
+              <button type="button" id="midi-button"><svg class="icon"><use href="#keyboard"/></svg> <span id="midi-button-label">Have a compatible keyboard? Try connecting it</span> <span aria-hidden="true">↗</span></button>
+              <span id="midi-status" role="status">Optional. A piano or MIDI keyboard is best for transfer. This on-screen keyboard is a stand-in if none is connected.</span>
+            </div>
+            <ul id="midi-devices" class="midi-devices" hidden></ul>
+            <details class="midi-help">
+              <summary>How keyboard input is counted</summary>
+              <p>A held key counts once until you let go. A silent MIDI note (velocity zero) is treated as letting go. Playing the same key again after a note-off counts as a new try. Leaving this tab silences sound; a key you kept holding does not keep adding progress. After you come back, let go and press again if you want it to sound. Demo notes you only listen to never count. If MIDI is missing or a keyboard is unplugged, the on-screen keys and computer keys still work.</p>
+            </details>
           </div>
           <span class="preview-label">Lesson L01 only. Not a teacher. Not a grade.</span>
         </div>

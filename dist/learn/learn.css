@@ -131,6 +131,30 @@
 }
 .seating-card svg { width: min(100%, 320px); height: auto; display: block; }
 .seating-card figcaption { margin-top: 8px; font-size: 13px; color: var(--muted); }
+.midi-setup { max-width: 52ch; }
+.midi-setup-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 10px 14px;
+}
+.midi-devices {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  font-size: 13px;
+  font-weight: 650;
+}
+.midi-help {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.midi-help summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--ink);
+}
+.midi-help p { margin: 8px 0 0; max-width: 52ch; }
 .learn-footnote {
   display: flex;
   align-items: center;

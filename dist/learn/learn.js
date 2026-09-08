@@ -12,11 +12,42 @@ const pianoRoot = document.querySelector('#piano');
 const shell = document.querySelector('.learn-shell');
 renderPiano(pianoRoot);
 
+const midiStatus = document.querySelector('#midi-status');
+const midiButton = document.querySelector('#midi-button');
+const midiButtonLabel = document.querySelector('#midi-button-label');
+const midiDevices = document.querySelector('#midi-devices');
+
+function paintMidi(view) {
+  if (!view) return;
+  if (midiStatus) midiStatus.textContent = view.status;
+  if (midiButtonLabel) midiButtonLabel.textContent = view.buttonLabel;
+  else if (midiButton) midiButton.textContent = view.buttonLabel;
+  if (midiButton) {
+    midiButton.disabled = view.kind === 'requesting' || view.kind === 'unsupported';
+  }
+  if (midiDevices) {
+    midiDevices.replaceChildren();
+    if (!view.devices.length) {
+      midiDevices.hidden = true;
+    } else {
+      midiDevices.hidden = false;
+      view.devices.forEach((device) => {
+        const item = document.createElement('li');
+        item.textContent = device.manufacturer
+          ? `${device.name} · ${device.manufacturer}`
+          : device.name;
+        midiDevices.append(item);
+      });
+    }
+  }
+}
+
 const input = bindInputs({
   pianoRoot,
   audio,
-  onUserNote: (note, source) => applyNote(player.handleNote(note, source)),
+  onUserNote: (note, source, extras) => applyNote(player.handleNote(note, source, extras)),
   isDemoPlaying: () => player.isDemoPlaying(),
+  onMidiStatus: paintMidi,
   shell
 });
 
@@ -276,8 +307,8 @@ document.querySelector('#sound-toggle').addEventListener('click', () => {
   document.querySelector('#sound-toggle span').textContent = muted ? 'Sound off' : 'Sound on';
 });
 
-document.querySelector('#midi-button').addEventListener('click', () => {
-  input.requestMidi(document.querySelector('#midi-status'), document.querySelector('#midi-button'));
+midiButton.addEventListener('click', () => {
+  input.requestMidi(midiStatus, midiButtonLabel || midiButton, midiDevices).then(paintMidi);
 });
 
 document.querySelector('#restart-button').addEventListener('click', confirmRestart);

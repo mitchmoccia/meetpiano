@@ -1,18 +1,20 @@
 import { COMPUTER_KEYS, clearPressed, setPressed } from './piano.js';
+import { applyMidiEvent, createHeldNotes, createMidiSession, describeMidiState, deviceIdentity } from './midi.js';
 
-export function bindInputs({ pianoRoot, audio, onUserNote, isDemoPlaying, shell }) {
+export function bindInputs({ pianoRoot, audio, onUserNote, isDemoPlaying, shell, onMidiStatus }) {
   const heldComputerKeys = new Set();
-  let midiAccess = null;
+  const heldNotes = createHeldNotes();
+  let lastMidiIds = [];
 
-  function sourceFromEvent(event) {
-    if (event.pointerType === 'touch') return 'touch';
-    return 'touch';
+  function emitUserNote(note, source, extras = {}) {
+    if (source === 'demo' || isDemoPlaying()) return;
+    onUserNote(note, source, extras);
   }
 
-  function noteOn(note, source, velocity = 0.75) {
+  function noteOn(note, source, velocity = 0.75, extras = {}) {
     audio.play(note, velocity);
     setPressed(pianoRoot, note, true);
-    if (source !== 'demo' && !isDemoPlaying()) onUserNote(note, source);
+    emitUserNote(note, source, { ...extras, velocity });
   }
 
   function noteOff(note) {
@@ -28,12 +30,16 @@ export function bindInputs({ pianoRoot, audio, onUserNote, isDemoPlaying, shell 
     event.preventDefault();
     key.focus({ preventScroll: true });
     try { key.setPointerCapture(event.pointerId); } catch (_) {}
-    noteOn(note, sourceFromEvent(event));
+    const press = heldNotes.press('pointer', note);
+    if (!press.accepted) return;
+    noteOn(note, 'touch');
   }
 
   function onPointerEnd(event) {
     const note = Number(event.currentTarget.dataset.note);
-    if (Number.isFinite(note)) noteOff(note);
+    if (!Number.isFinite(note)) return;
+    if (!heldNotes.release('pointer', note).accepted) return;
+    noteOff(note);
   }
 
   pianoRoot.querySelectorAll('.piano-key').forEach((key) => {
@@ -45,19 +51,26 @@ export function bindInputs({ pianoRoot, audio, onUserNote, isDemoPlaying, shell 
     key.addEventListener('keydown', (event) => {
       if ((event.key === ' ' || event.key === 'Enter') && !event.repeat) {
         event.preventDefault();
+        const press = heldNotes.press('pointer', note);
+        if (!press.accepted) return;
         noteOn(note, 'touch');
       }
     });
     key.addEventListener('keyup', (event) => {
       if (event.key === ' ' || event.key === 'Enter') {
         event.preventDefault();
+        if (!heldNotes.release('pointer', note).accepted) return;
         noteOff(note);
       }
     });
     key.addEventListener('click', (event) => {
       if (event.detail === 0) {
+        const press = heldNotes.press('pointer', note);
+        if (!press.accepted) return;
         noteOn(note, 'touch');
-        window.setTimeout(() => noteOff(note), 300);
+        window.setTimeout(() => {
+          if (heldNotes.release('pointer', note).accepted) noteOff(note);
+        }, 300);
       }
     });
   });
@@ -72,6 +85,7 @@ export function bindInputs({ pianoRoot, audio, onUserNote, isDemoPlaying, shell 
       if (rect.bottom < 0 || rect.top > window.innerHeight) return;
     }
     event.preventDefault();
+    if (!heldNotes.press('computer', COMPUTER_KEYS[key]).accepted) return;
     heldComputerKeys.add(key);
     noteOn(COMPUTER_KEYS[key], 'computer-keys');
   }
@@ -80,63 +94,95 @@ export function bindInputs({ pianoRoot, audio, onUserNote, isDemoPlaying, shell 
     const key = event.key.toLowerCase();
     if (!heldComputerKeys.has(key)) return;
     heldComputerKeys.delete(key);
-    noteOff(COMPUTER_KEYS[key]);
+    const note = COMPUTER_KEYS[key];
+    if (heldNotes.release('computer', note).accepted) noteOff(note);
   }
 
-  function silence() {
+  function silence({ keepMidiHolds = false } = {}) {
     heldComputerKeys.clear();
+    heldNotes.clearComputer();
+    heldNotes.clearPort('pointer');
+    if (!keepMidiHolds) {
+      heldNotes.snapshot().forEach((key) => {
+        const note = Number(String(key).split('::')[1]);
+        if (Number.isFinite(note)) audio.release(note);
+      });
+    }
     audio.releaseAll();
     clearPressed(pianoRoot);
   }
 
-  window.addEventListener('keydown', onWindowKeyDown);
-  window.addEventListener('keyup', onWindowKeyUp);
-  window.addEventListener('blur', silence);
-
-  function wireMidiInputs(statusNode, button) {
-    const inputs = [...midiAccess.inputs.values()].filter((input) => input.state === 'connected');
-    inputs.forEach((input) => {
-      input.onmidimessage = ({ data }) => {
-        if (!data || data.length < 3) return;
-        const [status, note, velocity] = data;
-        const command = status & 0xf0;
-        if (command === 0x90 && velocity > 0) noteOn(note, 'midi', velocity / 127);
-        if (command === 0x80 || (command === 0x90 && velocity === 0)) noteOff(note);
-      };
-    });
-    if (statusNode) {
-      statusNode.textContent = inputs.length
-        ? `Connected: ${inputs.map((input) => input.name || 'MIDI keyboard').join(', ')}. Compatible keyboards only — this is not universal MIDI support.`
-        : 'MIDI is ready. Connect a compatible keyboard by USB, then play a note. If nothing happens, keep using the on-screen keys.';
-    }
-    if (button) button.textContent = inputs.length ? 'Keyboard connected' : 'Listening for a keyboard…';
+  function onBlur() {
+    silence({ keepMidiHolds: true });
+    midi.blur();
   }
 
-  async function requestMidi(statusNode, button) {
-    audio.ensure();
-    if (!navigator.requestMIDIAccess) {
-      if (statusNode) {
-        statusNode.textContent = 'This browser does not offer MIDI. Use the on-screen keys or computer keys.';
+  window.addEventListener('keydown', onWindowKeyDown);
+  window.addEventListener('keyup', onWindowKeyUp);
+  window.addEventListener('blur', onBlur);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') onBlur();
+  });
+
+  const midi = createMidiSession({
+    onNote(note, device, velocity) {
+      noteOn(note, 'midi', (velocity || 96) / 127, { device });
+    },
+    onRelease(note) {
+      noteOff(note);
+    },
+    onStatus(view) {
+      lastMidiIds = view.devices.map((item) => item.id);
+      onMidiStatus?.(view);
+    }
+  });
+
+  function publishIdle() {
+    onMidiStatus?.(describeMidiState({
+      supported: typeof navigator.requestMIDIAccess === 'function',
+      devices: [],
+      previousIds: lastMidiIds
+    }));
+  }
+
+  function requestMidi(statusNode, button, listNode) {
+    function paint(view) {
+      if (statusNode) statusNode.textContent = view.status;
+      if (button) {
+        button.textContent = view.buttonLabel;
+        button.disabled = view.kind === 'requesting' || view.kind === 'unsupported';
       }
-      return;
-    }
-    if (midiAccess) {
-      wireMidiInputs(statusNode, button);
-      return;
-    }
-    if (button) button.disabled = true;
-    if (statusNode) statusNode.textContent = 'Allow access to a MIDI keyboard if your browser asks.';
-    try {
-      midiAccess = await navigator.requestMIDIAccess({ sysex: false });
-      wireMidiInputs(statusNode, button);
-      midiAccess.onstatechange = () => wireMidiInputs(statusNode, button);
-    } catch (_) {
-      if (statusNode) {
-        statusNode.textContent = 'Keyboard access was not available. The on-screen keys still work.';
+      if (listNode) {
+        listNode.replaceChildren();
+        if (!view.devices.length) {
+          listNode.hidden = true;
+          return;
+        }
+        listNode.hidden = false;
+        view.devices.forEach((device) => {
+          const item = document.createElement('li');
+          item.textContent = device.manufacturer
+            ? `${device.name} · ${device.manufacturer}`
+            : device.name;
+          listNode.append(item);
+        });
       }
-    } finally {
-      if (button) button.disabled = false;
+      onMidiStatus?.(view);
     }
+
+    return midi.request().then((view) => {
+      paint(view);
+      return view;
+    });
+  }
+
+  function ingestMidi(data, input) {
+    const result = applyMidiEvent(midi.held, data, input?.id || 'midi');
+    if (result.scored) {
+      noteOn(result.parsed.note, 'midi', result.parsed.velocity / 127, { device: deviceIdentity(input) });
+    }
+    if (result.released) noteOff(result.parsed.note);
+    return result;
   }
 
   function playDemoNote(note, velocity = 0.65) {
@@ -149,12 +195,17 @@ export function bindInputs({ pianoRoot, audio, onUserNote, isDemoPlaying, shell 
     setPressed(pianoRoot, note, false);
   }
 
+  publishIdle();
+
   return {
     requestMidi,
     playDemoNote,
     releaseDemoNote,
     silence,
     noteOn,
-    noteOff
+    noteOff,
+    ingestMidi,
+    midi,
+    heldNotes
   };
 }

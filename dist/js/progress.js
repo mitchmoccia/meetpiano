@@ -69,7 +69,18 @@ function sanitizeRestore(restore) {
   };
 }
 
-export function createAttempt(lessonId) {
+export function sanitizeInputDevice(value) {
+  if (!isPlainObject(value)) return null;
+  const id = typeof value.id === 'string' && value.id ? value.id.slice(0, 80) : null;
+  const name = typeof value.name === 'string' && value.name ? value.name.slice(0, 80) : null;
+  const manufacturer = typeof value.manufacturer === 'string' && value.manufacturer
+    ? value.manufacturer.slice(0, 80)
+    : null;
+  if (!id && !name && !manufacturer) return null;
+  return { id, name, manufacturer };
+}
+
+export function createAttempt(lessonId, extras = {}) {
   const id = globalThis.crypto?.randomUUID?.() || `att-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
   return {
     attemptId: id,
@@ -77,13 +88,16 @@ export function createAttempt(lessonId) {
     curriculumVersion: CURRICULUM_VERSION,
     startedAt: new Date().toISOString(),
     completedAt: null,
-    inputMode: 'touch',
+    inputMode: extras.inputMode && INPUT_MODES.has(extras.inputMode) ? extras.inputMode : 'touch',
+    inputDevice: sanitizeInputDevice(extras.inputDevice),
     audioUnlocked: false,
     phase: 'explanation',
     evidenceState: null,
     events: [],
     adultObserved: {},
-    octavePolicyUsed: 'pitch-class',
+    octavePolicyUsed: extras.octavePolicyUsed && OCTAVE_POLICIES.has(extras.octavePolicyUsed)
+      ? extras.octavePolicyUsed
+      : 'pitch-class',
     exportable: true,
     restore: sanitizeRestore({})
   };
@@ -113,6 +127,7 @@ export function validateAttempt(value, lessonId) {
     startedAt: value.startedAt,
     completedAt: value.completedAt,
     inputMode: value.inputMode,
+    inputDevice: sanitizeInputDevice(value.inputDevice),
     audioUnlocked: value.audioUnlocked,
     phase: value.phase,
     evidenceState,
