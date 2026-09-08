@@ -10,9 +10,11 @@ This is a dependency-free static website. `dist/` contains the authored source, 
 
 - `dist/index.html`: marketing page, playable piano, learning map, memberships, and FAQs.
 - `dist/styles.css`: responsive layout, typography, and theme.
+- `dist/learn/`: First Piano Journey `/learn` lesson surface (L01). ES modules, no build step.
+- `dist/js/`: shared lesson, audio, input, and device-local progress modules for `/learn`.
 - `dist/app.js`: Web Audio synthesis, three musical missions, XP, optional Web MIDI input, and interactive learning map.
 - `dist/assets/`: all artwork, self-hosted fonts, font licenses, and favicon.
-- `vercel.json`: static deployment configuration.
+- `vercel.json`: static deployment configuration, including a `/learn` rewrite.
 - `.openai/hosting.json`: identity of the existing ChatGPT Sites publication; Vercel does not depend on it.
 
 ## Local development
@@ -23,7 +25,7 @@ From the repository root, run:
 python3 -m http.server 3000 --directory dist
 ```
 
-Open `http://localhost:3000`. No dependency installation or build step is needed.
+Open `http://localhost:3000` for the marketing page and `http://localhost:3000/learn/` for L01. No dependency installation or build step is needed.
 
 ## Vercel
 
@@ -33,7 +35,9 @@ After a successful deployment, add `meetpiano.app` in the project's domain setti
 
 ## Current functionality
 
-Visitors can play the preview with touch, mouse, computer keys, or an available MIDI keyboard in a supporting browser. Audio starts after an interaction. The three missions award up to 60 XP per run. Progress is session-only and resets on reload or replay.
+Visitors can play the preview with touch, mouse, computer keys, or an available MIDI keyboard in a supporting browser. Audio starts after an interaction. The three missions award up to 60 XP per run. Marketing XP is session-only and resets on reload or replay.
+
+`/learn` is a separate First Piano Journey surface. L01 (Meet the keyboard) saves versioned attempt records in `localStorage` under `meetpiano:beginner-v1` on this device only. Demo playback does not earn progress. There are no accounts and no cloud sync.
 
 The full learning curriculum, coaching, accounts, billing, and family profiles are future product work. The page identifies those features as in development. This repository does not collect payments or email addresses.
 
@@ -44,7 +48,8 @@ First Piano Journey mission and lesson specification: [`docs/missions/first-pian
 ## Checks
 
 ```sh
-node --check dist/app.js
+node --check dist/app.js dist/js/*.js dist/js/lessons/*.js dist/learn/learn.js
+node scripts/mp-01-check.mjs
 ```
 
 Hardware MIDI compatibility depends on the browser, operating system, keyboard, and adapter. The current preview does not assess fingering, posture, sustain pedal technique, or microphone input.
