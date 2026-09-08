@@ -3,5 +3,9 @@
   "framework": null,
   "buildCommand": "",
   "installCommand": "",
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/learn", "destination": "/learn/index.html" },
+    { "source": "/learn/", "destination": "/learn/index.html" }
+  ]
 }
