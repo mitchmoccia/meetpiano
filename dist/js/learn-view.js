@@ -150,7 +150,11 @@ export function renderUnitHub(root, store, { onOpen, onContinue }) {
         className: 'button button-dark',
         type: 'button',
         onClick: () => onContinue(continueCard.lessonId)
-      }, continueCard.inProgress ? `Continue ${continueCard.title}` : `Start ${continueCard.title}`) : null
+      }, continueCard.inProgress
+        ? `Continue ${continueCard.title}`
+        : evidenceRank(continueCard.evidenceState) >= 3
+          ? `Replay ${continueCard.title}`
+          : `Start ${continueCard.title}`) : null
     ),
     el('ol', { className: 'unit-map', 'aria-label': 'First Notes activities' },
       ...view.cards.map((card) => unitCard(card, onOpen))

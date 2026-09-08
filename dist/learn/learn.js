@@ -167,6 +167,11 @@ function startLesson(id) {
     player.setDemoPlaying(false);
   }
 
+  function go(phase) {
+    stopDemo();
+    player.advanceFrom(phase);
+  }
+
   function applyNote(result) {
     if (!result) return;
     if (result.reason === 'demo-playback') {
@@ -179,8 +184,8 @@ function startLesson(id) {
     }
     showHouse = Boolean(result.remediate && id === 'L02');
     const view = player.view();
-    if (view.phase === 'independent' && view.independentStep === 'done') player.advanceFrom('independent');
-    if (view.phase === 'transfer' && view.transferStep === 'done' && id !== 'L01') player.advanceFrom('transfer');
+    if (view.phase === 'independent' && view.independentStep === 'done') go('independent');
+    if (view.phase === 'transfer' && view.transferStep === 'done' && id !== 'L01') go('transfer');
     paint();
   }
 
@@ -245,7 +250,7 @@ function startLesson(id) {
 
   function renderActions(view, copy) {
     if (view.phase === 'explanation') {
-      ui.actions.append(button(copy.action, () => { player.advanceFrom('explanation'); lastFeedback = ''; paint(); }, 'button-dark'));
+      ui.actions.append(button(copy.action, () => { go('explanation'); lastFeedback = ''; paint(); }, 'button-dark'));
     }
     if (view.phase === 'demo') renderDemo(view);
     if (view.phase === 'guided') renderGuided(view);
@@ -299,7 +304,7 @@ function startLesson(id) {
         button(copy.hearE, () => playSequence([spec.demo.singles.E], 420))
       );
     }
-    ui.actions.append(button(copy.action, () => { stopDemo(); player.advanceFrom('demo'); lastFeedback = ''; paint(); }, 'button-dark'));
+    ui.actions.append(button(copy.action, () => { go('demo'); lastFeedback = ''; paint(); }, 'button-dark'));
   }
 
   async function playSweep(spec) {
@@ -346,7 +351,7 @@ function startLesson(id) {
           player.setPosture(checked);
           paint();
         }));
-        ui.actions.append(button(copy.action, () => { player.advanceFrom('guided'); lastFeedback = 'Hints stay off for this check.'; paint(); }, 'button-dark'));
+        ui.actions.append(button(copy.action, () => { go('guided'); lastFeedback = 'Hints stay off for this check.'; paint(); }, 'button-dark'));
       }
       if (view.guidedStep === 'high-low' || view.guidedStep === 'groups') hintToggle(view);
       return;
@@ -356,13 +361,13 @@ function startLesson(id) {
         ui.actions.append(button('Hear C again', () => playSequence([spec.guidedC], 500)));
         ui.actions.append(button('I said C', () => { player.skipNamedGuided(); lastFeedback = spec.copy.feedback.named; paint(); }, 'button-dark'));
       }
-      if (view.guidedStep === 'other') {
+      if (view.guidedStep === 'other' || view.guidedStep === 'done') {
         ui.extras.append(checkbox(copy.adultOther, view.attempt.adultObserved.note === 'adult-confirmed-other-c', (checked) => {
           player.setAdultOtherC(checked);
           lastFeedback = spec.copy.feedback.otherC;
           paint();
         }));
-        ui.actions.append(button(copy.action, () => { player.advanceFrom('guided'); lastFeedback = 'Hints stay off for this check.'; paint(); }, 'button-dark'));
+        ui.actions.append(button(copy.action, () => { go('guided'); lastFeedback = 'Hints stay off for this check.'; paint(); }, 'button-dark'));
       }
       if (view.guidedStep === 'find' || view.guidedStep === 'other') hintToggle(view);
       return;
@@ -373,7 +378,7 @@ function startLesson(id) {
           player.setFingering(checked);
           paint();
         }));
-        ui.actions.append(button(copy.action, () => { player.advanceFrom('guided'); lastFeedback = 'Hints stay off for this check.'; paint(); }, 'button-dark'));
+        ui.actions.append(button(copy.action, () => { go('guided'); lastFeedback = 'Hints stay off for this check.'; paint(); }, 'button-dark'));
       }
       if (view.guidedStep !== 'fingering') hintToggle(view);
       return;
@@ -394,7 +399,7 @@ function startLesson(id) {
           paint();
         }));
         if (view.heardTransfer) {
-          ui.actions.append(button(copy.action, () => { player.advanceFrom('guided'); lastFeedback = 'Hints stay off for this check.'; paint(); }, 'button-dark'));
+          ui.actions.append(button(copy.action, () => { go('guided'); lastFeedback = 'Hints stay off for this check.'; paint(); }, 'button-dark'));
         }
       }
       if (view.guidedStep === 'head' || view.guidedStep === 'tail' || view.guidedStep === 'all') hintToggle(view);
@@ -418,6 +423,7 @@ function startLesson(id) {
         ui.extras.append(checkbox(copy.adultRegister, false, (checked) => {
           player.setAdultOtherC(checked);
           lastFeedback = spec.copy.feedback.otherC;
+          if (player.view().independentStep === 'done') go('independent');
           paint();
         }));
       }

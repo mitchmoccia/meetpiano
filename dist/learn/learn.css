@@ -1,4 +1,5 @@
 .learn-page { background: var(--paper); }
+.learn-page [hidden] { display: none !important; }
 .learn-page button:disabled { cursor: not-allowed; }
 .learn-main { padding-bottom: 48px; }
 .device-disclosure {
