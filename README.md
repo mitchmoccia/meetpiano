@@ -37,6 +37,10 @@ Visitors can play the preview with touch, mouse, computer keys, or an available 
 
 The full learning curriculum, coaching, accounts, billing, and family profiles are future product work. The page identifies those features as in development. This repository does not collect payments or email addresses.
 
+## Documentation
+
+First Piano Journey mission and lesson specification: [`docs/missions/first-piano-journey.md`](docs/missions/first-piano-journey.md).
+
 ## Checks
 
 ```sh
