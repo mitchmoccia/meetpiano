@@ -2,7 +2,7 @@ import { createAudio } from '../js/audio.js';
 import { bindInputs } from '../js/input.js';
 import { createPlayer } from '../js/player.js';
 import { createProgress } from '../js/progress.js';
-import { renderPiano, setGroupOutlines, setHints, setSweep } from '../js/piano.js';
+import { clearPressed, renderPiano, setGroupOutlines, setHints, setSweep } from '../js/piano.js';
 import { el, evidenceLabel, phaseCopy, renderParagraphs, renderSteps } from '../js/learn-view.js';
 
 const progress = createProgress();
@@ -132,6 +132,10 @@ function paint() {
   ui.extras.replaceChildren();
   setHints(pianoRoot, hintNotes(view));
   setGroupOutlines(pianoRoot, groupKinds(view));
+  if (view.phase === 'result') {
+    clearPressed(pianoRoot);
+    setSweep(pianoRoot, null);
+  }
   renderActions(view, copy);
   if (lastFeedback) ui.feedback.textContent = lastFeedback;
   else if (!ui.feedback.textContent) ui.feedback.textContent = 'Ready when you are.';
