@@ -50,3 +50,28 @@ export function eventRole(source, isDemoPlaying) {
 export function shouldCountTowardProgress(source, isDemoPlaying) {
   return eventRole(source, isDemoPlaying) === 'learner';
 }
+
+export function pitchClasses(notes) {
+  return notes.map((note) => pitchClass(note));
+}
+
+export function sequencesMatch(heard, expected, octavePolicy) {
+  if (!Array.isArray(heard) || !Array.isArray(expected) || heard.length !== expected.length) return false;
+  return expected.every((note, index) => pitchesMatch(heard[index], note, octavePolicy));
+}
+
+export function isWhitePitchClass(pc) {
+  return ![1, 3, 6, 8, 10].includes(pitchClass(pc));
+}
+
+export function nextWhiteUp(note) {
+  let cursor = Number(note) + 1;
+  while (!isWhitePitchClass(cursor)) cursor += 1;
+  return cursor;
+}
+
+export function isSkipOrBlackNeighbor(from, heard) {
+  if (!Number.isFinite(from) || !Number.isFinite(heard)) return false;
+  if (!isWhitePitchClass(heard)) return true;
+  return pitchClass(heard) !== pitchClass(nextWhiteUp(from)) && heard !== nextWhiteUp(from);
+}

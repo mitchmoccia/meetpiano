@@ -58,6 +58,11 @@ function sanitizeEvent(event) {
   };
 }
 
+function sanitizeNoteList(value) {
+  if (!Array.isArray(value)) return [];
+  return value.filter((item) => Number.isInteger(item)).slice(-16);
+}
+
 function sanitizeRestore(restore) {
   const src = isPlainObject(restore) ? restore : {};
   return {
@@ -65,7 +70,15 @@ function sanitizeRestore(restore) {
     independentStep: Number.isInteger(src.independentStep) && src.independentStep >= 0 ? src.independentStep : 0,
     transferStep: Number.isInteger(src.transferStep) && src.transferStep >= 0 ? src.transferStep : 0,
     guidedTwoGroup: typeof src.guidedTwoGroup === 'string' ? src.guidedTwoGroup : null,
-    hintsOn: src.hintsOn !== false
+    hintsOn: src.hintsOn !== false,
+    helped: src.helped === true,
+    guidedC: Number.isInteger(src.guidedC) ? src.guidedC : null,
+    lastC: Number.isInteger(src.lastC) ? src.lastC : null,
+    sequence: sanitizeNoteList(src.sequence),
+    heardTransfer: src.heardTransfer === true,
+    homeDone: src.homeDone === true,
+    independentStarted: src.independentStarted === true,
+    reviewPausedAt: isIsoDate(src.reviewPausedAt) ? src.reviewPausedAt : null
   };
 }
 
