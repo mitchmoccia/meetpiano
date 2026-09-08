@@ -11,7 +11,7 @@ Single active-slice board. Update this file at the start and end of each slice.
 | Branch | `piany/mp-03-first-notes` |
 | Base | `piany/mp-02-midi-input` @ `f478ed60993227c04f47427c217d3b90b2e0981f` |
 | Start time | 2026-09-08 23:30 UTC |
-| Last evidence | [`../evidence/first-piano-journey/mp-03.md`](../evidence/first-piano-journey/mp-03.md) |
+| Last evidence | [`../evidence/first-piano-journey/mp-03.md`](../evidence/first-piano-journey/mp-03.md) (filled 2026-09-08; product `912e6bc`, HEAD `72f4e5b`, PR #5) |
 | Blockers | Physical MIDI keyboard not available in this environment — hardware check unverified |
 | Next action | Mitch review of draft PR into `piany/mp-02-midi-input`. Do not merge or deploy production from this slice. |
 | Next eligible slice | MP-06 — Device-local progress polish (L03/L04 teaching already in this Checkpoint A branch) |
