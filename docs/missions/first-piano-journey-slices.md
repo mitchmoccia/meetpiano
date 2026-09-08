@@ -4,7 +4,7 @@ Ordered cards **MP-00 through MP-11**. Status values: `verified` · `working` ·
 
 Acceptance summaries are taken from the runbook [`first-piano-journey.md`](first-piano-journey.md). Teaching detail is in [`../curriculum/beginner-v1.md`](../curriculum/beginner-v1.md).
 
-MP-00 is marked **verified** because the mission and lesson specification docs are complete. MP-01 is **verified** and merged to `main`. MP-02 is **working** (trustworthy keyboard / MIDI input). Later cards stay **queued**.
+MP-00 is marked **verified** because the mission and lesson specification docs are complete. MP-01 is **verified** and merged to `main`. MP-02 is **working** (trustworthy keyboard / MIDI input). MP-03 is **working** (First Notes Checkpoint A: L01–L04). Later cards stay **queued**.
 
 ---
 
@@ -80,21 +80,28 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 
 ---
 
-## MP-03 — L02 Find C
+## MP-03 — First Notes L01–L04 (Checkpoint A)
 
 | Field | Value |
 | --- | --- |
-| Status | **queued** |
+| Status | **working** |
 | Depends on | MP-02 |
+| Branch | `piany/mp-03-first-notes` |
+| Base | `piany/mp-02-midi-input` @ `f478ed60993227c04f47427c217d3b90b2e0981f` |
 
-**Learner outcome.** The learner finds C from the two-black-key landmark, then finds C in a new register without a glow hint.
+**Learner outcome.** A beginner can explore the keyboard (L01), find C (L02), play neighboring C–D–E (L03), and complete the original *Little Wave* tune (L04) as a First Notes unit. The next activity unlocks only when this device is ready. No buttons lead to lessons beyond L04.
 
 **Acceptance**
 
-- Guided: two-black-key group → nearest C. Exact pitch required when a register is named.
-- Independent: a different C, no glow.
-- Adult-observed fingering is not required for “found C.”
-- Common-error remediation from the L02 contract is present.
+- Playable First Notes world at `/learn` with continue/resume and device-local disclosure.
+- L01 path stays healthy at `/learn/?lesson=L01`. Marketing preview on `/` stays a separate playground.
+- L02: two-black-key group → nearest C; independent C with no glow; new register via another MIDI C or adult mark; doorstep remediation present. Fingering is not required to find C.
+- L03: visual/audio C–D–E and fingers 1–2–3; fingering is adult-observed; independent order is a changed pattern (not C–D–E and not the marketing sequences alone).
+- L04: Little Wave and Wave the other way match `beginner-v1.md`; independent is without hints; later replay after a named pause can become Retained.
+- Demos show keyboard geometry and intentional fingering. Hints fade. Help/replay do not erase saved progress.
+- MIDI hardware remains **unverified**. No accounts, billing, educator-approval, or learning-effectiveness claims.
+
+**Handoff.** Teaching for L02–L04 is on this branch. Isolated MP-04 / MP-05 cards below record the original split; do not re-implement those lessons from scratch.
 
 ---
 
@@ -102,8 +109,9 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 
 | Field | Value |
 | --- | --- |
-| Status | **queued** |
+| Status | **working** (landed with MP-03 Checkpoint A) |
 | Depends on | MP-03 |
+| Branch | `piany/mp-03-first-notes` |
 
 **Learner outcome.** The learner plays C, D, and E as adjacent white keys with a demonstrated fingering, then a new three-note order without highlight.
 
@@ -119,8 +127,9 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 
 | Field | Value |
 | --- | --- |
-| Status | **queued** |
+| Status | **working** (landed with MP-03 Checkpoint A) |
 | Depends on | MP-04 |
+| Branch | `piany/mp-03-first-notes` |
 
 **Learner outcome.** The learner plays the original home phrase *Little Wave*, a related transfer phrase, and a later replay of the home phrase.
 

@@ -5,23 +5,24 @@ Single active-slice board. Update this file at the start and end of each slice.
 | Field | Value |
 | --- | --- |
 | Mission | First Piano Journey |
-| Active slice | **MP-02** Trustworthy keyboard / MIDI input |
+| Active slice | **MP-03** First Notes L01–L04 (Checkpoint A) |
 | Slice status | **working** |
-| Run ID | `piany-mp02-20260908-2257UTC` |
-| Branch | `piany/mp-02-midi-input` |
-| Base | `main` @ `13fbd6b29f0f78278a72e25ea0fbfb65e609a1aa` |
-| Start time | 2026-09-08 22:57 UTC |
-| Last evidence | [`../evidence/first-piano-journey/mp-02.md`](../evidence/first-piano-journey/mp-02.md) |
+| Run ID | `piany-mp03-20260908-2330UTC` |
+| Branch | `piany/mp-03-first-notes` |
+| Base | `piany/mp-02-midi-input` @ `f478ed60993227c04f47427c217d3b90b2e0981f` |
+| Start time | 2026-09-08 23:30 UTC |
+| Last evidence | [`../evidence/first-piano-journey/mp-03.md`](../evidence/first-piano-journey/mp-03.md) |
 | Blockers | Physical MIDI keyboard not available in this environment — hardware check unverified |
-| Next action | Mitch review of draft PR #4 into `main`. Do not merge or deploy production from this slice. |
-| Next eligible slice | MP-03 — L02 Find C |
+| Next action | Mitch review of draft PR into `piany/mp-02-midi-input`. Do not merge or deploy production from this slice. |
+| Next eligible slice | MP-06 — Device-local progress polish (L03/L04 teaching already in this Checkpoint A branch) |
 
 ## Notes
 
-- MP-00 and MP-01 are merged to `main` (`13fbd6b`). This slice is stacked on `main`, not on the old MP-01 branch.
-- `/learn` stays a static `dist/learn/index.html` surface. No Next.js rewrite.
-- Progress key: `localStorage` `meetpiano:beginner-v1`. Device-local only. Demo playback cannot earn progress.
-- Attempt records now store `inputMode` and optional MIDI `inputDevice`.
+- Stacked on `piany/mp-02-midi-input` (MP-02 MIDI work not yet merged). If that base disappears, retarget `main`.
+- `/learn` is the First Notes unit hub. L01 remains at `/learn/?lesson=L01`.
+- L02 Find C, L03 Neighbors, and L04 Little Wave are playable on this branch (Checkpoint A). Unlock: L02 after L01 Practiced, L03 after L02 Practiced, L04 after L03 Independent.
+- Progress key: `localStorage` `meetpiano:beginner-v1`. Device-local only. Demo playback cannot earn progress. Help/replay do not erase saved evidence.
 - Branch `cursor/setup-cloud-agent-env-d108` was left untouched.
 - Do not change Vercel projects, domains, or DNS.
 - Production deploy is not part of this slice. Mitch approval is required to merge or deploy production.
+- Do not mark physical MIDI verified.
