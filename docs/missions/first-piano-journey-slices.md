@@ -37,7 +37,7 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 | Status | **verified** |
 | Depends on | MP-00 |
 | Branch | `piany/mp-01-learn-l01` |
-| PR | https://github.com/mitchmoccia/meetpiano/pull/3 |
+| PR | https://github.com/mitchmoccia/meetpiano/pull/3 (merged to `main`) |
 
 **Learner outcome.** A child and grown-up can open `/learn`, start L01 *Meet the keyboard*, hear notes after a gesture, explore high/low and black-key groups of two and three, and leave an on-device Explored or Practiced record. Posture is adult-observed and labeled.
 
@@ -61,6 +61,7 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 | Depends on | MP-01 |
 | Branch | `piany/mp-02-midi-input` |
 | Base | `main` @ `13fbd6b29f0f78278a72e25ea0fbfb65e609a1aa` |
+| PR | https://github.com/mitchmoccia/meetpiano/pull/4 (draft into `main`) |
 
 **Learner outcome.** A grown-up can connect a compatible Web MIDI keyboard when the browser offers it, see clear connect / disconnect / unsupported copy, and know that on-screen and computer keys still work. Learner presses are counted once per hold. Demo audio never earns progress. Lessons can require an exact MIDI pitch or allow a pitch-class in any octave.
 

@@ -12,8 +12,8 @@ Single active-slice board. Update this file at the start and end of each slice.
 | Base | `main` @ `13fbd6b29f0f78278a72e25ea0fbfb65e609a1aa` |
 | Start time | 2026-09-08 22:57 UTC |
 | Last evidence | [`../evidence/first-piano-journey/mp-02.md`](../evidence/first-piano-journey/mp-02.md) |
-| Blockers | Physical MIDI keyboard not available in this environment |
-| Next action | Finish fixture checks and honest evidence. Do not merge or deploy production from this slice. |
+| Blockers | Physical MIDI keyboard not available in this environment — hardware check unverified |
+| Next action | Mitch review of draft PR #4 into `main`. Do not merge or deploy production from this slice. |
 | Next eligible slice | MP-03 — L02 Find C |
 
 ## Notes
