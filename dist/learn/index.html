@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffdc63">
+  <title>Meet the keyboard · First Piano Journey · MeetPiano</title>
+  <meta name="description" content="A first MeetPiano lesson: meet the keyboard, hear high and low, and find black-key groups of two and three. Progress stays on this device.">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/learn/learn.css">
+  <script type="module" src="/learn/learn.js"></script>
+</head>
+<body class="learn-page" id="unlock-area">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <svg xmlns="http://www.w3.org/2000/svg" class="icon-defs" aria-hidden="true"><defs>
+    <symbol id="arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="play" viewBox="0 0 24 24"><path d="m9 5 11 7-11 7z"/></symbol>
+    <symbol id="check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="music" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13M9 9l12-2"/><ellipse cx="6" cy="18" rx="3" ry="3"/><ellipse cx="18" cy="16" rx="3" ry="3"/></symbol>
+    <symbol id="heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></symbol>
+    <symbol id="headphones" viewBox="0 0 24 24"><path d="M3 14v-3a9 9 0 0 1 18 0v3M3 13h4v8H5a2 2 0 0 1-2-2zm18 0h-4v8h2a2 2 0 0 0 2-2z"/></symbol>
+    <symbol id="keyboard" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 4v16m5-16v16m5-16v16M5 4v8h4V4m6 0v8h4V4"/></symbol>
+    <symbol id="spark" viewBox="0 0 24 24"><path d="m12 3 2.6 6.4L21 12l-6.4 2.6L12 21l-2.6-6.4L3 12l6.4-2.6Z"/></symbol>
+    <symbol id="trophy" viewBox="0 0 24 24"><path d="M8 3h8v7a4 4 0 0 1-8 0V3ZM8 5H3v3a4 4 0 0 0 5 4m8-7h5v3a4 4 0 0 1-5 4m-4 2v5m-5 2h10"/></symbol>
+    <symbol id="volume" viewBox="0 0 24 24"><path d="m11 5-6 4H2v6h3l6 4zm4 3a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></symbol>
+  </defs></svg>
+  <header class="site-header">
+    <div class="nav-wrap wrap">
+      <a href="/" class="brand" aria-label="MeetPiano home"><span class="brand-keys" aria-hidden="true"><i></i><i></i><i></i></span>meetpiano<span class="brand-period">.</span></a>
+      <nav aria-label="Main navigation">
+        <a href="/learn" aria-current="page">First lesson</a>
+        <a href="/#adventure">The adventure</a>
+        <a href="/#grown-ups">For grown-ups</a>
+      </nav>
+      <button type="button" class="button button-small button-outline" id="restart-button">Start over</button>
+    </div>
+  </header>
+  <main id="main" class="learn-main">
+    <p class="device-disclosure wrap" id="device-disclosure">Progress is saved on this device only. It does not sync to other browsers, phones, or accounts. There is no account.</p>
+    <p class="storage-notice wrap" id="storage-notice" hidden role="status"></p>
+    <div class="wrap">
+      <div class="learn-shell">
+        <div class="game-topline">
+          <span class="game-label"><span class="game-live-dot"></span> FIRST PIANO JOURNEY · L01</span>
+          <span class="game-xp" id="evidence-pill">Not yet explored</span>
+        </div>
+        <p class="continue-note" id="continue-note" hidden>Picking up where you left off on this device.</p>
+        <ol class="phase-steps" id="phase-steps" aria-label="Lesson steps"></ol>
+        <div class="learn-body">
+          <section class="mission-panel learn-panel">
+            <p class="mission-eyebrow" id="phase-eyebrow">LESSON L01</p>
+            <h1 id="phase-title">Meet the keyboard</h1>
+            <div id="phase-copy"></div>
+            <div class="phase-extras" id="phase-extras"></div>
+            <div class="phase-actions" id="phase-actions"></div>
+            <p class="mission-feedback" role="status" aria-live="polite" id="phase-feedback">Ready when you are.</p>
+          </section>
+          <section class="instrument-panel learn-instrument">
+            <div class="group-labels" id="group-labels" hidden>
+              <span class="group-tag tag-two">2</span>
+              <span class="group-tag tag-three">3</span>
+            </div>
+            <div class="piano" id="piano"></div>
+            <div class="keyboard-help">
+              <span>This on-screen keyboard is a stand-in. Tap keys <span class="computer-help">or use A S D F G H J</span></span>
+              <button type="button" id="sound-toggle" aria-pressed="false" aria-label="Mute sound"><svg class="icon"><use href="#volume"/></svg><span>Sound on</span></button>
+            </div>
+            <figure class="seating-card" id="seating-card" hidden>
+              <svg viewBox="0 0 280 120" role="img" aria-labelledby="seating-title seating-desc">
+                <title id="seating-title">Simple seating sketch</title>
+                <desc id="seating-desc">A side view of a bench, feet on the floor, and level forearms at a keyboard. A grown-up checks this. The app cannot see your sitting.</desc>
+                <rect x="18" y="78" width="244" height="6" fill="#29251f"/>
+                <rect x="70" y="70" width="88" height="10" rx="2" fill="#de4936"/>
+                <rect x="78" y="80" width="8" height="22" fill="#29251f"/>
+                <rect x="134" y="80" width="8" height="22" fill="#29251f"/>
+                <circle cx="96" cy="28" r="10" fill="#29251f"/>
+                <path d="M96 38v22l-16 18" fill="none" stroke="#29251f" stroke-width="4" stroke-linecap="round"/>
+                <path d="M96 44h42" fill="none" stroke="#29251f" stroke-width="4" stroke-linecap="round"/>
+                <path d="M96 60l14 20" fill="none" stroke="#29251f" stroke-width="4" stroke-linecap="round"/>
+                <rect x="138" y="38" width="110" height="16" rx="3" fill="#ffdc63" stroke="#29251f" stroke-width="2"/>
+                <rect x="150" y="28" width="10" height="12" fill="#29251f"/>
+                <rect x="168" y="28" width="10" height="12" fill="#29251f"/>
+                <rect x="198" y="28" width="10" height="12" fill="#29251f"/>
+                <rect x="216" y="28" width="10" height="12" fill="#29251f"/>
+                <rect x="234" y="28" width="10" height="12" fill="#29251f"/>
+              </svg>
+              <figcaption>A grown-up checks this. The app cannot see your sitting.</figcaption>
+            </figure>
+          </section>
+        </div>
+        <div class="game-bottomline">
+          <div>
+            <button type="button" id="midi-button"><svg class="icon"><use href="#keyboard"/></svg> Have a compatible keyboard? Try connecting it <span aria-hidden="true">↗</span></button>
+            <span id="midi-status" role="status"></span>
+          </div>
+          <span class="preview-label">Lesson L01 only. Not a teacher. Not a grade.</span>
+        </div>
+      </div>
+      <p class="learn-footnote"><svg class="icon"><use href="#headphones"/></svg> Headphones help. A mute control stays available. MIDI depends on your browser and instrument — this is not a claim of universal support.</p>
+    </div>
+  </main>
+  <footer>
+    <div class="wrap footer-main">
+      <a href="/" class="brand"><span class="brand-keys" aria-hidden="true"><i></i><i></i><i></i></span>meetpiano<span class="brand-period">.</span></a>
+      <p>First Piano Journey · beginner-v1 · device-local only</p>
+      <a href="/">Back to the playground</a>
+    </div>
+    <div class="wrap footer-bottom">
+      <span>© 2026 MeetPiano</span>
+      <span>Original lesson copy. No accounts. No cloud progress.</span>
+      <a href="/learn">Back to the top ↑</a>
+    </div>
+  </footer>
+</body>
+</html>

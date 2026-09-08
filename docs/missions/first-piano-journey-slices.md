@@ -4,7 +4,7 @@ Ordered cards **MP-00 through MP-11**. Status values: `verified` · `working` ·
 
 Acceptance summaries are taken from the runbook [`first-piano-journey.md`](first-piano-journey.md). Teaching detail is in [`../curriculum/beginner-v1.md`](../curriculum/beginner-v1.md).
 
-MP-00 is marked **verified** because the mission and lesson specification docs are complete. MP-01 is **ready**. All later cards stay **queued**.
+MP-00 is marked **verified** because the mission and lesson specification docs are complete. MP-01 is **verified**. All later cards stay **queued**.
 
 ---
 
@@ -34,8 +34,10 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 
 | Field | Value |
 | --- | --- |
-| Status | **ready** |
+| Status | **verified** |
 | Depends on | MP-00 |
+| Branch | `piany/mp-01-learn-l01` |
+| PR | https://github.com/mitchmoccia/meetpiano/pull/3 |
 
 **Learner outcome.** A child and grown-up can open `/learn`, start L01 *Meet the keyboard*, hear notes after a gesture, explore high/low and black-key groups of two and three, and leave an on-device Explored or Practiced record. Posture is adult-observed and labeled.
 

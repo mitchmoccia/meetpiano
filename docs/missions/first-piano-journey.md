@@ -118,7 +118,7 @@ After MP-00 is merged or Mitch chooses to stack, the next action is **start MP-0
 | ID | Title | Status after MP-00 |
 | --- | --- | --- |
 | MP-00 | Mission and lesson specification | Verified (docs complete) |
-| MP-01 | Playable `/learn` + L01 | Ready |
+| MP-01 | Playable `/learn` + L01 | Verified |
 | MP-02 | Teaching-loop engine | Queued |
 | MP-03 | L02 Find C | Queued |
 | MP-04 | L03 Neighbors C–D–E | Queued |
