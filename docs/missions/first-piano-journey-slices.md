@@ -4,7 +4,7 @@ Ordered cards **MP-00 through MP-11**. Status values: `verified` · `working` ·
 
 Acceptance summaries are taken from the runbook [`first-piano-journey.md`](first-piano-journey.md). Teaching detail is in [`../curriculum/beginner-v1.md`](../curriculum/beginner-v1.md).
 
-MP-00 is marked **verified** because the mission and lesson specification docs are complete. MP-01 is **verified**. All later cards stay **queued**.
+MP-00 is marked **verified** because the mission and lesson specification docs are complete. MP-01 is **verified** and merged to `main`. MP-02 is **working** (trustworthy keyboard / MIDI input). Later cards stay **queued**.
 
 ---
 
@@ -49,25 +49,33 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 - Device-local disclosure is visible if any progress is stored.
 - No accounts, no L02–L24 implementation, no framework rewrite.
 
-**Handoff.** MP-02 can add the shared teaching loop without restating L01 copy.
+**Handoff.** MP-02 adds trustworthy physical-keyboard / MIDI input on the existing L01 loop.
 
 ---
 
-## MP-02 — Teaching-loop engine
+## MP-02 — Trustworthy keyboard / MIDI input
 
 | Field | Value |
 | --- | --- |
-| Status | **queued** |
+| Status | **working** |
 | Depends on | MP-01 |
+| Branch | `piany/mp-02-midi-input` |
+| Base | `main` @ `13fbd6b29f0f78278a72e25ea0fbfb65e609a1aa` |
 
-**Learner outcome.** Every implemented lesson can move through explanation → visual demo → replayable audio → guided practice with optional hints → independent check without hints → transfer → remediation.
+**Learner outcome.** A grown-up can connect a compatible Web MIDI keyboard when the browser offers it, see clear connect / disconnect / unsupported copy, and know that on-screen and computer keys still work. Learner presses are counted once per hold. Demo audio never earns progress. Lessons can require an exact MIDI pitch or allow a pitch-class in any octave.
 
 **Acceptance**
 
-- One shared loop used by L01 and ready for L02–L04.
-- Attempt records persist the versioned shape in `beginner-v1.md`.
-- Hints can be hidden for independent checks.
-- No new design system. Reuse current typography and piano chrome.
+- Device setup UX: request access, list connected inputs, reconnect / disconnect messaging, honest unsupported or no-device fallback. On-screen and computer keys stay usable.
+- Input normalization: note-on, velocity-zero note-off, repeated notes, held keys (no multi-count while held). Browser blur silences sound and does not keep incrementing a held key.
+- Octave-aware assessment: exploratory lessons may accept pitch-class in any octave; location lessons can require exact MIDI pitch. Wired into the L01 player path and ready for L02+.
+- Demo events stay separate from learner events. Demo notes never count toward progress.
+- Each AttemptRecord stores `inputMode` and MIDI device identity when the browser exposes it.
+- Simulated fixtures cover held key, note-off, wrong octave when exact is required, and ignored demo notes.
+- Real hardware check is recorded separately. Do not claim a physical keyboard was verified unless one was actually used.
+- Marketing `/` and `/learn` L01 still work. No Next.js rewrite. No Vercel / DNS changes.
+
+**Handoff.** L02 can require exact pitch when a register is named. The L01 teaching loop remains the current lesson path.
 
 ---
 

@@ -72,6 +72,7 @@ AttemptRecord {
   startedAt          ISO-8601
   completedAt        ISO-8601 | null
   inputMode          "touch" | "computer-keys" | "midi" | "mixed"
+  inputDevice        { id, name, manufacturer } | null   // MIDI identity when the browser exposes it
   audioUnlocked      boolean
   phase              "explanation" | "demo" | "guided" | "independent" | "transfer" | "remediation" | "review"
   evidenceState      "explored" | "practiced" | "independent" | "retained"
