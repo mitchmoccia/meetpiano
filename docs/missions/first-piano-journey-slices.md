@@ -4,7 +4,7 @@ Ordered cards **MP-00 through MP-11**. Status values: `verified` · `working` ·
 
 Acceptance summaries are taken from the runbook [`first-piano-journey.md`](first-piano-journey.md). Teaching detail is in [`../curriculum/beginner-v1.md`](../curriculum/beginner-v1.md).
 
-MP-00 is marked **verified** because the mission and lesson specification docs are complete. MP-01 is **verified** and merged to `main`. MP-02 is **software/fixture verified** (Gort accepted; hardware MIDI unverified — not a MIDI-verified release). MP-03 First Notes, MP-04 Rhythm Club, MP-05 Read and play, and MP-06 device-local progress are **working** and merged to `main`. MP-07 Left hand (L13–L16) is **working** on `piany/mp-07-left-hand`. MP-08 Together (L17–L20) is **working** on `piany/mp-08-together`. Later cards stay **queued**. The original isolated MP-04/MP-05 cards (L03/L04) landed with Checkpoint A. Historical MP-05 (L04 First little tune) is recorded below as MP-05b.
+MP-00 is marked **verified** because the mission and lesson specification docs are complete. MP-01 is **verified** and merged to `main`. MP-02 is **software/fixture verified** (Gort accepted; hardware MIDI unverified — not a MIDI-verified release). MP-03 First Notes, MP-04 Rhythm Club, MP-05 Read and play, and MP-06 device-local progress are **working** and merged to `main`. MP-07 Left hand (L13–L16) is **working** on `piany/mp-07-left-hand`. MP-08 Together (L17–L20) is **working** on `piany/mp-08-together`. MP-09 Expression (L21–L24) is **working** on `piany/mp-09-expression-recital` (Checkpoint B). Later leftover-review and closeout cards stay **queued**. The original isolated MP-04/MP-05 cards (L03/L04) landed with Checkpoint A. Historical MP-05 (L04 First little tune) is recorded below as MP-05b.
 
 ---
 
@@ -264,24 +264,34 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 - Device-local progress. Hardware MIDI remains unverified.
 - First Notes, Rhythm Club, Read and play, and Left hand stay healthy. Copyright footer is preserved. No Vercel / DNS changes.
 
-**Handoff.** L17–L20 teaching is on this branch. Later leftover outlines (long/short review, smooth/separate, named fingers, leftover house) wait for a later slice.
+**Handoff.** L17–L20 teaching is on this branch. Expression and first recital (L21–L24) is MP-09.
 
 ---
 
-## MP-09 — Later leftover sequence
+## MP-09 — Expression and first recital L21–L24 (Checkpoint B)
 
 | Field | Value |
 | --- | --- |
-| Status | **queued** |
+| Status | **working** |
 | Depends on | MP-08 |
+| Branch | `piany/mp-09-expression-recital` |
+| Base | `piany/mp-08-together` @ `898e84b4bafdb40c77dbad9a9ab36fb42ecba0f7` |
 
-**Learner outcome.** A later three-black-key house, meeting at middle C, a longer C-neighborhood tune, and quiet/strong. First teaching of left-hand C, bass reading, turns, and two-part pulse already live in L13–L16. First together already lives in L17–L20.
+**Learner outcome.** After Together is Independent on this device, a beginner can shape a walk quieter then stronger (L21), choose an ending without one melody being labeled correct (L22), practice a named job that keeps notes and rhythm apart (L23), and share a first recital with no glowing keys (L24). Velocity feedback is used only when the input sent velocity. Technique is never inferred. A share can finish through wobbles. All 24 lessons are authored and reachable when prerequisites are met.
 
 **Acceptance**
 
-- Later leftover outlines become playable without rebinding L13–L20.
-- Two-hand review does not claim coordination mastery from MIDI alone.
-- Dynamics are relative (softer vs stronger), not studio-grade velocity scoring.
+- Expression unit on `/learn` with unlock from L20 Independent. L01–L24 authored (Checkpoint B).
+- L21–L24 full lesson loops from the expanded contracts in `beginner-v1.md`.
+- Creative choices accept more than one valid ending. The app does not crown one arbitrary melody.
+- Velocity-based quiet/strong is conditional on input capability. Technique is never inferred.
+- Recital mode removes glowing-key prompts and allows finishing through mistakes.
+- Results distinguish notes, rhythm, assistance, self-observation, and a later transfer check.
+- Music/audio is original Web Audio. Provenance is recorded in evidence.
+- Device-local progress. Hardware MIDI remains unverified.
+- Prior units stay healthy. Copyright footer is preserved. No Vercel / DNS changes.
+
+**Handoff.** L21–L24 teaching is on this branch. Later leftover outlines (house, middle C, long tune, smooth/separate, named fingers) wait for MP-10.
 
 ---
 
@@ -292,7 +302,7 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 | Status | **queued** |
 | Depends on | MP-09 |
 
-**Learner outcome.** Later review of long and short notes, smooth vs separate, a known tune with specified fingering (adult-observed), a held left-hand C, question and answer, memory replay, and a share/review close. L17–L20 already teach Together.
+**Learner outcome.** Later review of long and short notes, smooth vs separate, a known tune with specified fingering (adult-observed), a held left-hand C, question and answer, and memory replay. L21–L24 already teach Expression and a first recital.
 
 **Acceptance**
 
