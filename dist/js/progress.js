@@ -78,7 +78,8 @@ function sanitizeRestore(restore) {
     heardTransfer: src.heardTransfer === true,
     homeDone: src.homeDone === true,
     independentStarted: src.independentStarted === true,
-    reviewPausedAt: isIsoDate(src.reviewPausedAt) ? src.reviewPausedAt : null
+    reviewPausedAt: isIsoDate(src.reviewPausedAt) ? src.reviewPausedAt : null,
+    reducedTempo: src.reducedTempo === true
   };
 }
 

@@ -9,6 +9,11 @@ import { L01 } from './lessons/l01.js';
 import { createL02Player } from './lessons/l02-play.js';
 import { createL03Player } from './lessons/l03-play.js';
 import { createL04Player } from './lessons/l04-play.js';
+import { L05 } from './lessons/l05.js';
+import { L06 } from './lessons/l06.js';
+import { L07 } from './lessons/l07.js';
+import { L08 } from './lessons/l08.js';
+import { createRhythmLessonPlayer } from './lessons/rhythm-play.js';
 import { blackGroupId, groupKind } from './piano.js';
 import { assessHeardPitch, resolveOctavePolicy, shouldCountTowardProgress } from './assess.js';
 
@@ -394,10 +399,14 @@ function createL01Player({ progress }) {
   };
 }
 
-export function createPlayer({ progress, lessonId = 'L01' }) {
+export function createPlayer({ progress, lessonId = 'L01', clock, now } = {}) {
   if (lessonId === 'L02') return createL02Player({ progress });
   if (lessonId === 'L03') return createL03Player({ progress });
   if (lessonId === 'L04') return createL04Player({ progress });
+  if (lessonId === 'L05') return createRhythmLessonPlayer({ progress, lessonSpec: L05, clock, now });
+  if (lessonId === 'L06') return createRhythmLessonPlayer({ progress, lessonSpec: L06, clock, now });
+  if (lessonId === 'L07') return createRhythmLessonPlayer({ progress, lessonSpec: L07, clock, now });
+  if (lessonId === 'L08') return createRhythmLessonPlayer({ progress, lessonSpec: L08, clock, now });
   return createL01Player({ progress });
 }
 

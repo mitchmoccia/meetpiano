@@ -200,6 +200,86 @@
   font-weight: 800;
 }
 .black-key .finger-mark { top: auto; bottom: 8px; background: var(--pink); }
+.unit-world { padding: 8px 27px 12px; }
+.unit-world h2 {
+  font-family: var(--display);
+  font-size: clamp(24px, 2.6vw, 32px);
+  letter-spacing: -0.6px;
+  margin: 6px 0 10px;
+}
+.unit-world.locked { opacity: 0.95; }
+.unit-world.focus {
+  outline: 3px solid var(--red);
+  outline-offset: 6px;
+  border-radius: 16px;
+}
+.pulse-card, .rest-card {
+  margin: 18px 0 0;
+  padding: 14px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  background: #fffaf1;
+}
+.pulse-dot {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  margin: 4px auto 10px;
+  background: var(--yellow);
+  border: 1.5px solid var(--ink);
+  transform: scale(calc(0.72 + (1 - var(--pulse, 0.4)) * 0.45));
+  box-shadow: 0 3px 0 var(--ink);
+}
+.pulse-card.live .pulse-dot { background: var(--red); }
+.pulse-card.performance .pulse-dot { opacity: 0.35; }
+.count-in {
+  text-align: center;
+  font-weight: 800;
+  margin: 0 0 8px;
+}
+.beat-lane {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0 0 8px;
+  padding: 0;
+  justify-content: center;
+}
+.beat-lane li {
+  min-width: 46px;
+  padding: 8px 6px;
+  border: 1.5px solid var(--ink);
+  border-radius: 10px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 800;
+  background: #fffdf8;
+}
+.beat-lane li.long { background: var(--yellow); }
+.beat-lane li.short { background: var(--pink); }
+.beat-lane li.rest { background: #f3efe4; font-style: italic; }
+.beat-lane li.now { box-shadow: 0 3px 0 var(--ink); }
+.rest-boxes {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.rest-boxes span {
+  display: grid;
+  place-items: center;
+  min-height: 44px;
+  border: 1.5px solid var(--ink);
+  border-radius: 10px;
+  font-weight: 800;
+  background: var(--yellow);
+}
+.rest-boxes .rest-hole { background: #f3efe4; color: var(--muted); }
+.pulse-card figcaption, .rest-card figcaption {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--muted);
+}
 .unit-intro { padding: 28px 27px 8px; }
 .unit-intro h1 {
   font-family: var(--display);
@@ -266,5 +346,6 @@
   .continue-note { padding-inline: 17px; }
   .unit-map { grid-template-columns: 1fr; padding-inline: 17px; }
   .unit-intro { padding-inline: 17px; }
+  .unit-world { padding-inline: 17px; }
   .learn-nav-actions .button-small { padding: 8px 10px; font-size: 12px; }
 }

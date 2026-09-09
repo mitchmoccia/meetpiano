@@ -32,10 +32,15 @@ export function createAudio() {
     return true;
   }
 
-  function play(note, velocity = 0.75) {
+  function currentTime() {
+    if (!audioContext) return null;
+    return audioContext.currentTime;
+  }
+
+  function play(note, velocity = 0.75, when = null) {
     if (!ensure()) return false;
-    release(note);
-    const now = audioContext.currentTime;
+    if (when == null) release(note);
+    const now = when == null ? audioContext.currentTime : Math.max(when, audioContext.currentTime);
     const voiceGain = audioContext.createGain();
     voiceGain.gain.setValueAtTime(0.0001, now);
     voiceGain.gain.exponentialRampToValueAtTime(Math.max(0.03, velocity) * 0.6, now + 0.008);
@@ -61,6 +66,27 @@ export function createAudio() {
       if (voices.get(note) === entry) voices.delete(note);
       voiceGain.disconnect();
     };
+    return true;
+  }
+
+  function playAt(note, when, velocity = 0.7) {
+    return play(note, velocity, when);
+  }
+
+  function clickAt(when, kind = 'beat') {
+    if (!ensure()) return false;
+    const start = Math.max(when, audioContext.currentTime);
+    const osc = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = kind === 'count' ? 880 : 1320;
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.exponentialRampToValueAtTime(kind === 'count' ? 0.18 : 0.28, start + 0.005);
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.08);
+    osc.connect(gain);
+    gain.connect(master);
+    osc.start(start);
+    osc.stop(start + 0.1);
     return true;
   }
 
@@ -90,6 +116,9 @@ export function createAudio() {
   return {
     ensure,
     play,
+    playAt,
+    clickAt,
+    currentTime,
     release,
     releaseAll,
     setMuted,

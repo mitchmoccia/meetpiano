@@ -2,6 +2,8 @@ import { createAudio } from '../js/audio.js';
 import { bindInputs } from '../js/input.js';
 import { createPlayer } from '../js/player.js';
 import { createProgress } from '../js/progress.js';
+import { createRhythmClock } from '../js/rhythm-clock.js';
+import { patternSpanSec } from '../js/rhythm-score.js';
 import {
   clearPressed,
   renderPiano,
@@ -21,12 +23,13 @@ import {
   renderSteps,
   renderUnitHub
 } from '../js/learn-view.js';
-import { isLessonUnlocked, parseLessonId } from '../js/unit.js';
+import { isLessonUnlocked, isRhythmLesson, parseLessonId, parseUnitId } from '../js/unit.js';
 
 const progress = createProgress();
 const audio = createAudio();
 const params = new URLSearchParams(window.location.search);
 const requested = parseLessonId(params.get('lesson'));
+const requestedUnit = parseUnitId(params.get('unit'));
 const store = progress.read().store;
 const unlocked = requested ? isLessonUnlocked(store, requested) : true;
 const lessonId = requested && unlocked ? requested : null;
@@ -74,22 +77,42 @@ if (!lessonId) {
   hubLink.hidden = true;
   if (requested && !unlocked) {
     document.querySelector('#storage-notice').hidden = false;
-    document.querySelector('#storage-notice').textContent = `${requested} is locked on this device until the earlier First Notes activity is ready.`;
+    document.querySelector('#storage-notice').textContent = `${requested} is locked on this device until the earlier activity is ready.`;
+  } else if (requestedUnit === 'rhythm-club' && !isLessonUnlocked(store, 'L05')) {
+    document.querySelector('#storage-notice').hidden = false;
+    document.querySelector('#storage-notice').textContent = 'Rhythm Club is locked on this device until First little tune is Independent.';
   }
-  renderUnitHub(hub, store, { onOpen: openLesson, onContinue: openLesson });
+  renderUnitHub(hub, store, { onOpen: openLesson, onContinue: openLesson, focusUnit: requestedUnit });
 } else {
   startLesson(lessonId);
 }
 
 function startLesson(id) {
-  const player = createPlayer({ progress, lessonId: id });
+  const clock = createRhythmClock({
+    now: () => {
+      const audioNow = audio.currentTime();
+      return audioNow == null ? performance.now() / 1000 : audioNow;
+    }
+  });
+  const player = createPlayer({ progress, lessonId: id, clock });
   const input = bindInputs({
     pianoRoot,
     audio,
     onUserNote: (note, source, extras) => applyNote(player.handleNote(note, source, extras)),
+    onUserRelease: (note, source, extras) => {
+      if (player.handleRelease) applyNote(player.handleRelease(note, source, extras));
+    },
     isDemoPlaying: () => player.isDemoPlaying(),
-    onMidiStatus: paintMidi,
-    shell
+    onMidiStatus: (view) => {
+      paintMidi(view);
+      if (isRhythmLesson(id) && view.change?.type === 'disconnect' && player.abortTake) {
+        const result = player.abortTake('disconnect');
+        lastFeedback = result?.message || player.lessonSpec.copy.feedback.disconnect;
+        paint();
+      }
+    },
+    shell,
+    clockNow: () => clock.now()
   });
 
   const ui = {
@@ -106,6 +129,12 @@ function startLesson(id) {
     hand: document.querySelector('#hand-card'),
     house: document.querySelector('#house-card'),
     wave: document.querySelector('#wave-card'),
+    pulse: document.querySelector('#pulse-card'),
+    pulseDot: document.querySelector('#pulse-dot'),
+    countIn: document.querySelector('#count-in'),
+    beatLane: document.querySelector('#beat-lane'),
+    rest: document.querySelector('#rest-card'),
+    restBoxes: document.querySelector('#rest-boxes'),
     tiles: document.querySelector('#phrase-tiles'),
     continueNote: document.querySelector('#continue-note'),
     evidence: document.querySelector('#evidence-pill'),
@@ -115,6 +144,7 @@ function startLesson(id) {
   let demoTimers = [];
   let lastFeedback = '';
   let showHouse = false;
+  let pulseRaf = 0;
 
   function wait(ms) {
     return new Promise((resolve) => {
@@ -129,6 +159,64 @@ function startLesson(id) {
     player.setDemoPlaying(false);
     input.silence();
     setSweep(pianoRoot, null);
+    clock.cancelAll();
+  }
+
+  function playRhythmPattern(pattern, { rush = false } = {}) {
+    stopDemo();
+    player.setDemoPlaying(true);
+    const ok = audio.ensure();
+    player.setAudioUnlocked(ok);
+    if (!ok) {
+      player.setDemoPlaying(false);
+      ui.feedback.textContent = player.lessonSpec.copy.feedback.audioMissing;
+      return;
+    }
+    const start = audio.currentTime() ?? clock.now();
+    const beat = 60 / pattern.bpm;
+    const countIn = pattern.countInBeats || 0;
+    for (let i = 0; i < countIn; i += 1) {
+      audio.clickAt(start + i * beat, 'count');
+    }
+    pattern.events.forEach((event, index) => {
+      if (event.kind !== 'note') return;
+      const when = rush
+        ? start + countIn * beat + index * 0.12
+        : start + countIn * beat + event.onsetBeats * beat;
+      audio.playAt(event.pitch, when);
+      clock.scheduleAt(when, () => setSweep(pianoRoot, event.pitch));
+    });
+    const end = start + countIn * beat + patternSpanSec(pattern) + 0.25;
+    clock.scheduleAt(end, () => {
+      setSweep(pianoRoot, null);
+      player.setDemoPlaying(false);
+    });
+  }
+
+  function beginRhythmTake(kind) {
+    const ok = audio.ensure();
+    player.setAudioUnlocked(ok);
+    clock.cancelAll();
+    const live = player.startTake(kind);
+    const beat = 60 / live.bpm;
+    const countStart = live.origin - (live.countInBeats || 0) * beat;
+    for (let i = 0; i < (live.countInBeats || 0); i += 1) {
+      audio.clickAt(countStart + i * beat, 'count');
+    }
+    live.pattern.events.forEach((event) => {
+      if (event.kind !== 'note') return;
+      audio.clickAt(live.origin + event.onsetBeats * beat, 'beat');
+    });
+    const end = live.origin + patternSpanSec(live.pattern) + 0.3;
+    clock.scheduleAt(end, () => {
+      const result = player.completeIfReady();
+      if (result?.message) lastFeedback = result.message;
+      const view = player.view();
+      if (view.phase === 'independent' && view.independentStep === 'done') go('independent');
+      if (view.phase === 'transfer' && view.transferStep === 'done') go('transfer');
+      paint();
+    });
+    lastFeedback = 'Count-in. Your taps during the clicks do not count as extras.';
   }
 
   async function playSequence(notes, gap = 400) {
@@ -192,7 +280,7 @@ function startLesson(id) {
   function paint() {
     const view = player.view();
     const copy = phaseCopy(view);
-    document.title = `${view.lessonSpec.title} · First Notes · MeetPiano`;
+    document.title = `${view.lessonSpec.title} · ${isRhythmLesson(id) ? 'Rhythm Club' : 'First Notes'} · MeetPiano`;
     ui.label.innerHTML = `<span class="game-live-dot"></span> FIRST PIANO JOURNEY · ${id}`;
     renderSteps(ui.steps, view.phaseIndex);
     ui.eyebrow.textContent = copy.eyebrow;
@@ -210,6 +298,7 @@ function startLesson(id) {
     ui.hand.hidden = id !== 'L03' || (view.phase !== 'demo' && !(view.phase === 'guided' && view.guidedStep === 'row' && view.hintsOn));
     ui.house.hidden = id !== 'L02' || !showHouse;
     ui.wave.hidden = id !== 'L04' || (view.phase !== 'demo' && view.phase !== 'guided');
+    paintRhythmChrome(view);
     renderPhraseTiles(ui.tiles, view.phrase);
     ui.actions.replaceChildren();
     ui.extras.replaceChildren();
@@ -234,11 +323,65 @@ function startLesson(id) {
     if (id === 'L03' && view.guidedStep === 'neighbors') {
       return view.attempt.restore.sequence.length ? [64] : [62];
     }
-    if (id === 'L04') {
+    if (id === 'L04' || id === 'L08') {
       const captions = view.captions || {};
       return Object.keys(captions).map(Number);
     }
     return [];
+  }
+
+  function paintRhythmChrome(view) {
+    if (!ui.pulse) return;
+    const rhythm = isRhythmLesson(id);
+    const showPulse = rhythm && view.phase !== 'explanation' && view.phase !== 'result';
+    ui.pulse.hidden = !showPulse;
+    ui.pulse.classList.toggle('live', Boolean(view.takeLive));
+    ui.pulse.classList.toggle('performance', view.phase === 'independent' || view.phase === 'transfer' || view.phase === 'review');
+    if (ui.countIn) {
+      ui.countIn.hidden = !(view.takeLive && view.clock?.running);
+      ui.countIn.textContent = view.takePaused ? 'Paused — not a miss' : (view.reducedTempo ? 'Slower heartbeat' : 'On the audio clock');
+    }
+    if (ui.rest) {
+      ui.rest.hidden = id !== 'L07' || view.phase === 'explanation' || view.phase === 'result';
+      if (id === 'L07' && ui.restBoxes) {
+        const transfer = view.phase === 'transfer';
+        ui.restBoxes.innerHTML = transfer
+          ? '<span>C</span><span>C</span><span class="rest-hole">shh</span><span>C</span>'
+          : '<span>C</span><span class="rest-hole">shh</span><span>C</span><span>C</span>';
+      }
+    }
+    if (ui.beatLane) {
+      const showLane = rhythm && (view.phase === 'demo' || (view.phase === 'guided' && view.hintsOn) || id === 'L06');
+      ui.beatLane.hidden = !showLane || view.phase === 'independent' || view.phase === 'transfer';
+      if (!ui.beatLane.hidden && view.pattern) {
+        ui.beatLane.replaceChildren(...view.pattern.events.map((event) => {
+          const item = document.createElement('li');
+          item.className = event.kind === 'rest' ? 'rest' : (event.length || '');
+          item.textContent = event.kind === 'rest' ? 'shh' : (event.length === 'long' ? 'long' : event.length === 'short' ? 'short' : 'tap');
+          return item;
+        }));
+      }
+    }
+    stopPulseVisual();
+    if (showPulse && view.phase === 'guided' && view.hintsOn) startPulseVisual(view);
+  }
+
+  function startPulseVisual(view) {
+    const bpm = view.bpm || 80;
+    const origin = view.clock?.origin || clock.now();
+    const tick = () => {
+      const elapsed = Math.max(0, clock.now() - origin);
+      const beat = 60 / bpm;
+      const phase = (elapsed % beat) / beat;
+      if (ui.pulse) ui.pulse.style.setProperty('--pulse', String(phase));
+      pulseRaf = window.requestAnimationFrame(tick);
+    };
+    tick();
+  }
+
+  function stopPulseVisual() {
+    if (pulseRaf) window.cancelAnimationFrame(pulseRaf);
+    pulseRaf = 0;
   }
 
   function groupKinds(view) {
@@ -303,6 +446,21 @@ function startLesson(id) {
         button(copy.hearD, () => playSequence([spec.demo.singles.D], 420)),
         button(copy.hearE, () => playSequence([spec.demo.singles.E], 420))
       );
+    }
+    if (isRhythmLesson(id)) {
+      ui.actions.append(button(copy.hear, () => {
+        player.markHeardDemo?.();
+        playRhythmPattern(spec.patterns.guided);
+        lastFeedback = spec.copy.feedback.heard;
+        paint();
+      }));
+      if (id === 'L08' && copy.hearWrong) {
+        ui.actions.append(button(copy.hearWrong, () => {
+          playRhythmPattern(spec.patterns.guided, { rush: true });
+          lastFeedback = 'Same letters, wrong time. That must not pass.';
+          paint();
+        }));
+      }
     }
     ui.actions.append(button(copy.action, () => { go('demo'); lastFeedback = ''; paint(); }, 'button-dark'));
   }
@@ -403,7 +561,65 @@ function startLesson(id) {
         }
       }
       if (view.guidedStep === 'head' || view.guidedStep === 'tail' || view.guidedStep === 'all') hintToggle(view);
+      return;
     }
+    if (isRhythmLesson(id)) {
+      if (view.guidedStep === 'hear') {
+        ui.actions.append(button(copy.hear || 'Hear it', () => {
+          player.markHeardDemo?.();
+          playRhythmPattern(spec.patterns.guided);
+          lastFeedback = spec.copy.feedback.heard;
+          paint();
+        }, 'button-dark'));
+      }
+      if (view.guidedStep === 'echo') {
+        rhythmTakeButtons('guided');
+        hintToggle(view);
+      }
+      if (view.guidedStep === 'cousin') {
+        ui.actions.append(button('Hear the cousin once', () => {
+          player.markHeardTransfer();
+          lastFeedback = spec.copy.feedback.cousinListen;
+          playRhythmPattern(spec.patterns.transfer);
+          paint();
+        }));
+        if (view.heardTransfer) {
+          ui.actions.append(button(copy.action, () => { go('guided'); lastFeedback = 'Hints stay off for this check.'; paint(); }, 'button-dark'));
+        }
+      }
+      if (view.guidedStep === 'done') {
+        ui.actions.append(button(copy.action, () => { go('guided'); lastFeedback = 'Hints stay off for this check.'; paint(); }, 'button-dark'));
+      }
+    }
+  }
+
+  function rhythmTakeButtons(kind) {
+    ui.actions.append(button('Start the take', () => {
+      beginRhythmTake(kind);
+      paint();
+    }, 'button-dark'));
+    ui.actions.append(button('Pause', () => {
+      const result = player.pauseTake();
+      lastFeedback = result.message || player.lessonSpec.copy.feedback.paused;
+      paint();
+    }));
+    ui.actions.append(button('Resume', () => {
+      const result = player.resumeTake();
+      lastFeedback = result.message || 'Back with the clock.';
+      paint();
+    }));
+    ui.actions.append(button('Slower heartbeat', () => {
+      player.reduceTempo();
+      beginRhythmTake(kind);
+      lastFeedback = player.lessonSpec.copy.feedback.slower;
+      paint();
+    }));
+    ui.actions.append(button('Replay take', () => {
+      player.replayTake();
+      beginRhythmTake(kind);
+      lastFeedback = 'New take. Earlier saved evidence stays.';
+      paint();
+    }));
   }
 
   function renderIndependent(view) {
@@ -434,6 +650,7 @@ function startLesson(id) {
     if (id === 'L04') {
       ui.actions.append(button(copy.clap, () => playSequence(spec.homeTail, 420)));
     }
+    if (isRhythmLesson(id)) rhythmTakeButtons('independent');
     ui.actions.append(button(copy.finishForNow, () => { player.finishForNow(); lastFeedback = ''; paint(); }));
   }
 
@@ -466,6 +683,7 @@ function startLesson(id) {
         paint();
       }));
     }
+    if (isRhythmLesson(id)) rhythmTakeButtons('transfer');
   }
 
   function renderReview(view) {
@@ -474,6 +692,7 @@ function startLesson(id) {
       ui.actions.append(button(copy.pause, () => { player.pauseForReview(); lastFeedback = copy.pause; paint(); }));
     } else {
       ui.actions.append(button(copy.back, () => { lastFeedback = copy.play; paint(); }, 'button-dark'));
+      if (isRhythmLesson(id)) rhythmTakeButtons('review');
     }
   }
 
@@ -487,12 +706,12 @@ function startLesson(id) {
     if (nextReady) {
       ui.actions.append(el('a', { className: 'button button-dark', href: next }, 'Continue to the next activity'));
     }
-    if (id === 'L04' && (view.lesson.evidenceState === 'independent' || view.lesson.evidenceState === 'retained')) {
+    if ((id === 'L04' || isRhythmLesson(id)) && (view.lesson.evidenceState === 'independent' || view.lesson.evidenceState === 'retained') && player.beginReview) {
       ui.actions.append(button(copy.pause, () => { player.beginReview(); lastFeedback = view.lessonSpec.copy.review.pause; paint(); }));
     }
     ui.actions.append(
       button(copy.restart, confirmRestart),
-      el('a', { className: 'button button-outline', href: '/learn/' }, copy.home || 'Back to First Notes')
+      el('a', { className: 'button button-outline', href: '/learn/' }, copy.home || (isRhythmLesson(id) ? 'Back to Rhythm Club' : 'Back to First Notes'))
     );
   }
 
