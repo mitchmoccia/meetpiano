@@ -4,7 +4,7 @@ Ordered cards **MP-00 through MP-11**. Status values: `verified` · `working` ·
 
 Acceptance summaries are taken from the runbook [`first-piano-journey.md`](first-piano-journey.md). Teaching detail is in [`../curriculum/beginner-v1.md`](../curriculum/beginner-v1.md).
 
-MP-00 is marked **verified** because the mission and lesson specification docs are complete. MP-01 is **verified** and merged to `main`. MP-02 is **software/fixture verified** (Gort accepted; hardware MIDI unverified — not a MIDI-verified release). MP-03 First Notes is **working** and merged to `main`. MP-04 Rhythm Club (L05–L08) is **working** on `piany/mp-04-rhythm-club`. Later cards stay **queued**. The original isolated MP-04/MP-05 cards (L03/L04) landed with Checkpoint A.
+MP-00 is marked **verified** because the mission and lesson specification docs are complete. MP-01 is **verified** and merged to `main`. MP-02 is **software/fixture verified** (Gort accepted; hardware MIDI unverified — not a MIDI-verified release). MP-03 First Notes is **working** and merged to `main`. MP-04 Rhythm Club (L05–L08) is **working** on `piany/mp-04-rhythm-club`. MP-05 Read and play (L09–L12) is **working** on `piany/mp-05-read-and-play`. Later cards stay **queued**. The original isolated MP-04/MP-05 cards (L03/L04) landed with Checkpoint A. Historical MP-05 (L04 First little tune) is recorded below as MP-05b.
 
 ---
 
@@ -126,7 +126,32 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 - Device-local progress. Hardware MIDI remains unverified.
 - Marketing playground stays a separate preview. No Vercel / DNS changes.
 
-**Handoff.** L05–L08 teaching is on this branch. Neighborhood skills once outlined as L05–L08 (F/G, fingers, steps, skips) wait for a later slice.
+**Handoff.** L05–L08 teaching is on this branch. Read and play (L09–L12) is the next unit. Neighborhood leftover skills (C five-note path, left-hand C, turns) wait for a later slice.
+
+---
+
+## MP-05 — Read and play L09–L12
+
+| Field | Value |
+| --- | --- |
+| Status | **working** |
+| Depends on | MP-04 |
+| Branch | `piany/mp-05-read-and-play` |
+| Base | `piany/mp-04-rhythm-club` @ `d144baa88357f69b90caf7a427b6bd3c3c2731db` |
+
+**Learner outcome.** After Rhythm Club is Independent on this device, a beginner can meet F and G from the three-black-key landmark (L09), hear and play steps, repeats, and skips (L10), map known patterns onto a treble staff (L11), and read an original little tune from the staff (L12). Letter names start as helpers and come off. A new phrase checks reading, not a memorized C–D–E path. Ear activities and a short creativity choice sit beside notation. Exact preview pitches are required when a register is named.
+
+**Acceptance**
+
+- Read and play unit on `/learn` with unlock from L08 Independent. No buttons to L13+.
+- L09–L12 full lesson loops from the expanded contracts in `beginner-v1.md`.
+- Staff pitch, clef, duration, demo audio, and expected input use the same MIDI numbers and duration kind.
+- Landmarks and relationships first; independent/transfer hide letter names.
+- L12 Porch Steps is not Little Wave and not the L08 walk. Wrong-octave F/G fails when exact pitch is required.
+- Device-local progress. Hardware MIDI remains unverified.
+- First Notes and Rhythm Club stay healthy. Marketing playground stays a separate preview. No Vercel / DNS changes.
+
+**Handoff.** L09–L12 teaching is on this branch. Pentapath, left-hand C, and turns wait for a later slice.
 
 ---
 
@@ -148,7 +173,7 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 
 ---
 
-## MP-05 — L04 First little tune
+## MP-05b — L04 First little tune (historical)
 
 | Field | Value |
 | --- | --- |
@@ -203,35 +228,35 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 
 ---
 
-## MP-08 — Neighborhood skills after Rhythm Club
+## MP-08 — Neighborhood leftovers after Read and play
 
 | Field | Value |
 | --- | --- |
 | Status | **queued** |
-| Depends on | MP-04 |
+| Depends on | MP-05 |
 
-**Learner outcome.** After Rhythm Club, the learner meets F and G, names fingers 1–5, steps, skips, and the C five-note path. Pulse and long/short first teaching already live in L05–L08.
+**Learner outcome.** After Read and play, remaining neighborhood work can add named fingers 1–5 as a later review and the C five-note path. F/G, steps, skips, and first staff reading already live in L09–L12. Pulse and long/short first teaching already live in L05–L08.
 
 **Acceptance**
 
-- Playable lessons for the deferred neighborhood skills, with the shared loop.
-- Do not rebind L05–L08 to F/G/fingers/steps/skips.
+- Playable lessons for the leftover neighborhood skills, with the shared loop.
+- Do not rebind L05–L08 or L09–L12.
 - Measurement limits still apply.
 
 ---
 
-## MP-09 — L11–L16 sequence
+## MP-09 — L13–L16 sequence
 
 | Field | Value |
 | --- | --- |
 | Status | **queued** |
 | Depends on | MP-08 |
 
-**Learner outcome.** Left-hand C, hands taking turns, the three-black-key landmark, meeting at middle C, a longer C-neighborhood tune, and quiet/strong.
+**Learner outcome.** A later three-black-key house, left-hand C, hands taking turns, meeting at middle C, a longer C-neighborhood tune, and quiet/strong. First teaching of F/G and staff reading already live in L09–L12.
 
 **Acceptance**
 
-- L11–L16 playable from the outlines.
+- L13+ playable from the outlines.
 - Two-hand work does not claim coordination mastery from MIDI alone.
 - Dynamics are relative (softer vs stronger), not studio-grade velocity scoring.
 

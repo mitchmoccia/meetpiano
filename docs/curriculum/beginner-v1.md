@@ -28,8 +28,12 @@ Skills are identifiers. A lesson lists which ones it needs and which one it intr
 | `S-PHRASE` | Play a short learned C–D–E phrase | App: note sequence vs the stored phrase |
 | `S-TRANSFER-PHRASE` | Play a related new phrase without the home-phrase highlight | App: sequence vs the transfer phrase |
 | `S-REPLAY` | Play a known phrase again after a gap | App: sequence; Retained requires the gap rule below |
+| `S-FIND-FG` | Find F left of a three-black-key group and G as the next white key to the right of F | App: pitch-class F/G, or exact MIDI when a register is named |
+| `S-STEP-SKIP` | Hear and play a white-key step, a repeat, and a skip | App: adjacent / same / skip-one white-key intervals |
+| `S-STAFF-MAP` | Map a known keyboard pattern onto a treble-clef staff | App: exact staff pitch and matching key; letters may be on for guided only |
+| `S-READ-PHRASE` | Read a new short phrase from the staff, not a memorized keyboard path | App: sequence vs the stored staff phrase |
 
-Rhythm Club (L05–L08) adds `S-PULSE`, `S-LONG-SHORT`, `S-REST`, and `S-RHYTHM-PHRASE`. Later outlines (L09–L24) add F/G, named fingers 1–5, steps, skips, left-hand C, turns, three-black-key landmark, dynamics, smooth/separate, held bass, question/answer, and memory. Those skill IDs are introduced in each outline. L09 pulse and L17 long/short are later reviews of Rhythm Club skills, not a second first teaching.
+Rhythm Club (L05–L08) adds `S-PULSE`, `S-LONG-SHORT`, `S-REST`, and `S-RHYTHM-PHRASE`. Read and play (L09–L12) adds `S-FIND-FG`, `S-STEP-SKIP`, `S-STAFF-MAP`, and `S-READ-PHRASE`. Later outlines (L13–L24) add named fingers 1–5 as a later review, the C five-note path, left-hand C, turns, a later three-black-key house, dynamics, smooth/separate, held bass, question/answer, and memory. Those skill IDs are introduced in each outline. L17 long/short is a later review of Rhythm Club, not a second first teaching. Steady walking-pulse review is not a second first teaching of `S-PULSE`.
 
 ## Input modes
 
@@ -600,31 +604,277 @@ Home walk after a named pause. Pass → `S-RHYTHM-PHRASE` may move to Retained.
 
 ---
 
-## L09–L24 — outlines (First Piano Journey sequence)
+## L09–L12 — Read and play (full contracts)
 
-These are sequence outlines, not full contracts. Later slices expand them. IDs and titles are stable.
+These expand the First Piano Journey sequence after Rhythm Club. Earlier placeholder titles on L05–L08 (F/G, fingers, steps, skips) and the old L09–L12 outlines (steady walking, C five-note path, left-hand C, hands take turns) are **not** bound to these IDs. Rhythm Club owns L05–L08. Read and play owns L09–L12. Pentapath, left-hand C, and turns wait for a later slice.
 
-Friends F and G, finger names 1–5, steps, and skips were earlier placeholder titles on L05–L08. Those skills are **not** bound to L05–L08 anymore; they wait for a later slice. Rhythm Club owns L05–L08.
+Staff pitch, clef, duration, demo audio, and expected input use the same MIDI numbers and the same duration kind. A quarter on the staff is a quarter in the ear and one tap. Independent and transfer checks that name a preview register use **exact MIDI pitch**. A same-name note in another octave is `wrong-octave`, not a pass.
 
-### L09 — Steady walking notes
+---
 
-Play known notes in an even walking pulse as a later review of `S-PULSE`. The app may show a silent visual pulse; it does not fail the lesson on millisecond timing. New skill review: `S-PULSE` (coarse).
+## L09 — Meet F and G
 
-### L10 — The C five-note path
+| Field | Value |
+| --- | --- |
+| Stable ID | `L09` |
+| Title | Meet F and G |
+| Curriculum version | `beginner-v1` |
+| Unit | Read and play |
+| Prerequisites | `S-RHYTHM-PHRASE` (Rhythm Club Independent on this device) |
+| Primary new skill | `S-FIND-FG` |
+| Octave policy | Landmark intro may accept **any F or G** (pitch-class). “This F” and “this G” on the preview use **exact MIDI** F4 = 65 and G4 = 67. |
 
-Walk C–D–E–F–G and back G–F–E–D–C. Optional demonstrated right-hand 1–5, adult-observed. New skill: `S-PENTAPATH-C`.
+### Short explanation
 
-### L11 — Left-hand C
+Find a group of **three** black keys. The white key hugging the left side of that group is **F**. The next white key to its right is **G**. C still lives left of two black keys. F and G live beside the house of three.
 
-Find C with the left hand using the same two-black-key landmark. One comfortable left-hand finger is enough. New skill: `S-LH-C`.
+### Visual demo
 
-### L12 — Hands take turns
+- Glow a three-black-key group, then the white key immediately to its left. Caption: “Left of the three black keys — F.”
+- Then glow the next white key. Caption: “Next door to the right — G.”
+- Optional letters **F** and **G** appear on those keys after the motion, then fade. No staff yet.
 
-Right hand plays a short C–D–E pattern; left hand answers with C. Not yet together. New skill: `S-TURNS`.
+### Replayable audio notes
 
-### L13 — Three-black-key landmark
+- F, then the three black keys as a soft cluster, then F again.
+- G alone. Then F then G as neighbors.
+- “Hear a higher F” / “Hear a higher G” using concrete MIDI the range can reach. On the one-octave stand-in, say so.
 
-Use a group of three black keys to find F (left white key) and G (next white key to the right of F, or as specified in the expanded contract). New skill: `S-LANDMARK-3`.
+### Guided practice (hints optional)
+
+1. Highlight a three-black group. Ask for the F beside it. Hint: glow that F.
+2. Name it aloud: “F.” Replay audio if wanted.
+3. Play G, the next white key to the right. Optional glow on G only.
+4. Grown-up prompt (optional): demonstrated fingers on F and G. Fingering is adult-observed.
+
+### Independent check (no hints)
+
+Find **this F**, then **this G**, with glow and letters off. Preview register is F4 then G4. A pitch-class F in another octave is the wrong room. Extra notes before F or G fail that try.
+
+### Transfer pattern
+
+Play **G then F** — the neighbors the other way. A copied F-then-G does not count.
+
+### Remediation for a common error
+
+**Error:** Learner plays E (right of the two-black house) or A (past G).  
+**Response:** Show the three black keys as a longer house. “F is the doorstep on the left of *three*. G is the next white key, not a skip.” Replay F, then G.
+
+### Later review
+
+On a later visit, find F and G with no glow. Exact register if it was previously independent.
+
+### Equipment, alternatives, cannot observe
+
+- Required: a view of at least one three-black group.
+- Alternatives: paper keyboard; grown-up points to a real F or G while the learner plays on-screen.
+- Cannot observe: whether they used the landmark or a leftover letter. Independent checks hide letter hints.
+
+---
+
+## L10 — Steps, repeats, and skips
+
+| Field | Value |
+| --- | --- |
+| Stable ID | `L10` |
+| Title | Steps, repeats, and skips |
+| Curriculum version | `beginner-v1` |
+| Unit | Read and play |
+| Prerequisites | `S-FIND-FG` |
+| Primary new skill | `S-STEP-SKIP` |
+| Octave policy | Guided exploration may accept the named interval in **any octave** (pitch-class). Independent and transfer use the **named preview register** (C4–G4 = 60–67). |
+
+### Short explanation
+
+A **step** is the next white key. A **repeat** is the same key again. A **skip** leaves out one white key (C to E, D to F, E to G). We hear the jump before we name it.
+
+### Visual demo
+
+- C then D light as a step. Caption: “Next door.”
+- G then G as a repeat. Caption: “Same place.”
+- C then E as a skip. Caption: “One white key takes a rest.”
+- Letter names may show, then fade. Still no staff required.
+
+### Replayable audio notes
+
+- Hear a step (C–D). Hear a repeat (G–G). Hear a skip (C–E).
+- Contrast clip: a skip that must not be treated as a step.
+
+### Guided practice (hints optional)
+
+1. From C, play a step up (D). Optional next-key glow.
+2. Play a repeat on G.
+3. From C, play a skip up (E).
+4. Creativity: make any three-note goodbye that uses **one step and one skip**. Any valid mix passes this choice; it is not the independent pattern.
+
+### Independent check (no hints, letters off)
+
+Play the named pattern **C – D – D – F** (step, repeat, skip) in the preview register. Correct letters in another octave fail. A copied C–D–E walk does not count.
+
+### Transfer pattern
+
+**G – F – F – D** (step down, repeat, skip down). A copied home pattern does not count.
+
+### Remediation for a common error
+
+**Error:** Playing D when asked for a skip from C, or skipping when asked for a step.  
+**Response:** “A step shares a fence. A skip leaves one white key sitting.” Isolate C→D, then C→E.
+
+### Later review
+
+Replay the home interval chain with no letters.
+
+### Equipment, alternatives, cannot observe
+
+- Required: C through G playable.
+- Alternatives: grown-up plays the interval while the learner names step / repeat / skip.
+- Cannot observe: fingering or whether they counted keys vs listened.
+
+---
+
+## L11 — Patterns to the staff
+
+| Field | Value |
+| --- | --- |
+| Stable ID | `L11` |
+| Title | Patterns to the staff |
+| Curriculum version | `beginner-v1` |
+| Unit | Read and play |
+| Prerequisites | `S-STEP-SKIP` |
+| Primary new skill | `S-STAFF-MAP` |
+| Octave policy | **Exact pitch.** The staff shows one register. The matching key and the demo audio use the same MIDI number. |
+
+### Short explanation
+
+Notes can sit on a picture of five lines. This lesson uses the **treble clef**. The curly G of the clef wraps the line where **G** lives (G4, second line). A known walk on the keys can live on that picture.
+
+**Staff walk** (quarters): `C4 – D4 – E4` (60–62–64).  
+**Staff neighbors** (quarters): `F4 – G4` (65–67).  
+Each quarter is one tap and one same-length sound. Clef, staff pitch, audio, and expected key agree.
+
+### Visual demo
+
+- Treble staff. Landmark G on the G-clef line. Middle C on a short ledger line below.
+- The C–D–E walk appears as three quarters. Then F–G as two quarters.
+- Guided may show letter names under the heads. They fade.
+
+### Replayable audio notes
+
+- Staff walk at a walking pace (one quarter each).
+- Staff neighbors F then G.
+- Single-note C, E, F, G for checking. Same MIDI as the heads.
+
+### Guided practice (hints optional)
+
+1. Hear the staff walk. Echo C–D–E. Letters may show.
+2. Hear F–G on the staff. Echo those two.
+3. Ear: hear F then G, then point/play the matching heads.
+
+### Independent check (no hints, letters off)
+
+Play the **staff walk** from the picture: C–D–E, preview register, no key glow. Memorized Little Wave or a dumped C–D–E–C does not match this picture.
+
+### Transfer pattern
+
+A new order of known notes on the staff: **E – C – F** (64–60–65). Letters off. A copied C–D–E does not count.
+
+### Remediation for a common error
+
+**Error:** Playing the right keys from memory while looking at the keyboard, ignoring the staff.  
+**Response:** “The picture is the boss. This C is the ledger C, not any C you remember.” Hide key letters. Replay the two-note neighbors.
+
+### Later review
+
+Staff walk with letters off.
+
+### Equipment, alternatives, cannot observe
+
+- Required: C, D, E, F, and G playable; a view of the staff.
+- Alternatives: grown-up points to each head while the learner plays.
+- Cannot observe: whether they read the head or guessed from leftover letters. Independent hides letters.
+
+---
+
+## L12 — Read a little tune
+
+| Field | Value |
+| --- | --- |
+| Stable ID | `L12` |
+| Title | Read a little tune |
+| Curriculum version | `beginner-v1` |
+| Unit | Read and play |
+| Prerequisites | `S-STAFF-MAP` |
+| Primary new skill | `S-READ-PHRASE` (then later replay can feed Retained) |
+| Octave policy | **Exact pitch** for the named staff register. |
+
+### Short explanation
+
+A tune we have not memorized on the keys can still be read. This lesson’s original home phrase is **Porch Steps**. It is MeetPiano’s own shape, not Little Wave and not a published primer song.
+
+**Home phrase — Porch Steps** (all quarters)
+
+`C – E – F – G | F – E – C`
+
+MIDI: `60 – 64 – 65 – 67 – 65 – 64 – 60`
+
+**Transfer phrase — Porch the other way** (all quarters)
+
+`G – E – C – E | F – G – G`
+
+MIDI: `67 – 64 – 60 – 64 – 65 – 67 – 67`
+
+Each quarter is one tap and one same-length sound. Staff, clef, duration, audio, and expected keys agree. The skip C–E and the repeat G–G check reading, not a remembered C–D–E path.
+
+### Visual demo
+
+- Staff shows Porch Steps. No letter names after the first demo fade.
+- Replay control under the staff.
+
+### Replayable audio notes
+
+- Home phrase at a walking pace.
+- Transfer phrase, labeled “a cousin — just listening” until transfer.
+- Optional contrast: a long G then a short G, listen-only, so duration on the staff stays honest when we say quarter.
+
+### Guided practice (hints optional)
+
+1. Hear Porch Steps while the staff lights.
+2. Echo it in parts: first four, last three, then all seven. Optional next-head hint. Letters fade.
+3. Creativity: make a three-note goodbye that uses F or G. This choice sits beside the reading check; it does not replace it.
+4. Hear the transfer phrase once without playing it yet.
+
+### Independent check (no hints)
+
+Play **Porch Steps** from the staff with letters and key glow off. Then play **Porch the other way**. Each phrase may be retried. A copied Little Wave or the L08 walk does not pass.
+
+### Transfer pattern
+
+The transfer phrase above is required. Do not accept only a transposition of Porch Steps.
+
+### Remediation for a common error
+
+**Error:** Walking C–D–E from muscle memory, or grabbing the nearest lettered key.  
+**Response:** “This tune starts with a skip: C up to E. The picture does not walk every neighbor.” Isolate the first two heads.
+
+### Later review
+
+After a named pause or a new visit, replay Porch Steps with no letters. Pass → Retained for this phrase. A pass on the same visit with no pause may count as Independent, not Retained.
+
+### Equipment, alternatives, cannot observe
+
+- Required: C, E, F, and G playable.
+- Alternatives: learner sings the contour while a grown-up plays — adult-supported, not independent reading.
+- Cannot observe: fingering, or silent inner counting.
+
+---
+
+## L13–L24 — outlines (later slices)
+
+These remain sequence outlines. IDs are stable. L09–L12 above are the Read and play contracts.
+
+### L13 — Three-black-key landmark (later house)
+
+First teaching of F and G from the three-black-key landmark is **L09**. This later outline is another house / another register of the same landmark, not a second first teaching. Review skill: `S-FIND-FG` / `S-LANDMARK-3`.
 
 ### L14 — Meeting at middle C
 
