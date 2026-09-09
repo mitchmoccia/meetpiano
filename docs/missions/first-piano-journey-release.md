@@ -37,7 +37,7 @@ Stacked PR heads used for this packet:
 | [#11](https://github.com/mitchmoccia/meetpiano/pull/11) | `piany/mp-08-together` | `a5e2485ae02dceebe7065591606ad07688f65375` | #10 branch | `meetpiano-git-piany-mp-08-together-mitchmoccias-projects.vercel.app` |
 | [#12](https://github.com/mitchmoccia/meetpiano/pull/12) | `piany/mp-09-expression-recital` | `980bf17a22223a4279ac50ccca3cf0814d454307` | #11 branch | `meetpiano-git-piany-mp-09-expressi-a16b49-mitchmoccias-projects.vercel.app` |
 | [#13](https://github.com/mitchmoccia/meetpiano/pull/13) | `piany/mp-10-kid-grownup-ux` | `2fdcfad0e8bdc62bb6511f0790855c532a0cc198` | #12 branch | `meetpiano-git-piany-mp-10-kid-grownup-ux-mitchmoccias-projects.vercel.app` |
-| [#14](https://github.com/mitchmoccia/meetpiano/pull/14) | `piany/mp-11-release-packet` | recorded in evidence | #13 branch | created after push |
+| [#14](https://github.com/mitchmoccia/meetpiano/pull/14) | `piany/mp-11-release-packet` | `25dcafef52bedd22d33af8be43cd66d032a0a727` | #13 branch | draft only; not production |
 
 `www.meetpiano.app` still does not resolve. Branch `cursor/setup-cloud-agent-env-d108` was left untouched.
 
