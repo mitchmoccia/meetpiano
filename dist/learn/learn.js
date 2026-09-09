@@ -6,12 +6,15 @@ import { createRhythmClock } from '../js/rhythm-clock.js';
 import { patternSpanSec } from '../js/rhythm-score.js';
 import {
   clearPressed,
+  computerKeysFor,
   renderPiano,
   setGroupOutlines,
   setHints,
   setKeyCaptions,
+  setPianoRegion,
   setSweep
 } from '../js/piano.js';
+import { pianoRangeFor, usesWidePiano } from '../js/hands.js';
 import {
   el,
   evidenceLabel,
@@ -23,7 +26,7 @@ import {
   renderSteps,
   renderUnitHub
 } from '../js/learn-view.js';
-import { isLessonUnlocked, isReadLesson, isRhythmLesson, parseLessonId, parseUnitId, unitTitleFor } from '../js/unit.js';
+import { isLessonUnlocked, isLeftLesson, isReadLesson, isRhythmLesson, parseLessonId, parseUnitId, unitTitleFor, usesRhythmTake } from '../js/unit.js';
 import { durationMs, renderStaff } from '../js/staff.js';
 import { exportProgress, importProgress } from '../js/portability.js';
 import { recommendAfterLesson } from '../js/recommend.js';
@@ -88,6 +91,9 @@ if (!lessonId) {
   } else if (requestedUnit === 'read-and-play' && !isLessonUnlocked(store, 'L09')) {
     document.querySelector('#storage-notice').hidden = false;
     document.querySelector('#storage-notice').textContent = 'Read and play is locked on this device until Notes with a beat is Independent.';
+  } else if (requestedUnit === 'left-hand' && !isLessonUnlocked(store, 'L13')) {
+    document.querySelector('#storage-notice').hidden = false;
+    document.querySelector('#storage-notice').textContent = 'Left hand is locked on this device until Read a little tune is Independent.';
   }
   renderUnitHub(hub, store, {
     onOpen: openLesson,
@@ -136,6 +142,7 @@ async function importRecords(file) {
 }
 
 function startLesson(id) {
+  if (pianoRoot) renderPiano(pianoRoot, pianoRangeFor(id));
   const clock = createRhythmClock({
     now: () => {
       const audioNow = audio.currentTime();
@@ -154,9 +161,10 @@ function startLesson(id) {
       if (player.handleRelease) applyNote(player.handleRelease(note, source, extras));
     },
     isDemoPlaying: () => player.isDemoPlaying(),
+    getComputerKeys: () => computerKeysFor(player.view()?.handFocus || (usesWidePiano(id) ? 'both' : 'right')),
     onMidiStatus: (view) => {
       paintMidi(view);
-      if (isRhythmLesson(id) && view.change?.type === 'disconnect' && player.abortTake) {
+      if (usesRhythmTake(id) && view.change?.type === 'disconnect' && player.abortTake) {
         const result = player.abortTake('disconnect');
         lastFeedback = result?.message || player.lessonSpec.copy.feedback.disconnect;
         paint();
@@ -178,6 +186,9 @@ function startLesson(id) {
     seating: document.querySelector('#seating-card'),
     groups: document.querySelector('#group-labels'),
     hand: document.querySelector('#hand-card'),
+    leftHand: document.querySelector('#left-hand-card'),
+    handFocus: document.querySelector('#hand-focus'),
+    regionLabels: document.querySelector('#region-labels'),
     house: document.querySelector('#house-card'),
     wave: document.querySelector('#wave-card'),
     pulse: document.querySelector('#pulse-card'),
@@ -356,6 +367,11 @@ function startLesson(id) {
     ui.seating.hidden = id !== 'L01' || (view.phase !== 'demo' && view.phase !== 'guided');
     ui.groups.hidden = id !== 'L01' || (view.phase !== 'demo' && !(view.phase === 'guided' && view.guidedStep === 'groups' && view.hintsOn));
     ui.hand.hidden = id !== 'L03' || (view.phase !== 'demo' && !(view.phase === 'guided' && view.guidedStep === 'row' && view.hintsOn));
+    if (ui.leftHand) {
+      ui.leftHand.hidden = id !== 'L13' || (view.phase !== 'demo' && !(view.phase === 'guided' && (view.guidedStep === 'neighbors' || view.guidedStep === 'fingering') && view.hintsOn));
+    }
+    paintHandFocus(view);
+    if (pianoRoot) setPianoRegion(pianoRoot, view.handFocus || (usesWidePiano(id) ? 'both' : 'right'));
     ui.house.hidden = id !== 'L02' || !showHouse;
     if (ui.threeHouse) ui.threeHouse.hidden = id !== 'L09' || !showThreeHouse;
     ui.wave.hidden = id !== 'L04' || (view.phase !== 'demo' && view.phase !== 'guided');
@@ -385,13 +401,26 @@ function startLesson(id) {
     if (id === 'L03' && view.guidedStep === 'neighbors') {
       return view.attempt.restore.sequence.length ? [64] : [62];
     }
-    if (id === 'L04' || id === 'L08' || id === 'L10' || id === 'L11' || id === 'L12') {
+    if (id === 'L04' || id === 'L08' || id === 'L10' || id === 'L11' || id === 'L12' || id === 'L13' || id === 'L14' || id === 'L15' || id === 'L16') {
       const captions = view.captions || {};
       return Object.keys(captions).map(Number);
     }
     if (id === 'L09' && view.guidedStep === 'find') return [65];
     if (id === 'L09' && view.guidedStep === 'neighbor') return [67];
+    if (id === 'L13' && (view.guidedStep === 'find' || view.guidedStep === 'name')) return [48];
     return [];
+  }
+
+  function paintHandFocus(view) {
+    if (!ui.handFocus) return;
+    const show = isLeftLesson(id) && view.phase !== 'explanation' && view.phase !== 'result';
+    ui.handFocus.hidden = !show;
+    if (ui.regionLabels) ui.regionLabels.hidden = !usesWidePiano(id) || view.phase === 'result';
+    if (!show) return;
+    const current = view.handFocus || 'both';
+    ui.handFocus.querySelectorAll('[data-focus]').forEach((button) => {
+      button.setAttribute('aria-pressed', String(button.dataset.focus === current));
+    });
   }
 
   function paintStaff(view) {
@@ -406,7 +435,7 @@ function startLesson(id) {
 
   function paintRhythmChrome(view) {
     if (!ui.pulse) return;
-    const rhythm = isRhythmLesson(id);
+    const rhythm = usesRhythmTake(id);
     const showPulse = rhythm && view.phase !== 'explanation' && view.phase !== 'result';
     ui.pulse.hidden = !showPulse;
     ui.pulse.classList.toggle('live', Boolean(view.takeLive));
@@ -463,6 +492,7 @@ function startLesson(id) {
     if (id === 'L01' && view.phase === 'guided' && view.hintsOn && view.guidedStep === 'groups') return ['two', 'three'];
     if (id === 'L02' && (view.phase === 'demo' || (view.phase === 'guided' && view.hintsOn))) return ['two'];
     if (id === 'L09' && (view.phase === 'demo' || (view.phase === 'guided' && view.hintsOn))) return ['three'];
+    if (id === 'L13' && (view.phase === 'demo' || (view.phase === 'guided' && view.hintsOn))) return ['two'];
     return [];
   }
 
@@ -522,14 +552,14 @@ function startLesson(id) {
         button(copy.hearE, () => playSequence([spec.demo.singles.E], 420))
       );
     }
-    if (isRhythmLesson(id)) {
+    if (usesRhythmTake(id)) {
       ui.actions.append(button(copy.hear, () => {
         player.markHeardDemo?.();
         playRhythmPattern(spec.patterns.guided);
         lastFeedback = spec.copy.feedback.heard;
         paint();
       }));
-      if (id === 'L08' && copy.hearWrong) {
+      if ((id === 'L08' || id === 'L16') && copy.hearWrong) {
         ui.actions.append(button(copy.hearWrong, () => {
           playRhythmPattern(spec.patterns.guided, { rush: true });
           lastFeedback = 'Same letters, wrong time. That must not pass.';
@@ -572,6 +602,31 @@ function startLesson(id) {
           playLongShortContrast();
           paint();
         })
+      );
+    }
+    if (id === 'L13') {
+      ui.actions.append(
+        button(copy.hearLandmark, () => playSequence(spec.demo.landmark, 360)),
+        button(copy.hearWalk, () => playSequence(spec.demo.walk, 420)),
+        button(copy.hearContrast, () => {
+          lastFeedback = spec.copy.feedback.previewOneRoom;
+          playSequence(spec.demo.contrast, 640);
+          paint();
+        })
+      );
+    }
+    if (id === 'L14') {
+      ui.actions.append(
+        button(copy.hearWalk, () => playStaffNotes(spec.walkNotes)),
+        button(copy.hearNeighbors, () => playStaffNotes(spec.neighborNotes)),
+        button(copy.hearF, () => playSequence([spec.demo.singles.F], 480))
+      );
+    }
+    if (id === 'L15') {
+      ui.actions.append(
+        button(copy.hearQuestion, () => playStaffNotes(spec.questionNotes)),
+        button(copy.hearAnswer, () => playStaffNotes(spec.answerNotes)),
+        button(copy.hearBoth, () => playStaffNotes(spec.homeNotes))
       );
     }
     ui.actions.append(button(copy.action, () => { go('demo'); lastFeedback = ''; paint(); }, 'button-dark'));
@@ -722,7 +777,7 @@ function startLesson(id) {
       if (view.guidedStep === 'head' || view.guidedStep === 'tail' || view.guidedStep === 'all') hintToggle(view);
       return;
     }
-    if (isRhythmLesson(id)) {
+    if (usesRhythmTake(id)) {
       if (view.guidedStep === 'hear') {
         ui.actions.append(button(copy.hear || 'Hear it', () => {
           player.markHeardDemo?.();
@@ -748,6 +803,12 @@ function startLesson(id) {
       }
       if (view.guidedStep === 'done') {
         ui.actions.append(button(copy.action, () => { go('guided'); lastFeedback = 'Hints stay off for this check.'; paint(); }, 'button-dark'));
+      }
+      if (id === 'L16' && (view.guidedStep === 'echo' || view.guidedStep === 'done') && copy.handLabel) {
+        ui.extras.append(checkbox(copy.handLabel, view.attempt.adultObserved.hand, (checked) => {
+          player.setHandMark(checked);
+          paint();
+        }));
       }
     }
     if (id === 'L09') {
@@ -799,6 +860,47 @@ function startLesson(id) {
         }
       }
       if (view.guidedStep === 'head' || view.guidedStep === 'tail' || view.guidedStep === 'all' || view.guidedStep === 'make') hintToggle(view);
+      return;
+    }
+    if (id === 'L13') {
+      if (view.guidedStep === 'name') {
+        ui.actions.append(button('Hear C again', () => playSequence([spec.register.C], 500)));
+        ui.actions.append(button('I said C', () => { player.skipNamedGuided(); lastFeedback = spec.copy.feedback.named; paint(); }, 'button-dark'));
+      }
+      if (view.guidedStep === 'fingering' || view.guidedStep === 'done') {
+        ui.extras.append(checkbox(copy.fingeringLabel, view.attempt.adultObserved.fingering, (checked) => {
+          player.setFingering(checked);
+          paint();
+        }));
+        ui.extras.append(checkbox(copy.handLabel, view.attempt.adultObserved.hand, (checked) => {
+          player.setHandMark(checked);
+          paint();
+        }));
+        ui.actions.append(button(copy.action, () => { go('guided'); lastFeedback = 'Hints stay off for this check.'; paint(); }, 'button-dark'));
+      }
+      if (view.guidedStep === 'find' || view.guidedStep === 'neighbors') hintToggle(view);
+      return;
+    }
+    if (id === 'L14') {
+      if (view.guidedStep === 'done') {
+        ui.actions.append(button(copy.action, () => { go('guided'); lastFeedback = 'Hints stay off for this check.'; paint(); }, 'button-dark'));
+      }
+      if (view.guidedStep !== 'done') hintToggle(view);
+      return;
+    }
+    if (id === 'L15') {
+      if (view.guidedStep === 'hands' || view.guidedStep === 'done') {
+        ui.extras.append(checkbox(copy.handLabel, view.attempt.adultObserved.hand, (checked) => {
+          player.setHandMark(checked);
+          paint();
+        }));
+        ui.extras.append(checkbox(copy.fingeringLabel, view.attempt.adultObserved.fingering, (checked) => {
+          player.setFingering(checked);
+          paint();
+        }));
+        ui.actions.append(button(copy.action, () => { go('guided'); lastFeedback = 'Hints stay off for this check.'; paint(); }, 'button-dark'));
+      }
+      if (view.guidedStep === 'question' || view.guidedStep === 'answer' || view.guidedStep === 'both') hintToggle(view);
     }
   }
 
@@ -876,7 +978,20 @@ function startLesson(id) {
     if (id === 'L12') {
       ui.actions.append(button(copy.clap, () => playSequence(spec.homeHead.slice(0, 2), 420)));
     }
-    if (isRhythmLesson(id)) rhythmTakeButtons('independent');
+    if (id === 'L13') {
+      ui.actions.append(button(copy.hearDoorstep, () => {
+        lastFeedback = copy.remediation;
+        playSequence(spec.demo.contrast, 640);
+        paint();
+      }));
+    }
+    if (id === 'L14') {
+      ui.actions.append(button(copy.hearWalk, () => playStaffNotes(spec.neighborNotes)));
+    }
+    if (id === 'L15') {
+      ui.actions.append(button(copy.hearBoth, () => playStaffNotes(spec.homeNotes)));
+    }
+    if (usesRhythmTake(id)) rhythmTakeButtons('independent');
     ui.actions.append(button(copy.finishForNow, () => { player.finishForNow(); lastFeedback = ''; paint(); }));
   }
 
@@ -909,7 +1024,7 @@ function startLesson(id) {
         paint();
       }));
     }
-    if (isRhythmLesson(id)) rhythmTakeButtons('transfer');
+    if (usesRhythmTake(id)) rhythmTakeButtons('transfer');
   }
 
   function renderReview(view) {
@@ -918,7 +1033,7 @@ function startLesson(id) {
       ui.actions.append(button(copy.pause, () => { player.pauseForReview(); lastFeedback = copy.pause; paint(); }));
     } else {
       ui.actions.append(button(copy.back, () => { lastFeedback = copy.play; paint(); }, 'button-dark'));
-      if (isRhythmLesson(id)) rhythmTakeButtons('review');
+      if (usesRhythmTake(id)) rhythmTakeButtons('review');
     }
   }
 
@@ -937,7 +1052,7 @@ function startLesson(id) {
         ui.actions.append(el('a', { className: 'button button-dark', href: next }, 'Continue to the next activity'));
       }
     }
-    if ((id === 'L04' || id === 'L12' || isRhythmLesson(id)) && (view.lesson.evidenceState === 'independent' || view.lesson.evidenceState === 'retained') && player.beginReview) {
+    if ((id === 'L04' || id === 'L12' || usesRhythmTake(id)) && (view.lesson.evidenceState === 'independent' || view.lesson.evidenceState === 'retained') && player.beginReview) {
       ui.actions.append(button(copy.pause, () => { player.beginReview(); lastFeedback = view.lessonSpec.copy.review.pause; paint(); }));
     }
     ui.actions.append(
@@ -988,6 +1103,21 @@ function startLesson(id) {
   document.querySelector('#unlock-area').addEventListener('pointerdown', () => {
     if (audio.ensure()) player.setAudioUnlocked(true);
   }, { once: true });
+
+  if (ui.handFocus) {
+    ui.handFocus.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-focus]');
+      if (!button || !player.setHandFocus) return;
+      const previous = player.view();
+      player.setHandFocus(button.dataset.focus);
+      lastFeedback = `Practicing the ${button.dataset.focus === 'both' ? 'both-hands picture' : `${button.dataset.focus} hand`}. Same step. MIDI still only hears pitch and time.`;
+      if (previous.phase === player.view().phase && previous.guidedStep === player.view().guidedStep) {
+        paint();
+      } else {
+        paint();
+      }
+    });
+  }
 
   paint();
 }

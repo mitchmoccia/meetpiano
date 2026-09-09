@@ -151,8 +151,9 @@ export function createRuntime({ progress, lessonSpec }) {
   function setAdult(fields = {}) {
     if (fields.posture != null) attempt.adultObserved.posture = Boolean(fields.posture);
     if (fields.fingering != null) attempt.adultObserved.fingering = Boolean(fields.fingering);
+    if (fields.hand != null) attempt.adultObserved.hand = Boolean(fields.hand);
     if (typeof fields.note === 'string') attempt.adultObserved.note = fields.note.slice(0, 160);
-    if (fields.posture || fields.fingering || fields.note) markExplored();
+    if (fields.posture || fields.fingering || fields.hand || fields.note) markExplored();
     persist();
   }
 

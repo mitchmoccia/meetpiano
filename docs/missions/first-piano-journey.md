@@ -124,9 +124,9 @@ After MP-00 is merged or Mitch chooses to stack, the next action is **start MP-0
 | MP-04 | Rhythm Club L05–L08 | Working |
 | MP-05 | Read and play L09–L12 | Working |
 | MP-06 | Device-local progress and evidence states | Working |
-| MP-07 | Input modes and adult-observed labels | Queued |
+| MP-07 | Left hand L13–L16 | Working |
 | MP-08 | Neighborhood leftovers after Read and play | Queued |
-| MP-09 | L13–L16 sequence | Queued |
+| MP-09 | Later leftover sequence (house, middle C, long tune, dynamics) | Queued |
 | MP-10 | L17–L24 and later review | Queued |
 | MP-11 | Export/import, disclosure, mission closeout | Queued |
 

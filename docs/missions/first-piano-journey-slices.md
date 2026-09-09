@@ -4,7 +4,7 @@ Ordered cards **MP-00 through MP-11**. Status values: `verified` · `working` ·
 
 Acceptance summaries are taken from the runbook [`first-piano-journey.md`](first-piano-journey.md). Teaching detail is in [`../curriculum/beginner-v1.md`](../curriculum/beginner-v1.md).
 
-MP-00 is marked **verified** because the mission and lesson specification docs are complete. MP-01 is **verified** and merged to `main`. MP-02 is **software/fixture verified** (Gort accepted; hardware MIDI unverified — not a MIDI-verified release). MP-03 First Notes is **working** and merged to `main`. MP-04 Rhythm Club (L05–L08) is **working** on `piany/mp-04-rhythm-club`. MP-05 Read and play (L09–L12) is **working** on `piany/mp-05-read-and-play`. Later cards stay **queued**. The original isolated MP-04/MP-05 cards (L03/L04) landed with Checkpoint A. Historical MP-05 (L04 First little tune) is recorded below as MP-05b.
+MP-00 is marked **verified** because the mission and lesson specification docs are complete. MP-01 is **verified** and merged to `main`. MP-02 is **software/fixture verified** (Gort accepted; hardware MIDI unverified — not a MIDI-verified release). MP-03 First Notes, MP-04 Rhythm Club, MP-05 Read and play, and MP-06 device-local progress are **working** and merged to `main`. MP-07 Left hand (L13–L16) is **working** on `piany/mp-07-left-hand`. Later cards stay **queued**. The original isolated MP-04/MP-05 cards (L03/L04) landed with Checkpoint A. Historical MP-05 (L04 First little tune) is recorded below as MP-05b.
 
 ---
 
@@ -151,7 +151,7 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 - Device-local progress. Hardware MIDI remains unverified.
 - First Notes and Rhythm Club stay healthy. Marketing playground stays a separate preview. No Vercel / DNS changes.
 
-**Handoff.** L09–L12 teaching is on this branch. Pentapath, left-hand C, and turns wait for a later slice.
+**Handoff.** L09–L12 teaching is on `main`. Left hand (L13–L16) is MP-07. Pentapath waits for a later slice.
 
 ---
 
@@ -216,21 +216,28 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 
 ---
 
-## MP-07 — Input modes and adult-observed labels
+## MP-07 — Left hand L13–L16
 
 | Field | Value |
 | --- | --- |
-| Status | **queued** |
-| Depends on | MP-01 |
+| Status | **working** |
+| Depends on | MP-06 |
+| Branch | `piany/mp-07-left-hand` |
+| Base | `main` @ `3da09b909fc54aaf54f0be8b00b374c3adf5cf5f` |
 
-**Learner outcome.** The same lesson can be played by touch, computer keys, or optional Web MIDI. The UI states what the computer can and cannot observe.
+**Learner outcome.** After Read and play is Independent on this device, a beginner can meet the left hand (L13), read a bass-clef walk (L14), take turns in a musical conversation (L15), and share one pulse with two parts (L16). Both clefs and both keyboard rooms can show. MIDI reports pitch and time only. Hand choice is adult-observed.
 
 **Acceptance**
 
-- All three input modes work on `/learn` where the browser supports them.
-- MIDI permission failure falls back to on-screen keys without blocking the lesson.
-- Adult-observed prompts exist for posture (L01) and demonstrated fingering (L03+).
-- Accessible alternatives from each lesson contract are listed in-product, not only in docs.
+- Left-hand unit on `/learn` with unlock from L12 Independent. No buttons to L17+.
+- L13–L16 full lesson loops from the expanded contracts in `beginner-v1.md`.
+- Both clefs and keyboard regions display correctly.
+- Fingering and hand instructions are visually clear. MIDI does not certify hand choice.
+- Learner can practice a hand separately and return without losing context.
+- Device-local progress. Hardware MIDI remains unverified.
+- First Notes, Rhythm Club, and Read and play stay healthy. Copyright footer is preserved. No Vercel / DNS changes.
+
+**Handoff.** L13–L16 teaching is on this branch. Pentapath and later leftover outlines wait for a later slice.
 
 ---
 
@@ -258,12 +265,12 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 | Status | **queued** |
 | Depends on | MP-08 |
 
-**Learner outcome.** A later three-black-key house, left-hand C, hands taking turns, meeting at middle C, a longer C-neighborhood tune, and quiet/strong. First teaching of F/G and staff reading already live in L09–L12.
+**Learner outcome.** A later three-black-key house, meeting at middle C, a longer C-neighborhood tune, and quiet/strong. First teaching of left-hand C, bass reading, turns, and two-part pulse already live in L13–L16.
 
 **Acceptance**
 
-- L13+ playable from the outlines.
-- Two-hand work does not claim coordination mastery from MIDI alone.
+- Later leftover outlines become playable without rebinding L13–L16.
+- Two-hand review does not claim coordination mastery from MIDI alone.
 - Dynamics are relative (softer vs stronger), not studio-grade velocity scoring.
 
 ---

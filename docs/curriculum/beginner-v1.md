@@ -32,8 +32,14 @@ Skills are identifiers. A lesson lists which ones it needs and which one it intr
 | `S-STEP-SKIP` | Hear and play a white-key step, a repeat, and a skip | App: adjacent / same / skip-one white-key intervals |
 | `S-STAFF-MAP` | Map a known keyboard pattern onto a treble-clef staff | App: exact staff pitch and matching key; letters may be on for guided only |
 | `S-READ-PHRASE` | Read a new short phrase from the staff, not a memorized keyboard path | App: sequence vs the stored staff phrase |
+| `S-LH-C` | Find C in the lower / left-hand room | App: pitch-class C below middle C, or exact MIDI C3 when this C is named |
+| `S-FINGER-LH` | Left-hand pinky–ring–middle (5–4–3) on C–D–E as demonstrated | **Adult-observed** for finger numbers; app can only hear C–D–E |
+| `S-HAND-CHOICE` | Use the requested hand | **Adult-observed**. MIDI reports pitch/time only |
+| `S-BASS-MAP` | Map a known left-hand pattern onto a bass-clef staff | App: exact staff pitch and matching key; letters may be on for guided only |
+| `S-TURNS` | Play a question in one room and an answer in the other, taking turns | App: pitch sequence; hand choice is adult-observed |
+| `S-TWO-PULSE` | Hold a lower C while a higher walk shares one pulse | App: pitch and time vs the stored pattern; coordination is not certified |
 
-Rhythm Club (L05–L08) adds `S-PULSE`, `S-LONG-SHORT`, `S-REST`, and `S-RHYTHM-PHRASE`. Read and play (L09–L12) adds `S-FIND-FG`, `S-STEP-SKIP`, `S-STAFF-MAP`, and `S-READ-PHRASE`. Later outlines (L13–L24) add named fingers 1–5 as a later review, the C five-note path, left-hand C, turns, a later three-black-key house, dynamics, smooth/separate, held bass, question/answer, and memory. Those skill IDs are introduced in each outline. L17 long/short is a later review of Rhythm Club, not a second first teaching. Steady walking-pulse review is not a second first teaching of `S-PULSE`.
+Rhythm Club (L05–L08) adds `S-PULSE`, `S-LONG-SHORT`, `S-REST`, and `S-RHYTHM-PHRASE`. Read and play (L09–L12) adds `S-FIND-FG`, `S-STEP-SKIP`, `S-STAFF-MAP`, and `S-READ-PHRASE`. Left hand (L13–L16) adds `S-LH-C`, `S-FINGER-LH`, `S-HAND-CHOICE`, `S-BASS-MAP`, `S-TURNS`, and `S-TWO-PULSE`. Later outlines (L17–L24) add named fingers 1–5 as a later review, the C five-note path, a later three-black-key house, dynamics, smooth/separate, held-bass review, question/answer review, and memory. Those skill IDs are introduced in each outline. L17 long/short is a later review of Rhythm Club, not a second first teaching. Steady walking-pulse review is not a second first teaching of `S-PULSE`. Left-hand C and turns are first taught in L13–L16, not later.
 
 ## Input modes
 
@@ -606,7 +612,7 @@ Home walk after a named pause. Pass → `S-RHYTHM-PHRASE` may move to Retained.
 
 ## L09–L12 — Read and play (full contracts)
 
-These expand the First Piano Journey sequence after Rhythm Club. Earlier placeholder titles on L05–L08 (F/G, fingers, steps, skips) and the old L09–L12 outlines (steady walking, C five-note path, left-hand C, hands take turns) are **not** bound to these IDs. Rhythm Club owns L05–L08. Read and play owns L09–L12. Pentapath, left-hand C, and turns wait for a later slice.
+These expand the First Piano Journey sequence after Rhythm Club. Earlier placeholder titles on L05–L08 (F/G, fingers, steps, skips) and the old L09–L12 outlines (steady walking, C five-note path, left-hand C, hands take turns) are **not** bound to these IDs. Rhythm Club owns L05–L08. Read and play owns L09–L12. Left hand owns L13–L16. Pentapath and a later three-black-key house wait for a later slice.
 
 Staff pitch, clef, duration, demo audio, and expected input use the same MIDI numbers and the same duration kind. A quarter on the staff is a quarter in the ear and one tap. Independent and transfer checks that name a preview register use **exact MIDI pitch**. A same-name note in another octave is `wrong-octave`, not a pass.
 
@@ -868,23 +874,285 @@ After a named pause or a new visit, replay Porch Steps with no letters. Pass →
 
 ---
 
-## L13–L24 — outlines (later slices)
+## L13–L16 — Left hand (full contracts)
 
-These remain sequence outlines. IDs are stable. L09–L12 above are the Read and play contracts.
+These expand the First Piano Journey sequence after Read and play. Earlier placeholder titles on L13–L16 (later three-black-key house, meeting at middle C, a longer C-neighborhood tune, quiet and strong) are **not** bound to these IDs. Left hand owns L13–L16. Those leftover outlines wait for a later slice.
 
-### L13 — Three-black-key landmark (later house)
+Both clefs and both keyboard rooms can show. Staff pitch, clef, duration, demo audio, and expected input use the same MIDI numbers and the same duration kind. MIDI reports pitch and time only. It does not certify which hand pressed a key. Hand choice and left-hand fingering are adult-observed labels.
+
+A learner may practice one hand and return. Phase, step, and saved evidence stay. Switching the hand picture does not restart the lesson.
+
+---
+
+## L13 — Meet the left hand
+
+| Field | Value |
+| --- | --- |
+| Stable ID | `L13` |
+| Title | Meet the left hand |
+| Curriculum version | `beginner-v1` |
+| Unit | Left hand |
+| Prerequisites | `S-READ-PHRASE` (Read a little tune Independent on this device) |
+| Primary new skill | `S-LH-C` (`S-FINGER-LH` and `S-HAND-CHOICE` are adult-observed) |
+| Octave policy | Landmark intro may accept a **lower-room C** (pitch-class below middle C). “This C” on the preview uses **exact MIDI** C3 = 48. |
+
+### Short explanation
+
+The left hand lives on the lower side of the keyboard. Find **C** the same way — left of two black keys — in this lower room. Left-hand pinky is finger **5** and often sits on that C. The higher C is a different room.
+
+### Visual demo
+
+- Glow the lower house of two, then the white key on its left. Caption: “Left of the lower house — C.”
+- Show left-hand fingers 5–4–3 on C–D–E. Caption: “A grown-up checks fingers and which hand. MIDI cannot.”
+- Both keyboard rooms may show. The left room is the one this lesson names.
+
+### Replayable audio notes
+
+- Lower house, then C3.
+- C3–D3–E3.
+- Lower C then higher C (C3 then C4), so the rooms stay honest.
+
+### Guided practice (hints optional)
+
+1. Find the lower C. Hint may glow C3.
+2. Name it aloud: “C.”
+3. Walk C–D–E in the left room.
+4. Grown-up prompt: left-hand fingers 5–4–3 and “this was the left hand.” Adult-observed.
+
+### Independent check (no hints)
+
+Find **this C**, then D, then E, glow off. Preview register is C3–D3–E3 (48–50–52). A pitch-class C in the higher room is the wrong room.
+
+### Transfer pattern
+
+**E – D – C** in the left room. A copied C–D–E does not count.
+
+### Remediation for a common error
+
+**Error:** Playing the higher C because that is the remembered doorstep.  
+**Response:** “Same letter. Different room. Left-hand C is the lower doorstep.” Replay C3 then C4.
+
+### Later review
+
+Find the lower C and its neighbors with no glow.
+
+### Equipment, alternatives, cannot observe
+
+- Required: a view of a lower C left of two black keys.
+- Alternatives: grown-up plays while the learner points — adult-supported, not independent motor skill.
+- Cannot observe: which hand, finger number, or bench height.
+
+---
+
+## L14 — Left-hand reading
+
+| Field | Value |
+| --- | --- |
+| Stable ID | `L14` |
+| Title | Left-hand reading |
+| Curriculum version | `beginner-v1` |
+| Unit | Left hand |
+| Prerequisites | `S-LH-C` |
+| Primary new skill | `S-BASS-MAP` |
+| Octave policy | **Exact pitch.** The bass staff shows one register. The matching key and the demo audio use the same MIDI number. |
+
+### Short explanation
+
+Notes can sit on a picture of five lines. This lesson uses the **bass clef**. The F of the clef wraps the line where **F** lives (F3 = 53). A known left-hand walk can live on that picture.
+
+**Bass walk** (quarters): `C3 – D3 – E3` (48–50–52).  
+**Bass neighbors** (quarters): `F3 – G3` (53–55).  
+Each quarter is one tap and one same-length sound. Clef, staff pitch, audio, and expected key agree.
+
+### Visual demo
+
+- Bass staff. Landmark F on the F-clef line.
+- The C–D–E walk appears as three quarters. Then F–G as two quarters.
+- Guided may show letter names under the heads. They fade.
+
+### Replayable audio notes
+
+- Bass walk at a walking pace.
+- Bass neighbors F then G.
+- Single-note C, E, F, G for checking. Same MIDI as the heads.
+
+### Guided practice (hints optional)
+
+1. Hear the bass walk. Echo C–D–E. Letters may show.
+2. Hear F–G on the bass staff. Echo those two.
+3. Ear: hear F then G, then play the matching heads.
+
+### Independent check (no hints, letters off)
+
+Play the **bass walk** from the picture: C–D–E, preview register, no key glow. A memorized higher C–D–E does not match this picture.
+
+### Transfer pattern
+
+A new order of known notes on the bass staff: **E – C – F** (52–48–53). Letters off. A copied C–D–E does not count.
+
+### Remediation for a common error
+
+**Error:** Playing the higher walk from memory.  
+**Response:** “This C lives on the bass staff.” Hide letters. Replay the two-note neighbors.
+
+### Later review
+
+Bass walk with letters off.
+
+### Equipment, alternatives, cannot observe
+
+- Required: lower C, D, E, and F playable; a view of the bass staff.
+- Alternatives: grown-up points to each head while the learner plays.
+- Cannot observe: which hand, or whether they read versus guessed leftover letters.
+
+---
+
+## L15 — Musical conversation
+
+| Field | Value |
+| --- | --- |
+| Stable ID | `L15` |
+| Title | Musical conversation |
+| Curriculum version | `beginner-v1` |
+| Unit | Left hand |
+| Prerequisites | `S-BASS-MAP` |
+| Primary new skill | `S-TURNS` |
+| Octave policy | **Exact pitch** for the named rooms. |
+
+### Short explanation
+
+One hand can ask. The other can answer. The **question** lives on the treble staff. The **answer** lives on the bass staff. Turns, not both hands at once.
+
+**Question** (quarters): `C4 – D4 – E4` (60–62–64).  
+**Answer** (quarters): `E3 – D3 – C3` (52–50–48).  
+**Home conversation:** question, then answer.  
+**Transfer:** answer, then question.
+
+Both clefs and both keyboard rooms show. A learner may practice one hand and return without losing the step. MIDI hears the pitch order. A grown-up marks which hand asked and which hand answered.
+
+### Visual demo
+
+- Grand staff: question on treble, answer on bass.
+- Keyboard regions labeled left and right.
+- Hand-focus control: Left / Right / Both. Changing it does not restart the lesson.
+
+### Replayable audio notes
+
+- Question alone. Answer alone. Whole conversation.
+
+### Guided practice (hints optional)
+
+1. Play only the question.
+2. Play only the answer.
+3. Play the conversation: question, then answer.
+4. Grown-up prompt: the hands took turns as shown. Adult-observed.
+
+### Independent check (no hints)
+
+Play the home conversation with letters and glow off. Practicing one hand is allowed; the quiet check still wants both parts.
+
+### Transfer pattern
+
+Answer first, then the question. A copied question-then-answer does not count.
+
+### Remediation for a common error
+
+**Error:** Staying in one room, or playing both parts at once.  
+**Response:** “The question climbs in the right room. The answer walks home in the left room.” Isolate one part, then return.
+
+### Later review
+
+Home conversation, letters off.
+
+### Equipment, alternatives, cannot observe
+
+- Required: lower C–E and higher C–E playable; both clefs.
+- Alternatives: grown-up plays one part while the learner plays the other.
+- Cannot observe: which hand played which part.
+
+---
+
+## L16 — Two parts one pulse
+
+| Field | Value |
+| --- | --- |
+| Stable ID | `L16` |
+| Title | Two parts one pulse |
+| Curriculum version | `beginner-v1` |
+| Unit | Left hand |
+| Prerequisites | `S-TURNS` |
+| Primary new skill | `S-TWO-PULSE` |
+| Octave policy | Guided may accept pitch-class. Independent and transfer use **exact pitch** and the shared audio clock. |
+
+### Short explanation
+
+The left hand can **hold C** while the right hand walks **C – D – E – C**. Both parts share one heartbeat from Rhythm Club. Plant the hold first, then walk. Correct pitches dumped as fast as possible fail.
+
+**Home pattern:** long C3 from beat 0 (four beats), plus C4–D4–E4–C4 one per beat.  
+**Transfer pattern:** the hold stays; the walk comes down: E4–D4–C4–C4.
+
+MIDI reports pitch and time. It does not certify which hand held, balance, or coordination mastery.
+
+### Visual demo
+
+- Grand staff and both keyboard rooms.
+- Pulse helper. The click is the boss.
+- Contrast: same letters, wrong time — listen only.
+
+### Replayable audio notes
+
+- Both parts with the heartbeat.
+- Same letters rushed — must not pass.
+
+### Guided practice (hints optional)
+
+1. Hear the hold and the walk.
+2. Echo with the clock. Practice one hand, then return to both.
+3. Hear the cousin once without playing it yet.
+4. Grown-up prompt: one hand held and the other walked. Adult-observed.
+
+### Independent check (no hints)
+
+Both parts with performance windows. Tiles off. Early, late, missed, extra, or a short hold fail.
+
+### Transfer pattern
+
+Hold C3. Walk E–D–C–C on the clicks. A copied even walk does not count.
+
+### Remediation for a common error
+
+**Error:** Playing the right keys as soon as they remember the letters.  
+**Response:** “The hold starts with the first real click. The walk waits for each click.”
+
+### Later review
+
+Home pattern after a named pause. Pass → `S-TWO-PULSE` may move to Retained.
+
+### Equipment, alternatives, cannot observe
+
+- Required: lower C and higher C–E playable.
+- Alternatives: grown-up holds the bass while the learner walks.
+- Cannot observe: which hand held, balance, or coordination mastery.
+
+---
+
+## L17–L24 — outlines (later slices)
+
+These remain sequence outlines. IDs are stable. L13–L16 above are the Left hand contracts. Earlier leftover titles (later three-black-key house, meeting at middle C, a longer C-neighborhood tune, quiet and strong) are **not** bound to L13–L16.
+
+### Later leftover — Three-black-key landmark (later house)
 
 First teaching of F and G from the three-black-key landmark is **L09**. This later outline is another house / another register of the same landmark, not a second first teaching. Review skill: `S-FIND-FG` / `S-LANDMARK-3`.
 
-### L14 — Meeting at middle C
+### Later leftover — Meeting at middle C
 
-When two C keys are available, notice they share a name. Call the meeting C the one the grown-up and learner choose as “ours” (often near the middle of a full piano). Exact pitch when that C is named. New skill: `S-MIDDLE-C`.
+When two C keys are available, notice they share a name. Call the meeting C the one the grown-up and learner choose as “ours” (often near the middle of a full piano). Exact pitch when that C is named. New skill: `S-MIDDLE-C`. Left-hand C is already first taught in L13.
 
-### L15 — A longer C-neighborhood tune
+### Later leftover — A longer C-neighborhood tune
 
 Original 6–8 note tune using C–G, built from steps and one skip. New skill: `S-PHRASE-LONG`.
 
-### L16 — Quiet and strong
+### Later leftover — Quiet and strong
 
 Same short pattern twice: quieter, then stronger. Relative only. New skill: `S-DYNAMIC`.
 
@@ -902,7 +1170,7 @@ Replay a known C–D–E phrase with a specified fingering. App hears pitches; f
 
 ### L20 — Left hand holds C
 
-Left hand holds C while right hand walks neighbors. Balance is adult-observed. New skill: `S-LH-HOLD`.
+Later review of L16. Left hand holds C while right hand walks neighbors. Balance is adult-observed. Review skill: `S-TWO-PULSE` / `S-LH-HOLD`. Not a second first teaching.
 
 ### L21 — Question and answer
 

@@ -1,6 +1,8 @@
 import { createRuntime, bindStandardPlayer } from '../player-core.js';
 import { beatsToSeconds, createRhythmClock, wallClockNow } from '../rhythm-clock.js';
 import { createRhythmTake, patternSpanSec } from '../rhythm-score.js';
+import { defaultHandFocus } from '../hands.js';
+import { HOME_NOTES, TRANSFER_NOTES } from './l16.js';
 
 function stepName(list, index, fallback) {
   return list[index] || fallback;
@@ -19,6 +21,9 @@ function guidedSteps(spec) {
 
 export function createRhythmLessonPlayer({ progress, lessonSpec, clock, now }) {
   const runtime = createRuntime({ progress, lessonSpec });
+  if (lessonSpec.lessonId === 'L16' && !runtime.attempt.restore.handFocus) {
+    runtime.attempt.restore.handFocus = defaultHandFocus('L16');
+  }
   const steps = guidedSteps(lessonSpec);
   const localClock = clock || createRhythmClock({ now: now || wallClockNow });
   let take = null;
@@ -234,7 +239,9 @@ export function createRhythmLessonPlayer({ progress, lessonSpec, clock, now }) {
           bpm: localClock.bpm
         },
         phrase: phraseFor(attempt, lessonSpec, kind),
-        captions: captionsFor(attempt, lessonSpec)
+        captions: captionsFor(attempt, lessonSpec),
+        handFocus: attempt.restore.handFocus || defaultHandFocus(lessonSpec.lessonId),
+        staff: staffFor(attempt, lessonSpec, kind)
       });
     },
     advanceFrom(phase) {
@@ -331,6 +338,13 @@ export function createRhythmLessonPlayer({ progress, lessonSpec, clock, now }) {
     return take.snapshot();
   };
   player.beatsToSeconds = beatsToSeconds;
+  player.setHandFocus = (focus) => {
+    runtime.attempt.restore.handFocus = focus;
+    runtime.persist();
+  };
+  player.setHandMark = (checked) => {
+    runtime.setAdult({ hand: checked });
+  };
   return player;
 }
 
@@ -347,9 +361,34 @@ function phraseFor(attempt, spec, kind) {
 }
 
 function captionsFor(attempt, spec) {
+  if (spec.lessonId === 'L16') {
+    if (attempt.phase === 'demo' || (attempt.phase === 'guided' && attempt.restore.hintsOn)) {
+      return {
+        48: { letter: 'C', finger: 5 },
+        60: { letter: 'C', finger: 1 },
+        62: { letter: 'D', finger: 2 },
+        64: { letter: 'E', finger: 3 }
+      };
+    }
+    return {};
+  }
   if (spec.lessonId !== 'L08') return {};
   if (attempt.phase === 'demo' || (attempt.phase === 'guided' && attempt.restore.hintsOn)) {
     return { 60: { letter: 'C' }, 62: { letter: 'D' }, 64: { letter: 'E' } };
   }
   return {};
+}
+
+function staffFor(attempt, spec, kind) {
+  if (spec.lessonId !== 'L16') return null;
+  const showLetters = attempt.phase === 'demo' || (attempt.phase === 'guided' && attempt.restore.hintsOn);
+  const notes = kind === 'transfer' ? TRANSFER_NOTES : HOME_NOTES;
+  if (attempt.phase === 'explanation' || attempt.phase === 'result') return null;
+  return {
+    notes,
+    current: -1,
+    showLetters,
+    grand: true,
+    caption: kind === 'transfer' ? 'Hold on bass. Walk down on treble.' : 'Hold on bass. Walk on treble. One pulse.'
+  };
 }

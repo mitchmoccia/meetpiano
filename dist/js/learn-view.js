@@ -146,6 +146,42 @@ function guidedTitles(lessonId, phase) {
   if (lessonId === 'L12' && phase === 'transfer') {
     return { cousin: 'Porch the other way', done: 'Saved' };
   }
+  if (lessonId === 'L13' && phase === 'guided') {
+    return { find: 'The lower doorstep', name: 'Name it', neighbors: 'C–D–E in the left room', fingering: 'A grown-up check', done: 'Ready for a quiet check' };
+  }
+  if (lessonId === 'L13' && phase === 'independent') {
+    return { find: 'This lower C, then neighbors', done: 'Ready to walk home' };
+  }
+  if (lessonId === 'L13' && phase === 'transfer') {
+    return { neighbors: 'E then D then C', done: 'Saved' };
+  }
+  if (lessonId === 'L14' && phase === 'guided') {
+    return { walk: 'The bass walk', neighbors: 'F and G on the bass picture', ear: 'Hear, then find', done: 'Ready for a quiet check' };
+  }
+  if (lessonId === 'L14' && phase === 'independent') {
+    return { walk: 'The bass picture is the boss', done: 'Ready for a new order' };
+  }
+  if (lessonId === 'L14' && phase === 'transfer') {
+    return { order: 'Same friends, new bass picture', done: 'Saved' };
+  }
+  if (lessonId === 'L15' && phase === 'guided') {
+    return { question: 'Just the question', answer: 'Just the answer', both: 'Question, then answer', hands: 'A grown-up check', done: 'Ready for a quiet check' };
+  }
+  if (lessonId === 'L15' && phase === 'independent') {
+    return { both: 'The whole conversation', done: 'Ready for the other way' };
+  }
+  if (lessonId === 'L15' && phase === 'transfer') {
+    return { both: 'Answer, then ask', done: 'Saved' };
+  }
+  if (lessonId === 'L16' && phase === 'guided') {
+    return { hear: 'Just listening', echo: 'Hold and walk with the clock', cousin: 'A cousin — just listening', done: 'Ready for a quiet check' };
+  }
+  if (lessonId === 'L16' && phase === 'independent') {
+    return { perform: 'Performance windows', done: 'Ready for one more pattern' };
+  }
+  if (lessonId === 'L16' && phase === 'transfer') {
+    return { perform: 'Hold, walk down', done: 'Saved' };
+  }
   return {};
 }
 
@@ -197,18 +233,8 @@ export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit, onEx
   const rec = recommendNext(store, store.session);
   const continueCard = [...view.units.flatMap((unit) => unit.cards)]
     .find((card) => card.lessonId === view.continueLessonId);
-  root.replaceChildren(
-    el('div', { className: 'game-topline' },
-      el('span', { className: 'game-label' }, el('span', { className: 'game-live-dot' }), ' FIRST PIANO JOURNEY'),
-      el('span', { className: 'game-xp' }, 'Device-local only')
-    ),
-    el('section', { className: 'unit-intro' },
-      el('p', { className: 'mission-eyebrow' }, 'THREE WORLDS · SAME DEVICE'),
-      el('h1', {}, 'First Notes, Rhythm Club, then Read and play.'),
-      el('p', {}, 'Explore, find C, walk the neighbors, play Little Wave. Tap with a heartbeat. Then meet F and G, name steps and skips, put patterns on the staff, and read a little tune. The next activity unlocks when this device is ready. Nothing here is a teacher grade.')
-    ),
-    nextSessionCard(rec, onContinue),
-    continueCard && rec.lessonId !== continueCard.lessonId ? el('p', { className: 'unit-limit' },
+  const extraContinue = continueCard && rec?.lessonId !== continueCard.lessonId
+    ? el('p', { className: 'unit-limit' },
       el('button', {
         className: 'button button-outline',
         type: 'button',
@@ -218,11 +244,24 @@ export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit, onEx
         : evidenceRank(continueCard.evidenceState) >= 3
           ? `Replay ${continueCard.title}`
           : `Start ${continueCard.title}`)
-    ) : null,
+    )
+    : null;
+  root.replaceChildren(...[
+    el('div', { className: 'game-topline' },
+      el('span', { className: 'game-label' }, el('span', { className: 'game-live-dot' }), ' FIRST PIANO JOURNEY'),
+      el('span', { className: 'game-xp' }, 'Device-local only')
+    ),
+    el('section', { className: 'unit-intro' },
+      el('p', { className: 'mission-eyebrow' }, 'FOUR WORLDS · SAME DEVICE'),
+      el('h1', {}, 'First Notes, Rhythm Club, Read and play, then Left hand.'),
+      el('p', {}, 'Explore, find C, walk the neighbors, play Little Wave. Tap with a heartbeat. Read F, G, and a little tune. Then meet the left hand, read the bass staff, take turns, and share one pulse. The next activity unlocks when this device is ready. Nothing here is a teacher grade.')
+    ),
+    nextSessionCard(rec, onContinue),
+    extraContinue,
     ...view.units.map((unit) => unitSection(unit, onOpen, focusUnit)),
     portabilityCard(onExport, onImport),
-    el('p', { className: 'unit-limit' }, 'Playable lessons are L01–L12. Later lessons are not here yet — there are no buttons to them. Export stays on the browsers you control. There is no account.')
-  );
+    el('p', { className: 'unit-limit' }, 'Playable lessons are L01–L16. Later lessons are not here yet — there are no buttons to them. MIDI reports pitch and time only. A grown-up marks which hand. Export stays on the browsers you control. There is no account.')
+  ].filter(Boolean));
 }
 
 function nextSessionCard(rec, onContinue) {
@@ -319,6 +358,7 @@ function evidenceLaneList(lanes) {
 }
 
 function lockNoteForUnit(unitId) {
+  if (unitId === 'left-hand') return 'Left hand unlocks when Read a little tune is Independent on this device.';
   if (unitId === 'read-and-play') return 'Read and play unlocks when Notes with a beat is Independent on this device.';
   return 'Rhythm Club unlocks when First little tune is Independent on this device.';
 }

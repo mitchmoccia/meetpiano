@@ -1,7 +1,7 @@
 import { COMPUTER_KEYS, clearPressed, setPressed } from './piano.js';
 import { applyMidiEvent, createHeldNotes, createMidiSession, describeMidiState, deviceIdentity } from './midi.js';
 
-export function bindInputs({ pianoRoot, audio, onUserNote, onUserRelease, isDemoPlaying, shell, onMidiStatus, clockNow }) {
+export function bindInputs({ pianoRoot, audio, onUserNote, onUserRelease, isDemoPlaying, shell, onMidiStatus, clockNow, getComputerKeys }) {
   const heldComputerKeys = new Set();
   const heldNotes = createHeldNotes();
   let lastMidiIds = [];
@@ -90,22 +90,24 @@ export function bindInputs({ pianoRoot, audio, onUserNote, onUserRelease, isDemo
     if (event.ctrlKey || event.metaKey || event.altKey || event.repeat) return;
     if (/INPUT|TEXTAREA|SELECT/.test(event.target.tagName) || event.target.isContentEditable) return;
     const key = event.key.toLowerCase();
-    if (!(key in COMPUTER_KEYS)) return;
+    const map = typeof getComputerKeys === 'function' ? getComputerKeys() : COMPUTER_KEYS;
+    if (!(key in map)) return;
     if (shell) {
       const rect = shell.getBoundingClientRect();
       if (rect.bottom < 0 || rect.top > window.innerHeight) return;
     }
     event.preventDefault();
-    if (!heldNotes.press('computer', COMPUTER_KEYS[key]).accepted) return;
+    if (!heldNotes.press('computer', map[key]).accepted) return;
     heldComputerKeys.add(key);
-    noteOn(COMPUTER_KEYS[key], 'computer-keys');
+    noteOn(map[key], 'computer-keys');
   }
 
   function onWindowKeyUp(event) {
     const key = event.key.toLowerCase();
     if (!heldComputerKeys.has(key)) return;
     heldComputerKeys.delete(key);
-    const note = COMPUTER_KEYS[key];
+    const map = typeof getComputerKeys === 'function' ? getComputerKeys() : COMPUTER_KEYS;
+    const note = map[key];
     if (heldNotes.release('computer', note).accepted) noteOff(note, 'computer-keys');
   }
 

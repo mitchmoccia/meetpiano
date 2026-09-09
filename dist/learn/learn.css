@@ -117,10 +117,46 @@
 .tag-two { left: 14%; }
 .tag-three { left: 62%; background: var(--pink); }
 .piano.outline-two .black-1,
-.piano.outline-two .black-2 { box-shadow: 0 0 0 3px var(--yellow); }
+.piano.outline-two .black-2,
+.piano.outline-two .black-key[data-group-kind="two"] { box-shadow: 0 0 0 3px var(--yellow); }
 .piano.outline-three .black-3,
 .piano.outline-three .black-4,
-.piano.outline-three .black-5 { box-shadow: 0 0 0 3px var(--pink); }
+.piano.outline-three .black-5,
+.piano.outline-three .black-key[data-group-kind="three"] { box-shadow: 0 0 0 3px var(--pink); }
+.piano.wide { height: 176px; }
+.piano.region-left [data-region="right"],
+.piano.region-right [data-region="left"] { opacity: 0.38; }
+.region-labels {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 4px 8px;
+  font-size: 12px;
+  font-weight: 800;
+}
+.region-tag {
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  padding: 2px 10px;
+}
+.region-left-tag { background: var(--pink); }
+.region-right-tag { background: var(--yellow); }
+.hand-focus {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: #fffaf1;
+}
+.hand-focus p {
+  margin: 0 0 8px;
+  font-size: 13px;
+  max-width: 46ch;
+}
+.hand-focus-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.hand-focus [aria-pressed="true"] {
+  background: var(--yellow);
+  border-color: var(--ink);
+}
 .piano-key.sweep { background: var(--yellow); }
 .black-key.sweep { background: var(--red); }
 .seating-card {

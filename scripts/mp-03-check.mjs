@@ -50,7 +50,7 @@ function seedLesson(storage, lessonId, evidenceState) {
 
 assert(parseLessonId('l02') === 'L02', 'parse L02');
 assert(parseLessonId('L05') === 'L05', 'L05 is Rhythm Club on the journey');
-assert(parseLessonId('L13') == null, 'no L13 button target');
+assert(parseLessonId('L17') == null, 'no L17 button target');
 assert(FIRST_NOTES_LESSONS.length === 4 && FIRST_NOTES_LESSONS.every((card) => card.lessonId <= 'L04'), 'First Notes unit is L01–L04 only');
 
 const emptyProgress = createProgress(memoryStorage());
