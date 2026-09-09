@@ -104,6 +104,10 @@ function mergeSkills(current, incoming) {
   return out;
 }
 
+export function resetProgress() {
+  return emptyStore();
+}
+
 export function importProgress(payload, currentStore) {
   const checked = validateExport(payload);
   if (!checked.ok) return { ok: false, reason: checked.reason };

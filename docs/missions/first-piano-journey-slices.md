@@ -4,7 +4,7 @@ Ordered cards **MP-00 through MP-11**. Status values: `verified` · `working` ·
 
 Acceptance summaries are taken from the runbook [`first-piano-journey.md`](first-piano-journey.md). Teaching detail is in [`../curriculum/beginner-v1.md`](../curriculum/beginner-v1.md).
 
-MP-00 is marked **verified** because the mission and lesson specification docs are complete. MP-01 is **verified** and merged to `main`. MP-02 is **software/fixture verified** (Gort accepted; hardware MIDI unverified — not a MIDI-verified release). MP-03 First Notes, MP-04 Rhythm Club, MP-05 Read and play, and MP-06 device-local progress are **working** and merged to `main`. MP-07 Left hand (L13–L16) is **working** on `piany/mp-07-left-hand`. MP-08 Together (L17–L20) is **working** on `piany/mp-08-together`. MP-09 Expression (L21–L24) is **working** on `piany/mp-09-expression-recital` (Checkpoint B). Later leftover-review and closeout cards stay **queued**. The original isolated MP-04/MP-05 cards (L03/L04) landed with Checkpoint A. Historical MP-05 (L04 First little tune) is recorded below as MP-05b.
+MP-00 is marked **verified** because the mission and lesson specification docs are complete. MP-01 is **verified** and merged to `main`. MP-02 is **software/fixture verified** (Gort accepted; hardware MIDI unverified — not a MIDI-verified release). MP-03 First Notes, MP-04 Rhythm Club, MP-05 Read and play, and MP-06 device-local progress are **working** and merged to `main`. MP-07 Left hand (L13–L16) is **working** on `piany/mp-07-left-hand`. MP-08 Together (L17–L20) is **working** on `piany/mp-08-together`. MP-09 Expression (L21–L24) is **working** on `piany/mp-09-expression-recital` (Checkpoint B). MP-10 kid-and-grown-up UX is **working** on `piany/mp-10-kid-grownup-ux`. Later leftover outlines and closeout stay **queued**. The original isolated MP-04/MP-05 cards (L03/L04) landed with Checkpoint A. Historical MP-05 (L04 First little tune) is recorded below as MP-05b.
 
 ---
 
@@ -292,24 +292,33 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 - Device-local progress. Hardware MIDI remains unverified.
 - Prior units stay healthy. Copyright footer is preserved. No Vercel / DNS changes.
 
-**Handoff.** L21–L24 teaching is on this branch. Later leftover outlines (house, middle C, long tune, smooth/separate, named fingers) wait for MP-10.
+**Handoff.** L21–L24 teaching is on this branch. MP-10 polishes kid-and-grown-up UX across L01–L24. Later leftover outlines (house, middle C, long tune, smooth/separate, named fingers) stay queued after this UX slice.
 
 ---
 
-## MP-10 — Later leftover review
+## MP-10 — A seven-year-old can use it and a grown-up can help
 
 | Field | Value |
 | --- | --- |
-| Status | **queued** |
+| Status | **working** |
 | Depends on | MP-09 |
+| Branch | `piany/mp-10-kid-grownup-ux` |
+| Base | `piany/mp-09-expression-recital` @ `980bf17a22223a4279ac50ccca3cf0814d454307` |
+| PR | https://github.com/mitchmoccia/meetpiano/pull/13 (draft into `piany/mp-09-expression-recital`) |
 
-**Learner outcome.** Later review of long and short notes, smooth vs separate, a known tune with specified fingering (adult-observed), a held left-hand C, question and answer, and memory replay. L21–L24 already teach Expression and a first recital.
+**Learner outcome.** A child can follow a short yellow job on every L01–L24 step, hear optional spoken words, pause or exit and come back, and keep using the page if speech fails. A nearby grown-up can open a helper view of skills this device actually stored and get one offline practice idea. That view is not a login and not privacy protection.
 
 **Acceptance**
 
-- Leftover outlines become playable without rebinding L17–L20.
-- Later review of L01–L04 can set Retained only after a gap and a successful independent replay, per the contract.
-- No fabricated performance or jury language.
+- Short child-facing copy, a clear current job, readable ink-on-yellow contrast, and restrained motion (reduced-motion honored).
+- Replayable narration where the browser can speak. Narration failure leaves the visual/text job. Piano demos stay replayable on their own buttons.
+- Keyboard and touch navigation, 44px targets, small-screen layout, and Escape to pause/resume.
+- Clear Pause / Exit / Resume. Device-local reset plus MP-06 export/import. Reset and export stay on browsers the family controls.
+- Grown-up view reports observed skills only and suggests one offline practice activity. Copy says it is not authenticated privacy protection.
+- No child email, public profile, chat, recording upload, advertising tracker, or billing.
+- All 24 lessons remain reachable when prerequisites are met. Hardware MIDI remains unverified. Copyright footer is preserved. No Vercel / DNS changes.
+
+**Handoff.** Kid-and-grown-up UX is on this branch. Later leftover outlines still wait. MP-11 remains mission closeout.
 
 ---
 
