@@ -75,9 +75,43 @@
 .learn-panel p {
   font-size: 16px;
   line-height: 1.6;
-  color: var(--muted);
+  color: #3f3a33;
   margin: 0 0 12px;
   max-width: 42ch;
+}
+.kid-target {
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  background: var(--yellow);
+  color: var(--ink);
+}
+.kid-kicker {
+  margin: 0 0 4px !important;
+  font-size: 12px !important;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink) !important;
+}
+.kid-job {
+  margin: 0 0 10px !important;
+  font-family: var(--display);
+  font-size: clamp(20px, 2.4vw, 26px) !important;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  line-height: 1.25;
+  color: var(--ink) !important;
+  max-width: 28ch !important;
+}
+.kid-hear {
+  min-height: 44px;
+}
+.mission-feedback {
+  color: #3f3a33;
+  font-size: 14px;
+  font-weight: 700;
 }
 .phase-actions {
   display: flex;
@@ -87,7 +121,8 @@
 }
 .phase-actions .button {
   font-size: 14px;
-  padding: 10px 15px;
+  padding: 12px 16px;
+  min-height: 44px;
 }
 .phase-extras { margin: 12px 0; }
 .grownup-check {
@@ -210,6 +245,8 @@
   .learn-panel { border-right: 0; border-bottom: 1px solid var(--border); }
   .tag-two { left: 12%; }
   .tag-three { left: 60%; }
+  .learn-nav-actions { gap: 6px; }
+  .kid-job { font-size: 22px !important; }
 }
 
 .learn-nav-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
@@ -451,5 +488,113 @@
   .unit-map { grid-template-columns: 1fr; padding-inline: 17px; }
   .unit-intro { padding-inline: 17px; }
   .unit-world { padding-inline: 17px; }
-  .learn-nav-actions .button-small { padding: 8px 10px; font-size: 12px; }
+  .learn-nav-actions .button-small { padding: 10px 12px; font-size: 13px; min-height: 44px; }
+  .kid-target { position: sticky; top: 8px; z-index: 3; }
+  .pause-card { margin: 16px; padding: 22px 18px; }
+  .grownup-intro, .grownup-practice, .grownup-skills { padding-inline: 17px; }
+  .learn-page .site-header nav a:nth-child(n+3) { display: none; }
+}
+
+.pause-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  background: rgba(41, 37, 31, 0.45);
+  padding: 20px;
+}
+.pause-overlay[hidden] { display: none !important; }
+.pause-card {
+  width: min(520px, 100%);
+  padding: 28px 24px;
+  border: 2px solid var(--ink);
+  border-radius: 20px;
+  background: var(--paper);
+  box-shadow: 0 8px 0 var(--ink);
+}
+.pause-card h2 {
+  font-family: var(--display);
+  font-size: clamp(26px, 4vw, 34px);
+  letter-spacing: -0.6px;
+  margin: 8px 0 12px;
+}
+.grownup-intro, .grownup-practice, .grownup-skills {
+  padding: 20px 27px 8px;
+}
+.grownup-honesty {
+  padding: 12px 14px;
+  border: 1.5px solid var(--ink);
+  border-radius: 12px;
+  background: var(--pink);
+  color: var(--ink) !important;
+  font-weight: 650;
+}
+.grownup-practice {
+  margin: 8px 27px 16px;
+  padding: 18px;
+  border: 1.5px solid var(--ink);
+  border-radius: 16px;
+  background: var(--yellow);
+}
+.grownup-practice h2, .grownup-skills h2 {
+  font-family: var(--display);
+  font-size: clamp(22px, 2.4vw, 30px);
+  letter-spacing: -0.5px;
+  margin: 6px 0 10px;
+}
+.grownup-lesson {
+  margin: 0 27px 14px;
+  padding: 16px;
+  border: 1.5px solid var(--ink);
+  border-radius: 14px;
+  background: #fffdf8;
+}
+.grownup-lesson h3 {
+  font-family: var(--display);
+  font-size: 22px;
+  margin: 4px 0 8px;
+}
+.grownup-skill-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.grownup-skill-list li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  align-items: baseline;
+  font-size: 14px;
+}
+.grownup-mark.yes { color: var(--ink); font-weight: 750; }
+.grownup-mark.no { color: #5c5348; }
+.learn-page .button,
+.learn-page .learn-nav-actions .button-small,
+.learn-page .unit-card .button {
+  min-height: 44px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .learn-page *,
+  .learn-page *::before,
+  .learn-page *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  .learn-page .pulse-dot,
+  .learn-page .sequence-note.current,
+  .learn-page .white-key.pressed,
+  .learn-page .black-key.pressed,
+  .learn-page .button:hover {
+    transform: none !important;
+  }
+  .learn-page .pulse-card.live .pulse-dot {
+    outline: 3px solid var(--ink);
+    background: var(--red);
+  }
+  .learn-page .white-key .key-caption.fade { opacity: 1; }
 }

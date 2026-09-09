@@ -2,6 +2,9 @@ import { PHASE_ORDER } from './player.js';
 import { evidenceRank, JOURNEY_LESSONS, nextLessonId, unitView } from './unit.js';
 import { recommendNext, laneSummary } from './recommend.js';
 import { sourceHonesty } from './evidence.js';
+import { kidLine, kidTitle } from './kid-copy.js';
+import { grownupReport } from './grownup.js';
+import { resumeHref } from './session-pause.js';
 
 const STEP_LABELS = ['Explain', 'See', 'Try', 'Check', 'Done'];
 
@@ -31,6 +34,78 @@ export function renderSteps(root, phaseIndex) {
 
 export function renderParagraphs(root, paragraphs) {
   root.replaceChildren(...(paragraphs || []).map((text) => el('p', {}, text)));
+}
+
+export function renderKidTarget(root, view, { onHear, hearLabel, hearDisabled } = {}) {
+  if (!root) return;
+  const job = kidLine(view);
+  root.hidden = false;
+  root.replaceChildren(
+    el('p', { className: 'kid-kicker' }, kidTitle(view)),
+    el('p', { className: 'kid-job', id: 'kid-job' }, job),
+    el('button', {
+      className: 'button button-small button-outline kid-hear',
+      type: 'button',
+      disabled: hearDisabled === true,
+      onClick: () => onHear?.(job)
+    }, hearLabel || 'Hear the words')
+  );
+}
+
+export function renderGrownupView(root, store, { onExport, onImport, onReset, pauseState } = {}) {
+  const report = grownupReport(store);
+  const rows = report.observed.length
+    ? report.observed.map((row) => grownupLesson(row))
+    : [el('p', {}, 'This device has not stored a lesson try yet. Nothing here is invented.')];
+  root.replaceChildren(...[
+    el('div', { className: 'game-topline' },
+      el('span', { className: 'game-label' }, el('span', { className: 'game-live-dot' }), ' GROWN-UP VIEW'),
+      el('span', { className: 'game-xp' }, 'Helper card · not a login')
+    ),
+    el('section', { className: 'grownup-intro' },
+      el('p', { className: 'mission-eyebrow' }, 'NEARBY HELPER · THIS DEVICE'),
+      el('h1', {}, 'What this browser has already seen'),
+      el('p', { className: 'grownup-honesty' }, report.honesty),
+      el('p', {}, `${report.observedCount} ${report.observedCount === 1 ? 'activity' : 'activities'} have a stored record. ${report.practicedCount} reached Practiced or higher. This is not authenticated privacy protection.`)
+    ),
+    pauseState
+      ? el('p', { className: 'unit-limit' },
+        el('a', { className: 'button button-dark', href: resumeHref(pauseState) }, `Resume ${pauseState.lessonId}`)
+      )
+      : null,
+    el('section', { className: 'grownup-practice', id: 'offline-practice' },
+      el('p', { className: 'mission-eyebrow' }, 'ONE THING TO TRY OFF THE SCREEN'),
+      el('h2', {}, report.practice.title),
+      el('p', {}, report.practice.activity)
+    ),
+    el('section', { className: 'grownup-skills', 'aria-label': 'Observed skills on this device' },
+      el('h2', {}, 'Observed skills'),
+      ...rows
+    ),
+    portabilityCard(onExport, onImport, onReset),
+    el('p', { className: 'unit-limit' }, 'No child email. No public profile. No chat. No recording upload. No advertising tracker. No billing. Export stays on the browsers you control.'),
+    el('p', { className: 'unit-limit' },
+      el('a', { className: 'button button-outline', href: '/learn/' }, 'Back to the journey')
+    )
+  ].filter(Boolean));
+}
+
+function grownupLesson(row) {
+  return el('article', { className: 'grownup-lesson' },
+    el('p', { className: 'unit-id' }, `${row.lessonId} · ${evidenceLabel(row.evidenceState)}`),
+    el('h3', {}, row.title),
+    el('p', { className: 'unit-blurb' }, row.honesty),
+    el('ol', { className: 'grownup-skill-list' },
+      ...row.skills.map((skill) => el('li', {},
+        el('strong', {}, skill.title),
+        el('span', {}, skill.state ? evidenceLabel(skill.state) : 'not stored'),
+        skill.adultObserved
+          ? el('span', { className: skill.adultMarked ? 'grownup-mark yes' : 'grownup-mark no' },
+            skill.adultMarked ? 'grown-up marked' : 'needs a grown-up mark')
+          : null
+      ))
+    )
+  );
 }
 
 export function phaseCopy(view) {
@@ -307,7 +382,7 @@ export function renderPhraseTiles(root, phrase) {
   }));
 }
 
-export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit, onExport, onImport } = {}) {
+export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit, onExport, onImport, onReset, pauseState } = {}) {
   const view = unitView(store);
   const rec = recommendNext(store, store.session);
   const continueCard = [...view.units.flatMap((unit) => unit.cards)]
@@ -332,13 +407,24 @@ export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit, onEx
     ),
     el('section', { className: 'unit-intro' },
       el('p', { className: 'mission-eyebrow' }, 'SIX WORLDS · SAME DEVICE'),
-      el('h1', {}, 'First Notes through Expression — all 24 lessons.'),
-      el('p', {}, 'Explore, find C, walk the neighbors, play Little Wave. Tap with a heartbeat. Read F, G, and a little tune. Meet the left hand. Play two rooms on the same click. Then shape the sound, make an ending yours, practice on purpose, and share a first recital. The next activity unlocks when this device is ready. Nothing here is a teacher grade.')
+      el('h1', {}, 'Twenty-four little jobs. Play, listen, try again.'),
+      el('p', {}, 'A yellow job tells you what to do now. Hear the words if you like. A grown-up can sit nearby. The next activity unlocks when this device is ready. Nothing here is a teacher grade.')
     ),
+    pauseState
+      ? el('section', { className: 'next-session', id: 'resume-session' },
+        el('p', { className: 'mission-eyebrow' }, 'PAUSED ON THIS DEVICE'),
+        el('h2', {}, `Resume ${pauseState.lessonId}`),
+        el('p', {}, 'You paused. Saved records stay. Resume picks up that lesson.'),
+        el('a', { className: 'button button-dark', href: resumeHref(pauseState) }, `Resume ${pauseState.lessonId}`)
+      )
+      : null,
     nextSessionCard(rec, onContinue),
     extraContinue,
     ...view.units.map((unit) => unitSection(unit, onOpen, focusUnit)),
-    portabilityCard(onExport, onImport),
+    portabilityCard(onExport, onImport, onReset),
+    el('p', { className: 'unit-limit' },
+      el('a', { className: 'button button-outline', href: '/learn/?view=grown-up' }, 'Grown-up view')
+    ),
     el('p', { className: 'unit-limit' }, 'Playable lessons are L01–L24 when earlier activities on this device are ready. On-screen keys are an exploration stand-in, not proof of hand coordination or quiet-versus-strong. MIDI reports pitch, time, and velocity if the keyboard sent it — never technique. A grown-up marks listening for a recital. Export stays on the browsers you control. There is no account.')
   ].filter(Boolean));
 }
@@ -359,12 +445,12 @@ function nextSessionCard(rec, onContinue) {
   );
 }
 
-function portabilityCard(onExport, onImport) {
-  if (!onExport && !onImport) return null;
+function portabilityCard(onExport, onImport, onReset) {
+  if (!onExport && !onImport && !onReset) return null;
   return el('section', { className: 'progress-port', id: 'progress-port' },
     el('p', { className: 'mission-eyebrow' }, 'THIS DEVICE ONLY'),
-    el('h2', {}, 'Copy records between browsers you control'),
-    el('p', {}, 'Export is a JSON file of lesson and attempt records. Import checks versions and skips duplicate attempt IDs. It cannot invent Independent or Retained. Nothing is uploaded to an account.'),
+    el('h2', {}, 'Copy or clear records on browsers you control'),
+    el('p', {}, 'Export is a JSON file of lesson and attempt records. Import checks versions and skips duplicate attempt IDs. It cannot invent Independent or Retained. Reset clears this browser only. Nothing is uploaded to an account. This is not privacy protection.'),
     el('div', { className: 'phase-actions' },
       onExport ? el('button', { className: 'button button-outline', type: 'button', onClick: onExport }, 'Export JSON') : null,
       onImport ? el('label', { className: 'button button-outline import-label' },
@@ -379,7 +465,8 @@ function portabilityCard(onExport, onImport) {
             event.target.value = '';
           }
         })
-      ) : null
+      ) : null,
+      onReset ? el('button', { className: 'button button-outline', type: 'button', onClick: onReset }, 'Reset this device') : null
     )
   );
 }
@@ -449,6 +536,12 @@ function lockReason(card) {
   if (!prior) return 'Locked';
   if (card.unlockNeeds === 'independent') return `Locked until ${prior.title} is Independent on this device.`;
   return `Locked until ${prior.title} is Practiced on this device.`;
+}
+
+export function parseGrownupView(value) {
+  if (typeof value !== 'string') return false;
+  const id = value.trim().toLowerCase();
+  return id === 'grown-up' || id === 'grownup' || id === 'adult';
 }
 
 export function lessonHref(lessonId) {

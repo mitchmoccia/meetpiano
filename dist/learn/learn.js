@@ -20,7 +20,10 @@ import {
   evidenceLabel,
   lessonHref,
   nextHref,
+  parseGrownupView,
   phaseCopy,
+  renderGrownupView,
+  renderKidTarget,
   renderParagraphs,
   renderPhraseTiles,
   renderSteps,
@@ -29,8 +32,11 @@ import {
 } from '../js/learn-view.js';
 import { isExpressionLesson, isLessonUnlocked, isLeftLesson, isTogetherLesson, parseLessonId, parseUnitId, unitTitleFor, usesClockTake, usesExpressionTake, usesRhythmTake, usesTogetherTake } from '../js/unit.js';
 import { durationMs, renderStaff } from '../js/staff.js';
-import { exportProgress, importProgress } from '../js/portability.js';
+import { exportProgress, importProgress, resetProgress } from '../js/portability.js';
 import { recommendAfterLesson } from '../js/recommend.js';
+import { createNarrator, NARRATION_FAIL_COPY, NARRATION_UNAVAILABLE_COPY } from '../js/narrate.js';
+import { kidSpoken } from '../js/kid-copy.js';
+import { clearPause, readPause, resumeHref, writePause } from '../js/session-pause.js';
 
 const progress = createProgress();
 progress.touchSession();
@@ -48,6 +54,13 @@ const shell = document.querySelector('#lesson-shell');
 const helpButton = document.querySelector('#help-button');
 const restartButton = document.querySelector('#restart-button');
 const hubLink = document.querySelector('#hub-link');
+const pauseButton = document.querySelector('#pause-button');
+const exitButton = document.querySelector('#exit-button');
+const resumeButton = document.querySelector('#resume-button');
+const grownupShell = document.querySelector('#grownup-shell');
+const pauseOverlay = document.querySelector('#pause-overlay');
+const showGrownup = parseGrownupView(params.get('view'));
+const pauseState = readPause();
 
 if (pianoRoot) renderPiano(pianoRoot);
 
@@ -78,11 +91,20 @@ function openLesson(id, rec) {
 }
 
 if (!lessonId) {
-  hub.hidden = false;
+  hub.hidden = showGrownup;
+  if (grownupShell) grownupShell.hidden = !showGrownup;
   shell.hidden = true;
   helpButton.hidden = true;
   restartButton.hidden = true;
-  hubLink.hidden = true;
+  hubLink.hidden = !showGrownup;
+  if (pauseButton) pauseButton.hidden = true;
+  if (exitButton) exitButton.hidden = true;
+  if (resumeButton) {
+    resumeButton.hidden = !pauseState;
+    if (pauseState) {
+      resumeButton.addEventListener('click', () => { window.location.href = resumeHref(pauseState); });
+    }
+  }
   if (requested && !unlocked) {
     document.querySelector('#storage-notice').hidden = false;
     document.querySelector('#storage-notice').textContent = `${requested} is locked on this device until the earlier activity is ready.`;
@@ -102,13 +124,21 @@ if (!lessonId) {
     document.querySelector('#storage-notice').hidden = false;
     document.querySelector('#storage-notice').textContent = 'Expression is locked on this device until Complete little piece is Independent.';
   }
-  renderUnitHub(hub, store, {
+  const hubOpts = {
     onOpen: openLesson,
     onContinue: openLesson,
     focusUnit: requestedUnit,
     onExport: exportRecords,
-    onImport: importRecords
-  });
+    onImport: importRecords,
+    onReset: resetRecords,
+    pauseState
+  };
+  if (showGrownup && grownupShell) {
+    document.title = 'Grown-up view · First Piano Journey · MeetPiano';
+    renderGrownupView(grownupShell, store, hubOpts);
+  } else {
+    renderUnitHub(hub, store, hubOpts);
+  }
 } else {
   startLesson(lessonId);
 }
@@ -146,6 +176,19 @@ async function importRecords(file) {
   }
   progress.write(result.store);
   window.location.reload();
+}
+
+function resetRecords() {
+  const ok = window.confirm('Clear First Piano Journey records on this device? Export first if you want a copy. This does not create an account or send anything anywhere.');
+  if (!ok) return;
+  progress.write(resetProgress());
+  clearPause();
+  const notice = document.querySelector('#storage-notice');
+  if (notice) {
+    notice.hidden = false;
+    notice.textContent = 'This device is clear. Nothing was uploaded.';
+  }
+  window.location.href = '/learn/';
 }
 
 function startLesson(id) {
@@ -209,9 +252,13 @@ function startLesson(id) {
     threeHouse: document.querySelector('#three-house-card'),
     continueNote: document.querySelector('#continue-note'),
     evidence: document.querySelector('#evidence-pill'),
-    label: document.querySelector('#lesson-label')
+    label: document.querySelector('#lesson-label'),
+    kidTarget: document.querySelector('#kid-target')
   };
 
+  const narrator = createNarrator();
+  let lessonPaused = false;
+  if (params.get('resume') === '1') clearPause();
   let demoTimers = [];
   let lastFeedback = '';
   let showHouse = false;
@@ -400,8 +447,79 @@ function startLesson(id) {
       setSweep(pianoRoot, null);
     }
     renderActions(view, copy);
+    paintKidTarget(view);
+    paintPauseChrome(view);
     if (lastFeedback) ui.feedback.textContent = lastFeedback;
     else if (!ui.feedback.textContent) ui.feedback.textContent = 'Ready when you are.';
+  }
+
+  function paintKidTarget(view) {
+    if (!ui.kidTarget) return;
+    const hearLabel = narrator.available()
+      ? (narrator.lastText() ? 'Hear the words again' : 'Hear the words')
+      : 'Words stay on the screen';
+    renderKidTarget(ui.kidTarget, view, {
+      hearLabel,
+      hearDisabled: !narrator.available(),
+      onHear: () => {
+        const result = narrator.replay(kidSpoken(view));
+        if (!result.ok) {
+          lastFeedback = result.reason === 'unavailable' ? NARRATION_UNAVAILABLE_COPY : NARRATION_FAIL_COPY;
+        } else {
+          lastFeedback = 'Hearing the words. Piano demos still have their own replay buttons.';
+        }
+        if (ui.feedback) ui.feedback.textContent = lastFeedback;
+        paintKidTarget(player.view());
+      }
+    });
+  }
+
+  function paintPauseChrome(view) {
+    if (pauseButton) pauseButton.hidden = lessonPaused;
+    if (exitButton) exitButton.hidden = false;
+    if (resumeButton) resumeButton.hidden = !lessonPaused;
+    if (pauseOverlay) pauseOverlay.hidden = !lessonPaused;
+    if (hubLink) hubLink.hidden = false;
+    if (lessonPaused && ui.feedback && !lastFeedback) {
+      ui.feedback.textContent = 'Paused. Your try is waiting.';
+    }
+    if (view) return view;
+  }
+
+  function pauseLesson() {
+    const view = player.view();
+    if (player.pauseTake && (usesClockTake(id) || view.useClock)) {
+      const result = player.pauseTake();
+      lastFeedback = result?.message || player.lessonSpec.copy.feedback.paused || 'Paused. Not a miss.';
+    } else {
+      lastFeedback = 'Paused. Your try is waiting.';
+    }
+    stopDemo();
+    narrator.cancel();
+    writePause({ lessonId: id, phase: view.phase, takeWasLive: Boolean(view.takeLive || view.takePaused) });
+    lessonPaused = true;
+    paint();
+  }
+
+  function resumeLesson() {
+    const view = player.view();
+    if (player.resumeTake && (usesClockTake(id) || view.useClock || view.takePaused)) {
+      const result = player.resumeTake();
+      lastFeedback = result?.message || 'Back. Your try is waiting.';
+    } else {
+      lastFeedback = 'Back. Your try is waiting.';
+    }
+    clearPause();
+    lessonPaused = false;
+    paint();
+  }
+
+  function exitLesson() {
+    const view = player.view();
+    writePause({ lessonId: id, phase: view.phase, takeWasLive: Boolean(view.takeLive || view.takePaused) });
+    stopDemo();
+    narrator.cancel();
+    window.location.href = '/learn/';
   }
 
   function hintNotes(view) {
@@ -1384,6 +1502,17 @@ function startLesson(id) {
   });
 
   restartButton.addEventListener('click', confirmRestart);
+  if (pauseButton) pauseButton.addEventListener('click', pauseLesson);
+  if (exitButton) exitButton.addEventListener('click', exitLesson);
+  if (resumeButton) resumeButton.addEventListener('click', resumeLesson);
+  document.querySelector('#pause-resume')?.addEventListener('click', resumeLesson);
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    if (event.target && ['INPUT', 'TEXTAREA'].includes(event.target.tagName)) return;
+    event.preventDefault();
+    if (lessonPaused) resumeLesson();
+    else pauseLesson();
+  });
   helpButton.addEventListener('click', () => {
     if (player.requestHelp) player.requestHelp();
     else player.setHints(true);
