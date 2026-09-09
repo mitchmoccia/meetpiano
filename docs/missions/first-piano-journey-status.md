@@ -18,7 +18,8 @@ Single active-slice board. Update this file at the start and end of each slice.
 
 ## Notes
 
-- Recreated on current `main` after Mitch merged #6 / #7 / #9. Draft PR targets `main`, not the old stacked bases.
+- Recreated on current `main` after Mitch merged #6 / #7 / #9. Draft PR targets `main`, not the old stacked bases. This slice did not re-merge those PRs.
+- Copyright footer from `main` @ `05ba06a8df48898f9e66a2f1bf832232abe0950e` (PR #8) is an ancestor of the `3da09b9` base. `dist/js/copyright.js` and the `/` + `/learn` footer markup (`data-copyright-year`, Xpancom, LLC) are unchanged from that commit.
 - Canonical hosting is a single Vercel project `meetpiano` plus `https://meetpiano.app`. Live `/learn` already serves First Notes + Rhythm Club + Read and play + evidence lanes + Xpancom copyright.
 - `/learn` is the journey hub: First Notes (L01–L04), Rhythm Club (L05–L08), Read and play (L09–L12), and Left hand (L13–L16).
 - Unlock: L13 after L12 Independent; L14 after L13 Practiced; L15 after L14 Practiced; L16 after L15 Independent. No buttons to L17+.
