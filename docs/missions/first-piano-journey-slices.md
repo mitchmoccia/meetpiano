@@ -276,6 +276,7 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 | Depends on | MP-08 |
 | Branch | `piany/mp-09-expression-recital` |
 | Base | `piany/mp-08-together` @ `898e84b4bafdb40c77dbad9a9ab36fb42ecba0f7` |
+| PR | https://github.com/mitchmoccia/meetpiano/pull/12 (draft into `piany/mp-08-together`) |
 
 **Learner outcome.** After Together is Independent on this device, a beginner can shape a walk quieter then stronger (L21), choose an ending without one melody being labeled correct (L22), practice a named job that keeps notes and rhythm apart (L23), and share a first recital with no glowing keys (L24). Velocity feedback is used only when the input sent velocity. Technique is never inferred. A share can finish through wobbles. All 24 lessons are authored and reachable when prerequisites are met.
 
