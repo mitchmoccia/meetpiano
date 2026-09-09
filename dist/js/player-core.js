@@ -77,7 +77,8 @@ export function createRuntime({ progress, lessonSpec }) {
       type,
       expected: extra.expected ?? null,
       heard: extra.heard ?? null,
-      match: extra.match ?? null
+      match: extra.match ?? null,
+      heardVelocity: Number.isFinite(extra.heardVelocity) ? extra.heardVelocity : null
     });
     if (attempt.events.length > 40) attempt.events = attempt.events.slice(-40);
   }
@@ -152,8 +153,10 @@ export function createRuntime({ progress, lessonSpec }) {
     if (fields.posture != null) attempt.adultObserved.posture = Boolean(fields.posture);
     if (fields.fingering != null) attempt.adultObserved.fingering = Boolean(fields.fingering);
     if (fields.hand != null) attempt.adultObserved.hand = Boolean(fields.hand);
+    if (fields.listened != null) attempt.adultObserved.listened = Boolean(fields.listened);
+    if (fields.selfHeard != null) attempt.adultObserved.selfHeard = Boolean(fields.selfHeard);
     if (typeof fields.note === 'string') attempt.adultObserved.note = fields.note.slice(0, 160);
-    if (fields.posture || fields.fingering || fields.hand || fields.note) markExplored();
+    if (fields.posture || fields.fingering || fields.hand || fields.listened || fields.selfHeard || fields.note) markExplored();
     persist();
   }
 

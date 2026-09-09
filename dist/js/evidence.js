@@ -33,6 +33,13 @@ export function togetherHonesty(inputMode) {
   return 'On-screen or computer keys are an exploration stand-in. They are not proof that two hands coordinated at a piano.';
 }
 
+export function expressionHonesty(inputMode) {
+  if (inputMode === 'midi') {
+    return 'Heard over MIDI. Pitch, time, and velocity if the keyboard sent it. Not technique, and not a hardware certification.';
+  }
+  return 'On-screen or computer keys can show which note and when. They cannot show quiet versus strong, and they are not a piano-action proof.';
+}
+
 export function emptyEvidenceLanes() {
   return emptyLanes();
 }
@@ -128,6 +135,16 @@ export function skillCapForAttempt(skillId, attempt, granted) {
   if (next === 'retained' && !canAutoRetain(skillId)) next = 'independent';
   if (skillId === 'S-REPLAY' && granted !== 'retained') next = granted === 'independent' ? 'practiced' : granted;
   if (skillId === 'S-REPLAY' && granted === 'retained') next = 'retained';
+  if (skillId === 'S-DYNAMIC' && (next === 'independent' || next === 'retained')) {
+    const vel = attempt?.restore?.dynamicsPassed === true;
+    const heard = attempt?.adultObserved?.listened === true;
+    if (!vel && !heard) next = 'practiced';
+  }
+  if (skillId === 'S-SHARE' && (next === 'independent' || next === 'retained')) {
+    const finished = attempt?.restore?.finishedThrough === true;
+    const heard = attempt?.adultObserved?.listened === true;
+    if (!finished || !heard) next = 'practiced';
+  }
   return next;
 }
 

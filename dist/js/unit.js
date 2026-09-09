@@ -10,6 +10,8 @@ export const LEFT_UNIT_ID = 'left-hand';
 export const LEFT_UNIT_TITLE = 'Left hand';
 export const TOGETHER_UNIT_ID = 'together';
 export const TOGETHER_UNIT_TITLE = 'Together';
+export const EXPRESSION_UNIT_ID = 'expression';
+export const EXPRESSION_UNIT_TITLE = 'Expression';
 export const CURRICULUM_VERSION = 'beginner-v1';
 
 const EVIDENCE_RANK = { explored: 1, practiced: 2, independent: 3, retained: 4 };
@@ -189,7 +191,42 @@ export const TOGETHER_LESSONS = [
   }
 ];
 
-export const JOURNEY_LESSONS = [...FIRST_NOTES_LESSONS, ...RHYTHM_CLUB_LESSONS, ...READ_AND_PLAY_LESSONS, ...LEFT_HAND_LESSONS, ...TOGETHER_LESSONS];
+export const EXPRESSION_LESSONS = [
+  {
+    lessonId: 'L21',
+    title: 'Shape the sound',
+    blurb: 'Same walk. Quieter, then stronger.',
+    unlocksAfter: 'L20',
+    unlockNeeds: 'independent',
+    unitId: EXPRESSION_UNIT_ID
+  },
+  {
+    lessonId: 'L22',
+    title: 'Make it yours',
+    blurb: 'Pick an ending. Both choices count.',
+    unlocksAfter: 'L21',
+    unlockNeeds: 'practiced',
+    unitId: EXPRESSION_UNIT_ID
+  },
+  {
+    lessonId: 'L23',
+    title: 'Practice with a purpose',
+    blurb: 'Notes, rhythm, or the sticky spot.',
+    unlocksAfter: 'L22',
+    unlockNeeds: 'practiced',
+    unitId: EXPRESSION_UNIT_ID
+  },
+  {
+    lessonId: 'L24',
+    title: 'First recital',
+    blurb: 'No glow. Finish even through wobbles.',
+    unlocksAfter: 'L23',
+    unlockNeeds: 'independent',
+    unitId: EXPRESSION_UNIT_ID
+  }
+];
+
+export const JOURNEY_LESSONS = [...FIRST_NOTES_LESSONS, ...RHYTHM_CLUB_LESSONS, ...READ_AND_PLAY_LESSONS, ...LEFT_HAND_LESSONS, ...TOGETHER_LESSONS, ...EXPRESSION_LESSONS];
 
 export function evidenceRank(state) {
   return EVIDENCE_RANK[state] || 0;
@@ -224,12 +261,20 @@ export function isTogetherLesson(lessonId) {
   return TOGETHER_LESSONS.some((item) => item.lessonId === lessonId);
 }
 
+export function isExpressionLesson(lessonId) {
+  return EXPRESSION_LESSONS.some((item) => item.lessonId === lessonId);
+}
+
 export function usesRhythmTake(lessonId) {
   return isRhythmLesson(lessonId) || lessonId === 'L16';
 }
 
 export function usesTogetherTake(lessonId) {
   return isTogetherLesson(lessonId);
+}
+
+export function usesExpressionTake(lessonId) {
+  return isExpressionLesson(lessonId);
 }
 
 export function usesClockTake(lessonId) {
@@ -241,6 +286,7 @@ export function unitTitleFor(lessonId) {
   if (isReadLesson(lessonId)) return READ_UNIT_TITLE;
   if (isLeftLesson(lessonId)) return LEFT_UNIT_TITLE;
   if (isTogetherLesson(lessonId)) return TOGETHER_UNIT_TITLE;
+  if (isExpressionLesson(lessonId)) return EXPRESSION_UNIT_TITLE;
   return UNIT_TITLE;
 }
 
@@ -271,6 +317,7 @@ export function parseUnitId(value) {
   if (id === READ_UNIT_ID || id === 'read') return READ_UNIT_ID;
   if (id === LEFT_UNIT_ID || id === 'left') return LEFT_UNIT_ID;
   if (id === TOGETHER_UNIT_ID || id === 'hands-together') return TOGETHER_UNIT_ID;
+  if (id === EXPRESSION_UNIT_ID || id === 'recital' || id === 'first-recital') return EXPRESSION_UNIT_ID;
   return null;
 }
 
@@ -302,7 +349,8 @@ export function unitView(store) {
   const readCards = mapCards(READ_AND_PLAY_LESSONS, store);
   const leftCards = mapCards(LEFT_HAND_LESSONS, store);
   const togetherCards = mapCards(TOGETHER_LESSONS, store);
-  const all = [...firstCards, ...rhythmCards, ...readCards, ...leftCards, ...togetherCards];
+  const expressionCards = mapCards(EXPRESSION_LESSONS, store);
+  const all = [...firstCards, ...rhythmCards, ...readCards, ...leftCards, ...togetherCards, ...expressionCards];
   const continueCard = pickContinue(all);
   return {
     unitId: UNIT_ID,
@@ -343,6 +391,13 @@ export function unitView(store) {
         kicker: 'WORLD · TOGETHER',
         unlocked: isLessonUnlocked(store, 'L17'),
         cards: togetherCards
+      },
+      {
+        unitId: EXPRESSION_UNIT_ID,
+        title: EXPRESSION_UNIT_TITLE,
+        kicker: 'WORLD · EXPRESSION',
+        unlocked: isLessonUnlocked(store, 'L21'),
+        cards: expressionCards
       }
     ],
     continueLessonId: continueCard?.lessonId || 'L01'

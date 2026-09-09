@@ -28,7 +28,12 @@ import { L17 } from './lessons/l17.js';
 import { L18 } from './lessons/l18.js';
 import { L19 } from './lessons/l19.js';
 import { L20 } from './lessons/l20.js';
+import { L21 } from './lessons/l21.js';
+import { L22 } from './lessons/l22.js';
+import { L23 } from './lessons/l23.js';
+import { L24 } from './lessons/l24.js';
 import { createTogetherLessonPlayer } from './lessons/together-play.js';
+import { createExpressionLessonPlayer } from './lessons/expression-play.js';
 import { blackGroupId, groupKind } from './piano.js';
 import { assessHeardPitch, resolveOctavePolicy, shouldCountTowardProgress } from './assess.js';
 
@@ -501,6 +506,10 @@ export function createPlayer({ progress, lessonId = 'L01', clock, now } = {}) {
   if (lessonId === 'L18') return createTogetherLessonPlayer({ progress, lessonSpec: L18, clock, now });
   if (lessonId === 'L19') return createTogetherLessonPlayer({ progress, lessonSpec: L19, clock, now });
   if (lessonId === 'L20') return createTogetherLessonPlayer({ progress, lessonSpec: L20, clock, now });
+  if (lessonId === 'L21') return createExpressionLessonPlayer({ progress, lessonSpec: L21, clock, now });
+  if (lessonId === 'L22') return createExpressionLessonPlayer({ progress, lessonSpec: L22, clock, now });
+  if (lessonId === 'L23') return createExpressionLessonPlayer({ progress, lessonSpec: L23, clock, now });
+  if (lessonId === 'L24') return createExpressionLessonPlayer({ progress, lessonSpec: L24, clock, now });
   return createL01Player({ progress });
 }
 

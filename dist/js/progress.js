@@ -57,7 +57,8 @@ function sanitizeEvent(event) {
     type,
     expected: event.expected ?? null,
     heard: typeof event.heard === 'number' ? event.heard : null,
-    match: typeof event.match === 'boolean' ? event.match : null
+    match: typeof event.match === 'boolean' ? event.match : null,
+    heardVelocity: Number.isFinite(event.heardVelocity) ? event.heardVelocity : null
   };
 }
 
@@ -99,8 +100,25 @@ function sanitizeRestore(restore) {
     handFocus: src.handFocus === 'left' || src.handFocus === 'right' || src.handFocus === 'both' ? src.handFocus : null,
     preparedLeft: src.preparedLeft === true,
     preparedRight: src.preparedRight === true,
-    passage: src.passage === 'head' ? 'head' : 'all'
+    passage: src.passage === 'head' ? 'head' : 'all',
+    choiceId: src.choiceId === 'home' || src.choiceId === 'open' || src.choiceId === 'turn' ? src.choiceId : null,
+    purpose: src.purpose === 'notes' || src.purpose === 'rhythm' || src.purpose === 'spot' ? src.purpose : null,
+    recitalPiece: src.recitalPiece === 'wave' || src.recitalPiece === 'walk' || src.recitalPiece === 'yours' ? src.recitalPiece : null,
+    velocities: sanitizeNumberList(src.velocities),
+    onsets: sanitizeNumberList(src.onsets),
+    velocityCapable: src.velocityCapable === true,
+    dynamicsPassed: src.dynamicsPassed === true,
+    notesPassed: src.notesPassed === true,
+    rhythmPassed: src.rhythmPassed === true,
+    finishedThrough: src.finishedThrough === true,
+    selfHeard: src.selfHeard === true,
+    yoursPhrase: sanitizeNoteList(src.yoursPhrase)
   };
+}
+
+function sanitizeNumberList(value) {
+  if (!Array.isArray(value)) return [];
+  return value.filter((item) => Number.isFinite(item)).slice(-24);
 }
 
 function sanitizeSkillIds(value, lessonId) {
@@ -225,6 +243,8 @@ export function validateAttempt(value, lessonId) {
       posture: adult.posture === true,
       fingering: adult.fingering === true,
       hand: adult.hand === true,
+      listened: adult.listened === true,
+      selfHeard: adult.selfHeard === true,
       note: typeof adult.note === 'string' ? adult.note.slice(0, 160) : undefined
     },
     octavePolicyUsed: value.octavePolicyUsed || 'pitch-class',

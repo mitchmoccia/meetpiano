@@ -42,8 +42,12 @@ Skills are identifiers. A lesson lists which ones it needs and which one it intr
 | `S-KEEP-GOING` | Continue a short together walk without stopping after the first pair | App: pitch and time vs the stored walk; a wrong tap does not skip later pairs |
 | `S-SMALL-HARMONY` | Play a named two-note color (C with E, C with G) | App: pitch and time for the stored pairs; blend is not certified |
 | `S-LITTLE-PIECE` | Play a short original piece with a held bass, a walk, and a landing | App: pitch, time, and named hold length; not a recital |
+| `S-DYNAMIC` | Play the same short pattern quieter, then stronger | App: relative velocity only when the input sent it; otherwise adult-listened. Never technique |
+| `S-MAKE-YOURS` | Choose an ending and play the start plus that ending | App: sequence vs the chosen ending. Other valid endings are other choices, not “the wrong song” |
+| `S-PURPOSE` | Practice a named job (notes, rhythm, or a sticky spot), then the whole | App: notes and rhythm as separate lanes |
+| `S-SHARE` | Finish a chosen piece for a grown-up listener, including through wobbles | App: finished-through; adult-observed listen. Notes/rhythm reported separately. Not a jury |
 
-Rhythm Club (L05–L08) adds `S-PULSE`, `S-LONG-SHORT`, `S-REST`, and `S-RHYTHM-PHRASE`. Read and play (L09–L12) adds `S-FIND-FG`, `S-STEP-SKIP`, `S-STAFF-MAP`, and `S-READ-PHRASE`. Left hand (L13–L16) adds `S-LH-C`, `S-FINGER-LH`, `S-HAND-CHOICE`, `S-BASS-MAP`, `S-TURNS`, and `S-TWO-PULSE`. Together (L17–L20) adds `S-TOGETHER`, `S-KEEP-GOING`, `S-SMALL-HARMONY`, and `S-LITTLE-PIECE`. Later leftover outlines add named fingers 1–5 as a later review, the C five-note path, a later three-black-key house, dynamics, smooth/separate, held-bass review, question/answer review, and memory. Those leftover skill IDs wait for a later slice. Long/short first teaching stays in L06. Left-hand C and turns stay in L13–L16. Two-part pulse first teaching stays in L16.
+Rhythm Club (L05–L08) adds `S-PULSE`, `S-LONG-SHORT`, `S-REST`, and `S-RHYTHM-PHRASE`. Read and play (L09–L12) adds `S-FIND-FG`, `S-STEP-SKIP`, `S-STAFF-MAP`, and `S-READ-PHRASE`. Left hand (L13–L16) adds `S-LH-C`, `S-FINGER-LH`, `S-HAND-CHOICE`, `S-BASS-MAP`, `S-TURNS`, and `S-TWO-PULSE`. Together (L17–L20) adds `S-TOGETHER`, `S-KEEP-GOING`, `S-SMALL-HARMONY`, and `S-LITTLE-PIECE`. Expression (L21–L24) adds `S-DYNAMIC`, `S-MAKE-YOURS`, `S-PURPOSE`, and `S-SHARE`. Later leftover outlines (another house, middle C, long tune, smooth/separate, named fingers, held-C review) wait for a later slice. Long/short first teaching stays in L06. Left-hand C and turns stay in L13–L16. Two-part pulse first teaching stays in L16. Dynamics first teaching is L21. A first share/recital is L24.
 
 ## Input modes
 
@@ -1400,9 +1404,248 @@ Home piece after a named pause. Pass → `S-LITTLE-PIECE` may move to Retained.
 
 ---
 
-## Later leftovers and L21–L24 — outlines
+## L21–L24 — Expression and first recital (full contracts)
 
-IDs stay stable. Together owns L17–L20. These leftover titles are **not** bound to L17–L20.
+These expand the First Piano Journey sequence after Together. Checkpoint B: L01–L24 are fully authored and reachable when prerequisites on this device are met.
+
+Earlier leftover titles that once sat on L21–L24 (question and answer, play from memory, put it together, share the journey) are **rebound** here to Expression skills. Neighborhood leftovers (later house, middle C, long tune, smooth/separate, named fingers, held-C review) stay leftover and are **not** bound to L21–L24.
+
+Velocity-based quiet/strong feedback is used **only** when the input sent velocity (typically MIDI). Touch and computer keys cannot invent a dynamics score. The app never infers wrist, weight, or finger. Recital mode hides glowing-key prompts and lets a share finish through mistakes. Results list notes, rhythm, assistance, self-observation, and a later transfer check as separate lanes.
+
+---
+
+## L21 — Shape the sound
+
+| Field | Value |
+| --- | --- |
+| Stable ID | `L21` |
+| Title | Shape the sound |
+| Curriculum version | `beginner-v1` |
+| Unit | Expression |
+| Prerequisites | `S-LITTLE-PIECE` (Complete little piece Independent on this device) |
+| Primary new skill | `S-DYNAMIC` |
+| Octave policy | Guided may accept pitch-class. Independent and transfer use **exact pitch**. |
+
+### Short explanation
+
+The same short walk can feel different. **Soft Walk** is MeetPiano’s own C–D–E–C. Play it quieter. Play it again stronger. Relative only.
+
+**Home pattern:** C4–D4–E4–C4, then the same letters again.  
+**Transfer pattern:** E4–D4–C4–C4, then the same letters again.
+
+### Visual demo
+
+- Treble staff. Same four letters twice.
+- Hear whispered Soft Walk, then spoken Soft Walk.
+
+### Replayable audio notes
+
+- Soft Walk at a quieter synth velocity, then a stronger one. Web Audio only. Original.
+
+### Guided practice (hints optional)
+
+1. Hear quieter, then stronger.
+2. Play Soft Walk twice.
+3. Grown-up prompt when velocity is missing: “We heard quieter, then stronger.”
+4. Hear the cousin once.
+
+### Independent check (no hints)
+
+Soft Walk twice. MIDI may compare relative velocity. Touch cannot invent dynamics. Independent needs the contrast **or** the grown-up listen mark.
+
+### Transfer pattern
+
+E–D–C–C quieter, then stronger. A copied climb does not count.
+
+### Remediation for a common error
+
+**Error:** Playing two walks the same strength, or strong then quiet.  
+**Response:** “Same letters. First time softer. Second time stronger. The app will not guess your wrist.”
+
+### Later review
+
+Home walk after a named pause.
+
+### Equipment, alternatives, cannot observe
+
+- Required: C, D, and E playable.
+- Alternatives: grown-up listens when velocity is missing.
+- Cannot observe: technique, studio-grade loudness.
+
+---
+
+## L22 — Make it yours
+
+| Field | Value |
+| --- | --- |
+| Stable ID | `L22` |
+| Title | Make it yours |
+| Curriculum version | `beginner-v1` |
+| Unit | Expression |
+| Prerequisites | `S-DYNAMIC` |
+| Primary new skill | `S-MAKE-YOURS` |
+| Octave policy | Guided may accept pitch-class. Independent and transfer use **exact pitch**. |
+
+### Short explanation
+
+Start C–D–E. Choose an ending: land on C, open on G, or turn back D–C. Each ending is a real piece. The app does not crown one melody as correct.
+
+**Home start:** C4–D4–E4.  
+**Transfer start:** E4–D4–C4 with stay-on-C, open-on-G, or turn-up D–E.
+
+### Visual demo
+
+- Three honest endings. Same start.
+
+### Replayable audio notes
+
+- Land, open, and turn. Original. Web Audio only.
+
+### Guided practice (hints optional)
+
+1. Pick an ending.
+2. Play the start plus that ending.
+3. Hear the downward start once.
+
+### Independent check (no hints)
+
+Pick, then play. Another valid ending is a different choice, not “wrong music.”
+
+### Transfer pattern
+
+New start. Same kind of choice.
+
+### Remediation for a common error
+
+**Error:** Playing a different valid ending than the button pressed.  
+**Response:** “That is a real ending. Switch the button, or play the one you picked.”
+
+### Later review
+
+Pick again after a named pause.
+
+### Equipment, alternatives, cannot observe
+
+- Required: C, D, E, and G. No stretch past G.
+- Cannot observe: which ending is “pretty.”
+
+---
+
+## L23 — Practice with a purpose
+
+| Field | Value |
+| --- | --- |
+| Stable ID | `L23` |
+| Title | Practice with a purpose |
+| Curriculum version | `beginner-v1` |
+| Unit | Expression |
+| Prerequisites | `S-MAKE-YOURS` |
+| Primary new skill | `S-PURPOSE` |
+| Octave policy | Guided may accept pitch-class. Independent and transfer use **exact pitch**. Rhythm purpose uses the shared audio clock. |
+
+### Short explanation
+
+Name the job: notes (Little Wave), rhythm (Soft Walk on the clock), or the sticky last three (E–D–C). Do that job, then put Little Wave back together. Notes and rhythm stay separate on the result card.
+
+### Visual demo
+
+- Three jobs. Dumping letters is not the rhythm job.
+
+### Replayable audio notes
+
+- Little Wave, Soft Walk on the clock, last three. Original.
+
+### Guided practice (hints optional)
+
+1. Pick a purpose.
+2. Do only that job.
+3. The whole Little Wave.
+4. Hear the cousin once.
+
+### Independent check (no hints)
+
+Same purpose, no glow. Notes and rhythm reported separately.
+
+### Transfer pattern
+
+Same kind of job on the cousin wave / downward walk.
+
+### Remediation for a common error
+
+**Error:** Rushing Soft Walk off the clock.  
+**Response:** “The rhythm job wants the heartbeat. Notes are a different line.”
+
+### Later review
+
+Name a job after a named pause.
+
+### Equipment, alternatives, cannot observe
+
+- Required: C, D, and E.
+- Alternatives: slower heartbeat.
+- Cannot observe: whether practice “felt focused.”
+
+---
+
+## L24 — First recital
+
+| Field | Value |
+| --- | --- |
+| Stable ID | `L24` |
+| Title | First recital |
+| Curriculum version | `beginner-v1` |
+| Unit | Expression |
+| Prerequisites | `S-PURPOSE` |
+| Primary new skill | `S-SHARE` |
+| Octave policy | Exact pitch. Recital mode hides helpers. |
+
+### Short explanation
+
+A share, not a jury. Choose Little Wave, Soft Walk, or the L22 ending. Recital mode removes glowing keys. A wobble does not stop the piece. A grown-up marks “we listened all the way through.”
+
+### Visual demo
+
+- Hear the three share options. No contest language.
+
+### Replayable audio notes
+
+- Little Wave and Soft Walk. Original Web Audio. The learner’s chosen ending if stored.
+
+### Guided practice (hints optional)
+
+1. Pick a piece.
+2. One reminder (helpers allowed).
+3. Play through. Finish through mistakes.
+4. Grown-up listen mark. Optional self-observation: “I kept going.”
+
+### Independent check (recital mode)
+
+No glow. Finish the share even if a note is wrong. Independent needs finished-through **and** the listen mark. Notes, rhythm, assistance, and self-observation stay on separate lines.
+
+### Transfer pattern
+
+Share a **different** piece, still no glow.
+
+### Remediation for a common error
+
+**Error:** Stopping after a wobble.  
+**Response:** “The stage does not stop. Keep the next note coming. We still write notes separately.”
+
+### Later review
+
+A later transfer check after a named pause. Pass → `S-SHARE` may move to Retained.
+
+### Equipment, alternatives, cannot observe
+
+- Required: C, D, E, and G if the ending uses G.
+- Alternatives: grown-up listens nearby.
+- Cannot observe: recital readiness, nerves, or a jury score.
+
+---
+
+## Later leftovers — outlines
+
+IDs stay stable. Together owns L17–L20. Expression owns L21–L24. These leftover titles are **not** bound to L17–L24.
 
 ### Later leftover — Three-black-key landmark (later house)
 
@@ -1416,9 +1659,9 @@ When two C keys are available, notice they share a name. Call the meeting C the 
 
 Original 6–8 note tune using C–G, built from steps and one skip. New skill: `S-PHRASE-LONG`.
 
-### Later leftover — Quiet and strong
+### Later leftover — Quiet and strong (later review)
 
-Same short pattern twice: quieter, then stronger. Relative only. New skill: `S-DYNAMIC`.
+Same short pattern twice: quieter, then stronger. First teaching of relative dynamics is **L21**. This leftover is another register or a later review. Review skill: `S-DYNAMIC`.
 
 ### Later leftover — Long notes and short notes
 
@@ -1436,21 +1679,21 @@ Replay a known C–D–E phrase with a specified fingering. App hears pitches; f
 
 Later review of L16. Left hand holds C while right hand walks neighbors. Balance is adult-observed. Review skill: `S-TWO-PULSE` / `S-LH-HOLD`. Not a second first teaching. L20’s held bass is a complete little piece, not this leftover review.
 
-### L21 — Question and answer
+### Later leftover — Question and answer
 
-A two-part idea: a rising or “asking” C–E pattern, then a falling “answer.” New skill: `S-QA`.
+A two-part idea: a rising or “asking” C–E pattern, then a falling “answer.” First musical conversation already lives in L15. Review skill: `S-QA`. Not bound to L21.
 
-### L22 — Play it from memory
+### Later leftover — Play it from memory
 
-Replay L04 Little Wave or L15’s tune with no tiles and no audio lead-in after the first reminder. New skill: `S-MEMORY` (feeds Retained).
+Replay L04 Little Wave or L15’s tune with no tiles and no audio lead-in after the first reminder. Review skill: `S-MEMORY` (feeds Retained). Not bound to L22.
 
-### L23 — Put it together
+### Later leftover — Put it together (later combine)
 
-A short original piece using C–G, one dynamic change, and either turns or a held C. New skill: `S-COMBINE`. L20 already ships one complete little piece; this leftover can add dynamics later.
+A short original piece using C–G, one dynamic change, and either turns or a held C. L20 already ships one complete little piece. L21 already teaches dynamics. Review skill: `S-COMBINE`. Not bound to L23.
 
-### L24 — Share the journey
+### Later leftover — Share the journey (later review)
 
-Learner chooses one piece (L04, L15, L20, or L23) to play for a grown-up. Adult-observed “we listened all the way through.” Review L01–L04 independent prompts. New skill: `S-SHARE`. No jury language.
+A later share of a known piece after Expression’s first recital. Adult-observed “we listened all the way through.” First teaching of a share is **L24**. Review skill: `S-SHARE`. No jury language.
 
 ---
 

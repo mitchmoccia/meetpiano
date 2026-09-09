@@ -1,0 +1,27 @@
+{
+  "softWalk": {
+    "pitches": [60, 62, 64, 60, 60, 62, 64, 60],
+    "durations": ["quarter", "quarter", "quarter", "quarter", "quarter", "quarter", "quarter", "quarter"],
+    "clef": "treble"
+  },
+  "softWalkDown": {
+    "pitches": [64, 62, 60, 60, 64, 62, 60, 60],
+    "durations": ["quarter", "quarter", "quarter", "quarter", "quarter", "quarter", "quarter", "quarter"],
+    "clef": "treble"
+  },
+  "landOnC": {
+    "pitches": [60, 62, 64, 60],
+    "durations": ["quarter", "quarter", "quarter", "quarter"],
+    "clef": "treble"
+  },
+  "openOnG": {
+    "pitches": [60, 62, 64, 67],
+    "durations": ["quarter", "quarter", "quarter", "quarter"],
+    "clef": "treble"
+  },
+  "provenance": {
+    "softWalk": "Original MeetPiano C–D–E–C walk authored for MP-09. Not Little Wave (C–D–E–D–E–D–C) and not a published method piece.",
+    "endings": "Original C–D–E stems with three learner-chosen endings (C, G, D–C). No single melody is labeled correct.",
+    "audio": "Web Audio synthesis only. No third-party recording or licensed commercial track."
+  }
+}

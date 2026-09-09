@@ -85,7 +85,8 @@ function playPattern(take, clock, pattern, { offsetMs = 0, pitches, skipFinalize
 assert(parseLessonId('L05') === 'L05', 'parse L05');
 assert(parseLessonId('L08') === 'L08', 'parse L08');
 assert(parseLessonId('L09') === 'L09', 'L09 is Read and play');
-assert(parseLessonId('L21') == null, 'no L21');
+assert(parseLessonId('L21') === 'L21', 'L21 is Expression');
+assert(RHYTHM_CLUB_LESSONS.every((card) => card.lessonId !== 'L21'), 'Rhythm Club has no L21');
 assert(parseUnitId('rhythm-club') === 'rhythm-club', 'unit id');
 assert(FIRST_NOTES_LESSONS.length === 4, 'First Notes stays L01–L04');
 assert(RHYTHM_CLUB_LESSONS.map((item) => item.lessonId).join() === 'L05,L06,L07,L08', 'Rhythm Club is L05–L08');
@@ -108,7 +109,8 @@ seedLesson(ready, 'L07', 'independent');
 assert(isLessonUnlocked(createProgress(ready).read().store, 'L08'), 'L08 after L07 Independent');
 
 const hub = unitView(createProgress(ready).read().store);
-assert(hub.units.length === 5, 'five worlds');
+assert(hub.units.length === 6, 'six worlds');
+assert(hub.units[5].cards.every((card) => ['L21', 'L22', 'L23', 'L24'].includes(card.lessonId)), 'Expression is L21–L24');
 assert(hub.units[4].cards.every((card) => ['L17', 'L18', 'L19', 'L20'].includes(card.lessonId)), 'Together is L17–L20');
 assert(hub.units[0].cards.length === 4 && hub.units[1].cards.length === 4, 'four cards each on First Notes and Rhythm Club');
 assert(hub.units[1].unlocked, 'Rhythm Club unlocked after First Notes');
