@@ -182,6 +182,22 @@ function guidedTitles(lessonId, phase) {
   if (lessonId === 'L16' && phase === 'transfer') {
     return { perform: 'Hold, walk down', done: 'Saved' };
   }
+  if (['L17', 'L18', 'L19', 'L20'].includes(lessonId) && phase === 'guided') {
+    return {
+      left: 'Just the left room',
+      right: 'Just the right room',
+      loop: 'A small loop',
+      together: 'Both rooms together',
+      cousin: 'A cousin — just listening',
+      done: 'Ready for a quiet check'
+    };
+  }
+  if (['L17', 'L18', 'L19', 'L20'].includes(lessonId) && phase === 'independent') {
+    return { perform: 'Both rooms, no glow', done: 'Ready for one more pattern' };
+  }
+  if (['L17', 'L18', 'L19', 'L20'].includes(lessonId) && phase === 'transfer') {
+    return { perform: 'A new together pattern', done: 'Saved' };
+  }
   return {};
 }
 
@@ -252,15 +268,15 @@ export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit, onEx
       el('span', { className: 'game-xp' }, 'Device-local only')
     ),
     el('section', { className: 'unit-intro' },
-      el('p', { className: 'mission-eyebrow' }, 'FOUR WORLDS · SAME DEVICE'),
-      el('h1', {}, 'First Notes, Rhythm Club, Read and play, then Left hand.'),
-      el('p', {}, 'Explore, find C, walk the neighbors, play Little Wave. Tap with a heartbeat. Read F, G, and a little tune. Then meet the left hand, read the bass staff, take turns, and share one pulse. The next activity unlocks when this device is ready. Nothing here is a teacher grade.')
+      el('p', { className: 'mission-eyebrow' }, 'FIVE WORLDS · SAME DEVICE'),
+      el('h1', {}, 'First Notes, Rhythm Club, Read and play, Left hand, then Together.'),
+      el('p', {}, 'Explore, find C, walk the neighbors, play Little Wave. Tap with a heartbeat. Read F, G, and a little tune. Meet the left hand. Then play two rooms on the same click. The next activity unlocks when this device is ready. Nothing here is a teacher grade.')
     ),
     nextSessionCard(rec, onContinue),
     extraContinue,
     ...view.units.map((unit) => unitSection(unit, onOpen, focusUnit)),
     portabilityCard(onExport, onImport),
-    el('p', { className: 'unit-limit' }, 'Playable lessons are L01–L16. Later lessons are not here yet — there are no buttons to them. MIDI reports pitch and time only. A grown-up marks which hand. Export stays on the browsers you control. There is no account.')
+    el('p', { className: 'unit-limit' }, 'Playable lessons are L01–L20. Later lessons are not here yet — there are no buttons to L21 or beyond. On-screen keys are an exploration stand-in, not proof of hand coordination. MIDI reports pitch and time only. A grown-up marks which hand. Export stays on the browsers you control. There is no account.')
   ].filter(Boolean));
 }
 
@@ -358,6 +374,7 @@ function evidenceLaneList(lanes) {
 }
 
 function lockNoteForUnit(unitId) {
+  if (unitId === 'together') return 'Together unlocks when Two parts one pulse is Independent on this device.';
   if (unitId === 'left-hand') return 'Left hand unlocks when Read a little tune is Independent on this device.';
   if (unitId === 'read-and-play') return 'Read and play unlocks when Notes with a beat is Independent on this device.';
   return 'Rhythm Club unlocks when First little tune is Independent on this device.';

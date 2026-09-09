@@ -26,6 +26,13 @@ export function sourceHonesty(inputMode) {
   return 'Saved on this device only.';
 }
 
+export function togetherHonesty(inputMode) {
+  if (inputMode === 'midi') {
+    return 'Heard over MIDI. Pitch and time only — not proof of hand coordination, and not a hardware certification.';
+  }
+  return 'On-screen or computer keys are an exploration stand-in. They are not proof that two hands coordinated at a piano.';
+}
+
 export function emptyEvidenceLanes() {
   return emptyLanes();
 }

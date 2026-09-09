@@ -96,7 +96,10 @@ function sanitizeRestore(restore) {
     easierWork: src.easierWork === true,
     sessionCheck: src.sessionCheck === true,
     patternId: typeof src.patternId === 'string' && PATTERN_IDS.has(src.patternId) ? src.patternId : null,
-    handFocus: src.handFocus === 'left' || src.handFocus === 'right' || src.handFocus === 'both' ? src.handFocus : null
+    handFocus: src.handFocus === 'left' || src.handFocus === 'right' || src.handFocus === 'both' ? src.handFocus : null,
+    preparedLeft: src.preparedLeft === true,
+    preparedRight: src.preparedRight === true,
+    passage: src.passage === 'head' ? 'head' : 'all'
   };
 }
 
