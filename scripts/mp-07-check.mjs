@@ -87,7 +87,8 @@ function seedThrough(storage, lastId, lastState = 'independent') {
 
 assert(parseLessonId('L13') === 'L13', 'parse L13');
 assert(parseLessonId('L16') === 'L16', 'parse L16');
-assert(parseLessonId('L17') == null, 'no L17');
+assert(parseLessonId('L17') === 'L17', 'L17 is Together');
+assert(parseLessonId('L21') == null, 'no L21');
 assert(parseUnitId('left-hand') === 'left-hand', 'unit id');
 assert(FIRST_NOTES_LESSONS.length === 4, 'First Notes stays L01–L04');
 assert(RHYTHM_CLUB_LESSONS.map((item) => item.lessonId).join() === 'L05,L06,L07,L08', 'Rhythm Club stays L05–L08');
@@ -122,10 +123,11 @@ seedLesson(ready, 'L15', 'independent');
 assert(isLessonUnlocked(createProgress(ready).read().store, 'L16'), 'L16 after L15 Independent');
 
 const hub = unitView(createProgress(ready).read().store);
-assert(hub.units.length === 4, 'four worlds');
+assert(hub.units.length === 5, 'five worlds');
 assert(hub.units[3].unlocked, 'Left hand unlocked after Read and play');
 assert(hub.units[3].cards.every((card) => ['L13', 'L14', 'L15', 'L16'].includes(card.lessonId)), 'left cards');
-assert(!hub.units.some((unit) => unit.cards.some((card) => card.lessonId === 'L17')), 'no L17 cards');
+assert(!hub.units[3].cards.some((card) => card.lessonId === 'L17'), 'Left hand has no L17');
+assert(!hub.units[4].unlocked, 'Together locked until L16 Independent');
 
 const l13 = createPlayer({ progress: createProgress(memoryStorage()), lessonId: 'L13' });
 l13.advanceFrom('explanation');
