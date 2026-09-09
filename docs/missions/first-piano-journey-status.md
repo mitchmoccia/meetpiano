@@ -5,26 +5,27 @@ Single active-slice board. Update this file at the start and end of each slice.
 | Field | Value |
 | --- | --- |
 | Mission | First Piano Journey |
-| Active slice | **MP-06** Device-local progress and next-session recommendation |
+| Active slice | **MP-07** Left hand L13–L16 |
 | Slice status | **working** |
-| Run ID | `piany-mp06-20260909-0000UTC` |
-| Branch | `piany/mp-06-adaptive-next` |
-| Base | `piany/mp-05-read-and-play` @ `54d0d0c96f2e0d2b15c0992fa5f884b49c62da87` |
-| Start time | 2026-09-09 01:13 UTC |
-| Last evidence | [`../evidence/first-piano-journey/mp-06.md`](../evidence/first-piano-journey/mp-06.md) (filled 2026-09-09; product `2ed919c`, checks `fad3d25`, PR #9) |
+| Run ID | `piany-mp07-20260909-0000UTC` |
+| Branch | `piany/mp-07-left-hand` |
+| Base | `main` @ `3da09b909fc54aaf54f0be8b00b374c3adf5cf5f` |
+| Start time | 2026-09-09 01:41 UTC |
+| Last evidence | [`../evidence/first-piano-journey/mp-07.md`](../evidence/first-piano-journey/mp-07.md) |
 | Blockers | Physical MIDI keyboard not available in this environment — hardware check unverified |
-| Next action | Mitch review of draft PR into `piany/mp-05-read-and-play`. Do not merge or deploy production from this slice. |
-| Next eligible slice | MP-07 input labels, MP-08 leftover neighborhood, or MP-11 closeout |
+| Next action | Mitch review of draft PR into `main`. Do not merge or deploy production from this slice. |
+| Next eligible slice | MP-08 leftover neighborhood or MP-11 closeout |
 
 ## Notes
 
-- Stacked on `piany/mp-05-read-and-play` @ `54d0d0c`. Draft PR targets that branch, not `main`.
-- Canonical hosting is a single Vercel project `meetpiano` plus `https://meetpiano.app`. `https://meetpiano.app/learn` already serves the First Notes hub on current `main` (HTTP 200). The former `meetpiano-app` project was deleted.
-- `/learn` is the journey hub: First Notes (L01–L04), Rhythm Club (L05–L08), and Read and play (L09–L12). L01 remains at `/learn/?lesson=L01`.
-- Unlock: L09 after L08 Independent; L10 after L09 Practiced; L11 after L10 Practiced; L12 after L11 Independent. No buttons to L13+.
-- Staff pitch, clef, duration, demo audio, and expected keys agree. Independent/transfer that name a preview register use exact MIDI pitch.
-- Progress key: `localStorage` `meetpiano:beginner-v1`. Device-local only. Demo playback cannot earn progress. Help/replay do not erase saved evidence.
-- MP-06: practiced / independent / retained are separate lanes. New visits recommend another pattern. Touch cannot become MIDI verified. Export/import is device-local.
+- Recreated on current `main` after Mitch merged #6 / #7 / #9. Draft PR targets `main`, not the old stacked bases.
+- Canonical hosting is a single Vercel project `meetpiano` plus `https://meetpiano.app`. Live `/learn` already serves First Notes + Rhythm Club + Read and play + evidence lanes + Xpancom copyright.
+- `/learn` is the journey hub: First Notes (L01–L04), Rhythm Club (L05–L08), Read and play (L09–L12), and Left hand (L13–L16).
+- Unlock: L13 after L12 Independent; L14 after L13 Practiced; L15 after L14 Practiced; L16 after L15 Independent. No buttons to L17+.
+- Both clefs and both keyboard rooms can show. MIDI reports pitch and time only. Hand choice is adult-observed.
+- A learner may practice one hand and return without losing the step.
+- Progress key: `localStorage` `meetpiano:beginner-v1`. Device-local only. Demo playback cannot earn progress.
+- Copyright footer (`dist/js/copyright.js`, `data-copyright-year`, Xpancom, LLC) is preserved from `main`.
 - Branch `cursor/setup-cloud-agent-env-d108` was left untouched.
 - Do not change Vercel projects, domains, or DNS.
 - Production deploy is not part of this slice. Mitch approval is required to merge or deploy production.
