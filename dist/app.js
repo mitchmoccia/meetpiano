@@ -8,8 +8,8 @@
     { title: 'A melody\nof your own.', eyebrow: 'MISSION 03 · YOUR LITTLE FINALE', description: 'Ready for a little more? Play E, D, C, D, E. Listen first if you like. This time, the key hints take a break.', notes: [64,62,60,62,64], hints: false, success: 'That was your first little melody! +20 XP' }
   ];
   const worlds = [
-    { kicker:'WORLD 01 · THE BEGINNING',title:'A first note worth celebrating.',description:'Discover the keys, hear the difference, and put your first little melody together. Confidence starts here.',skills:['Finding notes','Listening','First melodies'] },
-    { kicker:'WORLD 02 · FIND YOUR GROOVE',title:'You’re the heartbeat of the band.',description:'Clap it, hear it, play it. Build a steady beat and keep the music moving, even when the backing track takes a little break.',skills:['Steady pulse','Rhythm patterns','Playing in time'] },
+    { kicker:'WORLD 01 · THE BEGINNING',title:'A first note worth celebrating.',description:'Discover the keys, hear the difference, and put your first little melody together. Confidence starts here.',skills:['Finding notes','Listening','First melodies'],learnHref:'/learn/',learnLabel:'Open First Notes' },
+    { kicker:'WORLD 02 · FIND YOUR GROOVE',title:'You’re the heartbeat of the band.',description:'Clap it, hear it, play it. Build a steady beat and keep the music moving, even when the backing track takes a little break.',skills:['Steady pulse','Rhythm patterns','Playing in time'],learnHref:'/learn/?unit=rhythm-club',learnLabel:'Open Rhythm Club' },
     { kicker:'WORLD 03 · BETTER TOGETHER',title:'Two hands. One very happy brain.',description:'Let your left hand join the adventure. Start with simple bass notes, add a melody, and work toward making music with both hands.',skills:['Hand coordination','Bass notes','Simple chords'] },
     { kicker:'WORLD 04 · FOLLOW YOUR CURIOSITY',title:'What happens if you play it your way?',description:'Explore quiet and loud, answer a musical question, and invent a little melody. Making music has room for your own ideas.',skills:['Dynamics','Improvising','Musical expression'] },
     { kicker:'WORLD 05 · YOUR MOMENT',title:'The best audience? Your favorite people.',description:'Put your skills together in a piece you can share. Keep going through the little wobbles, finish your song, and enjoy your moment.',skills:['Independent playing','Musical memory','Performance confidence'] }
@@ -281,6 +281,16 @@
     $('#world-kicker').textContent = world.kicker;
     $('#world-title').textContent = world.title;
     $('#world-description').textContent = world.description;
+    const learnLink = $('#world-learn-link');
+    if (learnLink) {
+      if (world.learnHref) {
+        learnLink.hidden = false;
+        learnLink.innerHTML = `<a href="${world.learnHref}">${world.learnLabel}</a>`;
+      } else {
+        learnLink.hidden = true;
+        learnLink.replaceChildren();
+      }
+    }
     $('#skill-tags').replaceChildren(...world.skills.map(skill => { const tag = document.createElement('span'); tag.textContent = skill; return tag; }));
   }));
 })();

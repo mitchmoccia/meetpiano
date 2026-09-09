@@ -1,25 +1,36 @@
 import { COMPUTER_KEYS, clearPressed, setPressed } from './piano.js';
 import { applyMidiEvent, createHeldNotes, createMidiSession, describeMidiState, deviceIdentity } from './midi.js';
 
-export function bindInputs({ pianoRoot, audio, onUserNote, isDemoPlaying, shell, onMidiStatus }) {
+export function bindInputs({ pianoRoot, audio, onUserNote, onUserRelease, isDemoPlaying, shell, onMidiStatus, clockNow }) {
   const heldComputerKeys = new Set();
   const heldNotes = createHeldNotes();
   let lastMidiIds = [];
+
+  function stamp(extras = {}) {
+    const t = typeof clockNow === 'function' ? clockNow() : null;
+    return t == null ? extras : { ...extras, t };
+  }
 
   function emitUserNote(note, source, extras = {}) {
     if (source === 'demo' || isDemoPlaying()) return;
     onUserNote(note, source, extras);
   }
 
+  function emitUserRelease(note, source, extras = {}) {
+    if (!onUserRelease || source === 'demo' || isDemoPlaying()) return;
+    onUserRelease(note, source, extras);
+  }
+
   function noteOn(note, source, velocity = 0.75, extras = {}) {
     audio.play(note, velocity);
     setPressed(pianoRoot, note, true);
-    emitUserNote(note, source, { ...extras, velocity });
+    emitUserNote(note, source, stamp({ ...extras, velocity }));
   }
 
-  function noteOff(note) {
+  function noteOff(note, source = 'touch') {
     audio.release(note);
     setPressed(pianoRoot, note, false);
+    emitUserRelease(note, source, stamp());
   }
 
   function onPointerDown(event) {
@@ -39,7 +50,7 @@ export function bindInputs({ pianoRoot, audio, onUserNote, isDemoPlaying, shell,
     const note = Number(event.currentTarget.dataset.note);
     if (!Number.isFinite(note)) return;
     if (!heldNotes.release('pointer', note).accepted) return;
-    noteOff(note);
+    noteOff(note, 'touch');
   }
 
   pianoRoot.querySelectorAll('.piano-key').forEach((key) => {
@@ -60,7 +71,7 @@ export function bindInputs({ pianoRoot, audio, onUserNote, isDemoPlaying, shell,
       if (event.key === ' ' || event.key === 'Enter') {
         event.preventDefault();
         if (!heldNotes.release('pointer', note).accepted) return;
-        noteOff(note);
+        noteOff(note, 'touch');
       }
     });
     key.addEventListener('click', (event) => {
@@ -69,7 +80,7 @@ export function bindInputs({ pianoRoot, audio, onUserNote, isDemoPlaying, shell,
         if (!press.accepted) return;
         noteOn(note, 'touch');
         window.setTimeout(() => {
-          if (heldNotes.release('pointer', note).accepted) noteOff(note);
+          if (heldNotes.release('pointer', note).accepted) noteOff(note, 'touch');
         }, 300);
       }
     });
@@ -95,7 +106,7 @@ export function bindInputs({ pianoRoot, audio, onUserNote, isDemoPlaying, shell,
     if (!heldComputerKeys.has(key)) return;
     heldComputerKeys.delete(key);
     const note = COMPUTER_KEYS[key];
-    if (heldNotes.release('computer', note).accepted) noteOff(note);
+    if (heldNotes.release('computer', note).accepted) noteOff(note, 'computer-keys');
   }
 
   function silence({ keepMidiHolds = false } = {}) {
@@ -129,7 +140,7 @@ export function bindInputs({ pianoRoot, audio, onUserNote, isDemoPlaying, shell,
       noteOn(note, 'midi', (velocity || 96) / 127, { device });
     },
     onRelease(note) {
-      noteOff(note);
+      noteOff(note, 'midi');
     },
     onStatus(view) {
       lastMidiIds = view.devices.map((item) => item.id);
@@ -181,7 +192,7 @@ export function bindInputs({ pianoRoot, audio, onUserNote, isDemoPlaying, shell,
     if (result.scored) {
       noteOn(result.parsed.note, 'midi', result.parsed.velocity / 127, { device: deviceIdentity(input) });
     }
-    if (result.released) noteOff(result.parsed.note);
+    if (result.released) noteOff(result.parsed.note, 'midi');
     return result;
   }
 

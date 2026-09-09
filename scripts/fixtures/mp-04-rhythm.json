@@ -1,0 +1,45 @@
+{
+  "heartbeat": {
+    "id": "heartbeat-4",
+    "bpm": 80,
+    "countInBeats": 4,
+    "events": [
+      { "kind": "note", "pitch": 60, "onsetBeats": 0, "durationBeats": 0.5 },
+      { "kind": "note", "pitch": 60, "onsetBeats": 1, "durationBeats": 0.5 },
+      { "kind": "note", "pitch": 60, "onsetBeats": 2, "durationBeats": 0.5 },
+      { "kind": "note", "pitch": 60, "onsetBeats": 3, "durationBeats": 0.5 }
+    ]
+  },
+  "longShort": {
+    "id": "long-short-short",
+    "bpm": 80,
+    "countInBeats": 0,
+    "events": [
+      { "kind": "note", "pitch": 60, "onsetBeats": 0, "durationBeats": 2, "length": "long" },
+      { "kind": "note", "pitch": 60, "onsetBeats": 2, "durationBeats": 0.5, "length": "short" },
+      { "kind": "note", "pitch": 60, "onsetBeats": 3, "durationBeats": 0.5, "length": "short" }
+    ]
+  },
+  "restHome": {
+    "id": "c-rest-c-c",
+    "bpm": 80,
+    "countInBeats": 0,
+    "events": [
+      { "kind": "note", "pitch": 60, "onsetBeats": 0, "durationBeats": 0.5 },
+      { "kind": "rest", "onsetBeats": 1, "durationBeats": 1 },
+      { "kind": "note", "pitch": 60, "onsetBeats": 2, "durationBeats": 0.5 },
+      { "kind": "note", "pitch": 60, "onsetBeats": 3, "durationBeats": 0.5 }
+    ]
+  },
+  "walkEven": {
+    "id": "cde-c-even",
+    "bpm": 80,
+    "countInBeats": 0,
+    "events": [
+      { "kind": "note", "pitch": 60, "onsetBeats": 0, "durationBeats": 1 },
+      { "kind": "note", "pitch": 62, "onsetBeats": 1, "durationBeats": 1 },
+      { "kind": "note", "pitch": 64, "onsetBeats": 2, "durationBeats": 1 },
+      { "kind": "note", "pitch": 60, "onsetBeats": 3, "durationBeats": 1 }
+    ]
+  }
+}

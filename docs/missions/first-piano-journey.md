@@ -59,7 +59,7 @@ Recorded 2026-09-08. Only list what was actually checked.
 | Vercel project `meetpiano` | Works | `framework: null`, empty install/build, `outputDirectory: dist` in repo `vercel.json`; production alias `meetpiano.vercel.app` returns HTTP 200 |
 | Custom domain `https://meetpiano.app` | Works | HTTP 200 from Vercel on 2026-09-08 (~18:23 America/New_York). Brand domain is already live. |
 | `www.meetpiano.app` | Does not resolve | DNS lookup failed on 2026-09-08. Not a blocker for this mission. |
-| `/learn` on production | Missing | `https://meetpiano.app/learn` returns HTTP 404. Expected until MP-01. |
+| `/learn` on production | Works | `https://meetpiano.app/learn` returns HTTP 200 and serves the First Notes hub (verified after MP-03 merged to `main`). |
 | GitHub-linked Vercel project `meetpiano-app` | Deleted | Removed. Canonical hosting is the single Vercel project `meetpiano` plus `https://meetpiano.app`. |
 | Hourly resume routines | Not configured | No scheduled resume, heartbeat, or slice-runner automation is set up yet. |
 
@@ -68,7 +68,7 @@ Recorded 2026-09-08. Only list what was actually checked.
 Inspected **2026-09-08 ~18:23 America/New_York**.
 
 - Repo: https://github.com/mitchmoccia/meetpiano
-- Live `main` SHA: `2385bd72a176c140aaf4a50849d197adea69579b`
+- Live `main` SHA (MP-00 inspect): `2385bd72a176c140aaf4a50849d197adea69579b`. Current `main` after MP-02+MP-03 merge: `96860fa8262bfe2f8a902910c55745054d21eeb5`.
 - Message: `Import complete MeetPiano site, artwork, piano demo, and Vercel configuration`
 - Extra branch `cursor/setup-cloud-agent-env-d108` is **+1 commit** (`b141d3489fb29845937a63d5361b21e9ca3125aa`) adding only `.cursor/environment.json`. Do not merge or delete it. Leave it alone.
 - Hosting: single Vercel project `meetpiano` in `mitchmoccias-projects` plus `https://meetpiano.app`. The former GitHub-linked project `meetpiano-app` was deleted. `vercel.json` uses `outputDirectory: dist` and empty build/install commands.
@@ -120,9 +120,9 @@ After MP-00 is merged or Mitch chooses to stack, the next action is **start MP-0
 | MP-00 | Mission and lesson specification | Verified (docs complete) |
 | MP-01 | Playable `/learn` + L01 | Verified |
 | MP-02 | Trustworthy keyboard / MIDI input | Working |
-| MP-03 | L02 Find C | Queued |
-| MP-04 | L03 Neighbors C–D–E | Queued |
-| MP-05 | L04 First little tune | Queued |
+| MP-03 | First Notes L01–L04 | Working (merged to `main`) |
+| MP-04 | Rhythm Club L05–L08 | Working |
+| MP-05 | L04 First little tune (landed with MP-03) | Working |
 | MP-06 | Device-local progress and evidence states | Queued |
 | MP-07 | Input modes and adult-observed labels | Queued |
 | MP-08 | L05–L10 sequence | Queued |

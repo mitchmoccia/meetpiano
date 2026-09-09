@@ -1,5 +1,5 @@
 import { PHASE_ORDER } from './player.js';
-import { evidenceRank, FIRST_NOTES_LESSONS, nextLessonId, unitView } from './unit.js';
+import { evidenceRank, JOURNEY_LESSONS, nextLessonId, unitView } from './unit.js';
 
 const STEP_LABELS = ['Explain', 'See', 'Try', 'Check', 'Done'];
 
@@ -89,6 +89,15 @@ function guidedTitles(lessonId, phase) {
   if (lessonId === 'L04' && phase === 'transfer') {
     return { cousin: 'Wave the other way', done: 'Saved' };
   }
+  if (['L05', 'L06', 'L07', 'L08'].includes(lessonId) && phase === 'guided') {
+    return { hear: 'Just listening', echo: 'Your turn with the clock', cousin: 'A cousin — just listening', done: 'Ready for a quiet check' };
+  }
+  if (['L05', 'L06', 'L07', 'L08'].includes(lessonId) && phase === 'independent') {
+    return { perform: 'Performance windows', done: 'Ready for one more pattern' };
+  }
+  if (['L05', 'L06', 'L07', 'L08'].includes(lessonId) && phase === 'transfer') {
+    return { perform: 'A new pattern', done: 'Saved' };
+  }
   return {};
 }
 
@@ -134,18 +143,19 @@ export function renderPhraseTiles(root, phrase) {
   }));
 }
 
-export function renderUnitHub(root, store, { onOpen, onContinue }) {
+export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit } = {}) {
   const view = unitView(store);
-  const continueCard = view.cards.find((card) => card.lessonId === view.continueLessonId);
+  const continueCard = [...view.units.flatMap((unit) => unit.cards)]
+    .find((card) => card.lessonId === view.continueLessonId);
   root.replaceChildren(
     el('div', { className: 'game-topline' },
-      el('span', { className: 'game-label' }, el('span', { className: 'game-live-dot' }), ' FIRST PIANO JOURNEY · FIRST NOTES'),
+      el('span', { className: 'game-label' }, el('span', { className: 'game-live-dot' }), ' FIRST PIANO JOURNEY'),
       el('span', { className: 'game-xp' }, 'Device-local only')
     ),
     el('section', { className: 'unit-intro' },
-      el('p', { className: 'mission-eyebrow' }, 'WORLD · FIRST NOTES'),
-      el('h1', {}, 'Four little activities. Same keyboard.'),
-      el('p', {}, 'Explore, find C, walk to the neighbors, then play Little Wave. The next activity unlocks when this device is ready. Nothing here is a teacher grade.'),
+      el('p', { className: 'mission-eyebrow' }, 'TWO WORLDS · SAME DEVICE'),
+      el('h1', {}, 'First Notes, then Rhythm Club.'),
+      el('p', {}, 'Explore, find C, walk the neighbors, play Little Wave. Then tap with a heartbeat, hold and let go, leave a rest, and walk C–D–E on the clock. The next activity unlocks when this device is ready. Nothing here is a teacher grade.'),
       continueCard ? el('button', {
         className: 'button button-dark',
         type: 'button',
@@ -156,10 +166,24 @@ export function renderUnitHub(root, store, { onOpen, onContinue }) {
           ? `Replay ${continueCard.title}`
           : `Start ${continueCard.title}`) : null
     ),
-    el('ol', { className: 'unit-map', 'aria-label': 'First Notes activities' },
-      ...view.cards.map((card) => unitCard(card, onOpen))
-    ),
-    el('p', { className: 'unit-limit' }, 'First Notes is L01–L04. Later lessons are not here yet.')
+    ...view.units.map((unit) => unitSection(unit, onOpen, focusUnit)),
+    el('p', { className: 'unit-limit' }, 'Playable lessons are L01–L08. Later lessons are not here yet — there are no buttons to them.')
+  );
+}
+
+function unitSection(unit, onOpen, focusUnit) {
+  return el('section', {
+    className: `unit-world ${unit.unlocked ? 'open' : 'locked'} ${focusUnit === unit.unitId ? 'focus' : ''}`,
+    id: `unit-${unit.unitId}`
+  },
+    el('p', { className: 'mission-eyebrow' }, unit.kicker),
+    el('h2', {}, unit.title),
+    unit.unlocked
+      ? null
+      : el('p', { className: 'unit-lock-note' }, 'Rhythm Club unlocks when First little tune is Independent on this device.'),
+    el('ol', { className: 'unit-map', 'aria-label': `${unit.title} activities` },
+      ...unit.cards.map((card) => unitCard(card, onOpen))
+    )
   );
 }
 
@@ -189,7 +213,7 @@ function unitCard(card, onOpen) {
 }
 
 function lockReason(card) {
-  const prior = FIRST_NOTES_LESSONS.find((item) => item.lessonId === card.unlocksAfter);
+  const prior = JOURNEY_LESSONS.find((item) => item.lessonId === card.unlocksAfter);
   if (!prior) return 'Locked';
   if (card.unlockNeeds === 'independent') return `Locked until ${prior.title} is Independent on this device.`;
   return `Locked until ${prior.title} is Practiced on this device.`;

@@ -49,14 +49,16 @@ function seedLesson(storage, lessonId, evidenceState) {
 }
 
 assert(parseLessonId('l02') === 'L02', 'parse L02');
-assert(parseLessonId('L05') == null, 'no L05 in First Notes');
-assert(FIRST_NOTES_LESSONS.length === 4 && FIRST_NOTES_LESSONS.every((card) => card.lessonId <= 'L04'), 'unit is L01–L04 only');
+assert(parseLessonId('L05') === 'L05', 'L05 is Rhythm Club on the journey');
+assert(parseLessonId('L09') == null, 'no L09 button target');
+assert(FIRST_NOTES_LESSONS.length === 4 && FIRST_NOTES_LESSONS.every((card) => card.lessonId <= 'L04'), 'First Notes unit is L01–L04 only');
 
 const emptyProgress = createProgress(memoryStorage());
 assert(isLessonUnlocked(emptyProgress.read().store, 'L01') === true, 'L01 is open');
 assert(isLessonUnlocked(emptyProgress.read().store, 'L02') === false, 'L02 locked until L01 practiced');
 assert(isLessonUnlocked(emptyProgress.read().store, 'L03') === false, 'L03 locked');
 assert(isLessonUnlocked(emptyProgress.read().store, 'L04') === false, 'L04 locked');
+assert(isLessonUnlocked(emptyProgress.read().store, 'L05') === false, 'Rhythm Club locked until L04 Independent');
 
 const practicedStore = memoryStorage();
 seedLesson(practicedStore, 'L01', 'practiced');
@@ -76,8 +78,9 @@ seedLesson(l03ind, 'L03', 'independent');
 assert(isLessonUnlocked(createProgress(l03ind).read().store, 'L04') === true, 'L04 unlocks after L03 Independent');
 
 const hub = unitView(createProgress(l03ind).read().store);
-assert(hub.cards.length === 4 && hub.cards.every((card) => card.unlocked), 'hub shows four unlocked cards');
-assert(!hub.cards.some((card) => card.lessonId === 'L05'), 'hub has no L05');
+assert(hub.cards.length === 4 && hub.cards.every((card) => card.unlocked), 'hub shows four unlocked First Notes cards');
+assert(!hub.cards.some((card) => card.lessonId === 'L05'), 'First Notes cards have no L05');
+assert(isLessonUnlocked(createProgress(l03ind).read().store, 'L05') === false, 'L05 still locked without L04 Independent');
 
 const l01 = createPlayer({ progress: createProgress(memoryStorage()) });
 assert(l01.view().lessonSpec.lessonId === 'L01', 'default player is still L01');
