@@ -4,7 +4,7 @@ Ordered cards **MP-00 through MP-11**. Status values: `verified` · `working` ·
 
 Acceptance summaries are taken from the runbook [`first-piano-journey.md`](first-piano-journey.md). Teaching detail is in [`../curriculum/beginner-v1.md`](../curriculum/beginner-v1.md).
 
-MP-00 is marked **verified** because the mission and lesson specification docs are complete. MP-01 is **verified** and merged to `main`. MP-02 is **software/fixture verified** (Gort accepted; hardware MIDI unverified — not a MIDI-verified release). MP-03 First Notes, MP-04 Rhythm Club, MP-05 Read and play, and MP-06 device-local progress are **working** and merged to `main`. MP-07 Left hand (L13–L16) is **working** on `piany/mp-07-left-hand`. Later cards stay **queued**. The original isolated MP-04/MP-05 cards (L03/L04) landed with Checkpoint A. Historical MP-05 (L04 First little tune) is recorded below as MP-05b.
+MP-00 is marked **verified** because the mission and lesson specification docs are complete. MP-01 is **verified** and merged to `main`. MP-02 is **software/fixture verified** (Gort accepted; hardware MIDI unverified — not a MIDI-verified release). MP-03 First Notes, MP-04 Rhythm Club, MP-05 Read and play, and MP-06 device-local progress are **working** and merged to `main`. MP-07 Left hand (L13–L16) is **working** on `piany/mp-07-left-hand`. MP-08 Together (L17–L20) is **working** on `piany/mp-08-together`. Later cards stay **queued**. The original isolated MP-04/MP-05 cards (L03/L04) landed with Checkpoint A. Historical MP-05 (L04 First little tune) is recorded below as MP-05b.
 
 ---
 
@@ -237,56 +237,65 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 - Device-local progress. Hardware MIDI remains unverified.
 - First Notes, Rhythm Club, and Read and play stay healthy. Copyright footer is preserved. No Vercel / DNS changes.
 
-**Handoff.** L13–L16 teaching is on this branch. Pentapath and later leftover outlines wait for a later slice.
+**Handoff.** L13–L16 teaching is on this branch. Together (L17–L20) is MP-08. Pentapath and later leftover outlines wait for a later slice.
 
 ---
 
-## MP-08 — Neighborhood leftovers after Read and play
+## MP-08 — Together L17–L20
 
 | Field | Value |
 | --- | --- |
-| Status | **queued** |
-| Depends on | MP-05 |
+| Status | **working** |
+| Depends on | MP-07 |
+| Branch | `piany/mp-08-together` |
+| Base | `piany/mp-07-left-hand` @ latest HEAD |
 
-**Learner outcome.** After Read and play, remaining neighborhood work can add named fingers 1–5 as a later review and the C five-note path. F/G, steps, skips, and first staff reading already live in L09–L12. Pulse and long/short first teaching already live in L05–L08.
+**Learner outcome.** After Left hand is Independent on this device, a beginner can play two keys on one click (L17), keep a short together walk going (L18), play a small harmony (L19), and finish a complete little piece with a held bass (L20). Per-hand preparation comes first. On-screen keys are an exploration stand-in, not proof of hand coordination. MIDI reports pitch and time only.
 
 **Acceptance**
 
-- Playable lessons for the leftover neighborhood skills, with the shared loop.
-- Do not rebind L05–L08 or L09–L12.
-- Measurement limits still apply.
+- Together unit on `/learn` with unlock from L16 Independent. No buttons to L21+.
+- L17–L20 full lesson loops from the expanded contracts in `beginner-v1.md`.
+- Simultaneous note groups, held bass under melody, extra notes, and release events are handled. A wrong note does not derail later alignment.
+- Per-hand preparation precedes combined attempts. Slow practice and a small passage loop are available.
+- Keyboard ranges stay in the declared two rooms. No forced stretches.
+- On-screen mode is labeled as an exploration alternative, not proof of hand coordination.
+- Device-local progress. Hardware MIDI remains unverified.
+- First Notes, Rhythm Club, Read and play, and Left hand stay healthy. Copyright footer is preserved. No Vercel / DNS changes.
+
+**Handoff.** L17–L20 teaching is on this branch. Later leftover outlines (long/short review, smooth/separate, named fingers, leftover house) wait for a later slice.
 
 ---
 
-## MP-09 — L13–L16 sequence
+## MP-09 — Later leftover sequence
 
 | Field | Value |
 | --- | --- |
 | Status | **queued** |
 | Depends on | MP-08 |
 
-**Learner outcome.** A later three-black-key house, meeting at middle C, a longer C-neighborhood tune, and quiet/strong. First teaching of left-hand C, bass reading, turns, and two-part pulse already live in L13–L16.
+**Learner outcome.** A later three-black-key house, meeting at middle C, a longer C-neighborhood tune, and quiet/strong. First teaching of left-hand C, bass reading, turns, and two-part pulse already live in L13–L16. First together already lives in L17–L20.
 
 **Acceptance**
 
-- Later leftover outlines become playable without rebinding L13–L16.
+- Later leftover outlines become playable without rebinding L13–L20.
 - Two-hand review does not claim coordination mastery from MIDI alone.
 - Dynamics are relative (softer vs stronger), not studio-grade velocity scoring.
 
 ---
 
-## MP-10 — L17–L24 and later review
+## MP-10 — Later leftover review
 
 | Field | Value |
 | --- | --- |
 | Status | **queued** |
 | Depends on | MP-09 |
 
-**Learner outcome.** Long and short notes, smooth vs separate, a known tune with specified fingering (adult-observed), a held left-hand C, question and answer, memory replay, a short put-together piece, and a share/review close.
+**Learner outcome.** Later review of long and short notes, smooth vs separate, a known tune with specified fingering (adult-observed), a held left-hand C, question and answer, memory replay, and a share/review close. L17–L20 already teach Together.
 
 **Acceptance**
 
-- L17–L24 exist as playable lessons from the outlines.
+- Leftover outlines become playable without rebinding L17–L20.
 - Later review of L01–L04 can set Retained only after a gap and a successful independent replay, per the contract.
 - No fabricated performance or jury language.
 
