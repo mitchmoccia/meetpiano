@@ -248,7 +248,8 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 | Status | **working** |
 | Depends on | MP-07 |
 | Branch | `piany/mp-08-together` |
-| Base | `piany/mp-07-left-hand` @ latest HEAD |
+| Base | `piany/mp-07-left-hand` @ `b901df6dfeab91d0305e1fc4ade590e2264a22c3` |
+| PR | https://github.com/mitchmoccia/meetpiano/pull/11 (draft into `piany/mp-07-left-hand`; #10 not merged) |
 
 **Learner outcome.** After Left hand is Independent on this device, a beginner can play two keys on one click (L17), keep a short together walk going (L18), play a small harmony (L19), and finish a complete little piece with a held bass (L20). Per-hand preparation comes first. On-screen keys are an exploration stand-in, not proof of hand coordination. MIDI reports pitch and time only.
 
