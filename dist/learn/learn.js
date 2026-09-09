@@ -25,8 +25,11 @@ import {
 } from '../js/learn-view.js';
 import { isLessonUnlocked, isReadLesson, isRhythmLesson, parseLessonId, parseUnitId, unitTitleFor } from '../js/unit.js';
 import { durationMs, renderStaff } from '../js/staff.js';
+import { exportProgress, importProgress } from '../js/portability.js';
+import { recommendAfterLesson } from '../js/recommend.js';
 
 const progress = createProgress();
+progress.touchSession();
 const audio = createAudio();
 const params = new URLSearchParams(window.location.search);
 const requested = parseLessonId(params.get('lesson'));
@@ -66,8 +69,8 @@ function paintMidi(view) {
   }
 }
 
-function openLesson(id) {
-  window.location.href = lessonHref(id);
+function openLesson(id, rec) {
+  window.location.href = rec?.href || lessonHref(id);
 }
 
 if (!lessonId) {
@@ -86,9 +89,50 @@ if (!lessonId) {
     document.querySelector('#storage-notice').hidden = false;
     document.querySelector('#storage-notice').textContent = 'Read and play is locked on this device until Notes with a beat is Independent.';
   }
-  renderUnitHub(hub, store, { onOpen: openLesson, onContinue: openLesson, focusUnit: requestedUnit });
+  renderUnitHub(hub, store, {
+    onOpen: openLesson,
+    onContinue: openLesson,
+    focusUnit: requestedUnit,
+    onExport: exportRecords,
+    onImport: importRecords
+  });
 } else {
   startLesson(lessonId);
+}
+
+function exportRecords() {
+  const bundle = exportProgress(progress.read().store);
+  const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'meetpiano-beginner-v1.json';
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+async function importRecords(file) {
+  const notice = document.querySelector('#storage-notice');
+  let payload;
+  try {
+    payload = JSON.parse(await file.text());
+  } catch (_) {
+    if (notice) {
+      notice.hidden = false;
+      notice.textContent = 'That file was not readable JSON. Nothing was imported.';
+    }
+    return;
+  }
+  const result = importProgress(payload, progress.read().store);
+  if (!result.ok) {
+    if (notice) {
+      notice.hidden = false;
+      notice.textContent = `Import stopped (${result.reason}). Versions must match, and Independent cannot be invented.`;
+    }
+    return;
+  }
+  progress.write(result.store);
+  window.location.reload();
 }
 
 function startLesson(id) {
@@ -99,6 +143,9 @@ function startLesson(id) {
     }
   });
   const player = createPlayer({ progress, lessonId: id, clock });
+  if (params.get('check') === 'review' && player.beginSessionCheck) {
+    player.beginSessionCheck();
+  }
   const input = bindInputs({
     pianoRoot,
     audio,
@@ -286,6 +333,10 @@ function startLesson(id) {
   }
 
   function paint() {
+    if (player.view().easierWork && player.startEasierWork) {
+      const phase = player.view().phase;
+      if (phase === 'independent' || phase === 'transfer' || phase === 'review') player.startEasierWork();
+    }
     const view = player.view();
     const copy = phaseCopy(view);
     document.title = `${view.lessonSpec.title} · ${unitTitleFor(id)} · MeetPiano`;
@@ -301,6 +352,7 @@ function startLesson(id) {
       ? 'This device still has your last saved result.'
       : 'Picking up where you left off on this device.';
     ui.evidence.textContent = evidenceLabel(view.lesson.evidenceState);
+    if (view.sourceHonesty && ui.evidence) ui.evidence.title = view.sourceHonesty;
     ui.seating.hidden = id !== 'L01' || (view.phase !== 'demo' && view.phase !== 'guided');
     ui.groups.hidden = id !== 'L01' || (view.phase !== 'demo' && !(view.phase === 'guided' && view.guidedStep === 'groups' && view.hintsOn));
     ui.hand.hidden = id !== 'L03' || (view.phase !== 'demo' && !(view.phase === 'guided' && view.guidedStep === 'row' && view.hintsOn));
@@ -419,7 +471,7 @@ function startLesson(id) {
       ui.actions.append(button(copy.action, () => { go('explanation'); lastFeedback = ''; paint(); }, 'button-dark'));
     }
     if (view.phase === 'demo') renderDemo(view);
-    if (view.phase === 'guided') renderGuided(view);
+    if (view.phase === 'guided' || view.phase === 'remediation') renderGuided(view);
     if (view.phase === 'independent') renderIndependent(view);
     if (view.phase === 'transfer') renderTransfer(view);
     if (view.phase === 'review') renderReview(view);
@@ -875,10 +927,15 @@ function startLesson(id) {
     if (view.firstCompletionNow) {
       ui.extras.append(el('div', { className: 'reward-pill' }, copy.firstReward, el('span', {}, 'First finish on this device')));
     }
-    const next = nextHref(id);
-    const nextReady = next !== '/learn/' && isLessonUnlocked(progress.read().store, next.replace('/learn/?lesson=', ''));
-    if (nextReady) {
-      ui.actions.append(el('a', { className: 'button button-dark', href: next }, 'Continue to the next activity'));
+    const rec = recommendAfterLesson(progress.read().store, id, progress.read().store.session);
+    if (rec && rec.kind !== 'rest') {
+      ui.actions.append(el('a', { className: 'button button-dark', href: rec.href }, rec.action));
+    } else {
+      const next = nextHref(id);
+      const nextReady = next !== '/learn/' && isLessonUnlocked(progress.read().store, next.replace('/learn/?lesson=', ''));
+      if (nextReady) {
+        ui.actions.append(el('a', { className: 'button button-dark', href: next }, 'Continue to the next activity'));
+      }
     }
     if ((id === 'L04' || id === 'L12' || isRhythmLesson(id)) && (view.lesson.evidenceState === 'independent' || view.lesson.evidenceState === 'retained') && player.beginReview) {
       ui.actions.append(button(copy.pause, () => { player.beginReview(); lastFeedback = view.lessonSpec.copy.review.pause; paint(); }));

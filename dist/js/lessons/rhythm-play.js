@@ -75,17 +75,30 @@ export function createRhythmLessonPlayer({ progress, lessonSpec, clock, now }) {
       return { ...snap, message: lessonSpec.copy.feedback[reason] || lessonSpec.copy.feedback.paused };
     }
     if (snap.passed) markPassed();
+    else {
+      const missInfo = runtime.recordMiss(snap.extras[0]?.reason || 'rhythm');
+      if (missInfo.easier) {
+        runtime.attempt.restore.reducedTempo = true;
+        runtime.attempt.tempoBpm = lessonSpec.reducedBpm;
+        if (runtime.attempt.phase !== 'guided' && runtime.attempt.phase !== 'remediation') {
+          runtime.startEasierWork();
+        }
+      }
+    }
     const miss = snap.misses?.length && !snap.extras.length;
     return {
       ...snap,
       ok: snap.passed,
       message: snap.passed
         ? passMessage()
-        : miss
-          ? lessonSpec.copy.feedback.miss
-          : snap.extras[0]
-            ? feedbackFor({ result: snap.extras[0].reason })
-            : lessonSpec.copy.feedback.miss
+        : runtime.attempt.restore.easierWork
+          ? `${lessonSpec.copy.feedback.miss} Let's try an easier heartbeat — not the same hard take again.`
+          : miss
+            ? lessonSpec.copy.feedback.miss
+            : snap.extras[0]
+              ? feedbackFor({ result: snap.extras[0].reason })
+              : lessonSpec.copy.feedback.miss,
+      easier: runtime.attempt.restore.easierWork === true
     };
   }
 
@@ -138,6 +151,7 @@ export function createRhythmLessonPlayer({ progress, lessonSpec, clock, now }) {
       localClock.start({ audioOrigin: take.origin, tempo });
     }
     runtime.attempt.restore.reducedTempo = tempo === lessonSpec.reducedBpm;
+    runtime.attempt.tempoBpm = tempo;
     runtime.recordEvent('phase-change');
     runtime.persist();
     return {
@@ -301,6 +315,7 @@ export function createRhythmLessonPlayer({ progress, lessonSpec, clock, now }) {
     runtime.attempt.restore.hintsOn = false;
     runtime.setPhase('review');
   };
+  player.beginSessionCheck = runtime.beginSessionCheck;
   player.clock = localClock;
   player.completeIfReady = (at) => {
     if (!take) return lastTake;

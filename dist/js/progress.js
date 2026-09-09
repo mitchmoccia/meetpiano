@@ -1,17 +1,37 @@
-export const STORAGE_KEY = 'meetpiano:beginner-v1';
-export const SCHEMA_VERSION = 1;
-export const CURRICULUM_VERSION = 'beginner-v1';
+import {
+  CURRICULUM_VERSION,
+  EVIDENCE,
+  EVIDENCE_RANK,
+  INPUT_MODES,
+  LEGACY_SCHEMA_VERSION,
+  OCTAVE_POLICIES,
+  PATTERN_IDS,
+  PHASES,
+  SCHEMA_VERSION,
+  STORAGE_KEY,
+  isIsoDate,
+  isPlainObject,
+  promoteEvidence,
+  shouldGrantFirstCompletion
+} from './progress-core.js';
+import { SESSION_GAP_MS, applyLessonOutcome, emptyEvidenceLanes, highestLane } from './evidence.js';
+import { SKILL_CATALOG_VERSION, emptySkill, knownSkillId, skillIdsFor } from './skills.js';
 
-const PHASES = new Set(['explanation', 'demo', 'guided', 'independent', 'transfer', 'remediation', 'review', 'result']);
-const EVIDENCE = new Set(['explored', 'practiced', 'independent', 'retained']);
-const INPUT_MODES = new Set(['touch', 'computer-keys', 'midi', 'mixed']);
-const OCTAVE_POLICIES = new Set(['pitch-class', 'exact-pitch']);
-const EVIDENCE_RANK = { explored: 1, practiced: 2, independent: 3, retained: 4 };
+export {
+  CURRICULUM_VERSION,
+  SCHEMA_VERSION,
+  STORAGE_KEY,
+  promoteEvidence,
+  shouldGrantFirstCompletion
+};
 
 export function emptyStore() {
   return {
     schemaVersion: SCHEMA_VERSION,
     curriculumVersion: CURRICULUM_VERSION,
+    skillCatalogVersion: SKILL_CATALOG_VERSION,
+    session: null,
+    skills: {},
     lessons: {}
   };
 }
@@ -20,29 +40,12 @@ export function emptyLesson(lessonId) {
   return {
     lessonId,
     evidenceState: null,
+    evidenceLanes: emptyEvidenceLanes(),
     currentAttemptId: null,
     firstCompletionRewarded: false,
     firstCompletedAt: null,
     attempts: []
   };
-}
-
-export function promoteEvidence(current, next) {
-  if (!next || !EVIDENCE.has(next)) return current ?? null;
-  if (!current || !EVIDENCE.has(current)) return next;
-  return EVIDENCE_RANK[next] > EVIDENCE_RANK[current] ? next : current;
-}
-
-export function shouldGrantFirstCompletion(lesson) {
-  return Boolean(lesson && lesson.evidenceState === 'independent' && !lesson.firstCompletionRewarded);
-}
-
-function isIsoDate(value) {
-  return typeof value === 'string' && value.length >= 8 && !Number.isNaN(Date.parse(value));
-}
-
-function isPlainObject(value) {
-  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 }
 
 function sanitizeEvent(event) {
@@ -63,6 +66,15 @@ function sanitizeNoteList(value) {
   return value.filter((item) => Number.isInteger(item)).slice(-16);
 }
 
+function sanitizeMistakeKinds(value) {
+  if (!isPlainObject(value)) return {};
+  const out = {};
+  for (const [key, count] of Object.entries(value)) {
+    if (typeof key === 'string' && Number.isInteger(count) && count > 0) out[key.slice(0, 40)] = count;
+  }
+  return out;
+}
+
 function sanitizeRestore(restore) {
   const src = isPlainObject(restore) ? restore : {};
   return {
@@ -79,7 +91,54 @@ function sanitizeRestore(restore) {
     homeDone: src.homeDone === true,
     independentStarted: src.independentStarted === true,
     reviewPausedAt: isIsoDate(src.reviewPausedAt) ? src.reviewPausedAt : null,
-    reducedTempo: src.reducedTempo === true
+    reducedTempo: src.reducedTempo === true,
+    mistakeKinds: sanitizeMistakeKinds(src.mistakeKinds),
+    easierWork: src.easierWork === true,
+    sessionCheck: src.sessionCheck === true,
+    patternId: typeof src.patternId === 'string' && PATTERN_IDS.has(src.patternId) ? src.patternId : null
+  };
+}
+
+function sanitizeSkillIds(value, lessonId) {
+  const fallback = skillIdsFor(lessonId);
+  if (!Array.isArray(value)) return fallback;
+  const known = value.filter((id) => typeof id === 'string' && knownSkillId(id));
+  return known.length ? known : fallback;
+}
+
+function sanitizeAssistance(value, restore) {
+  const src = isPlainObject(value) ? value : {};
+  return {
+    hintsUsed: src.hintsUsed === true || restore.hintsOn === true || restore.helped === true,
+    helpRequested: src.helpRequested === true || restore.helped === true,
+    reducedTempo: src.reducedTempo === true || restore.reducedTempo === true
+  };
+}
+
+function sanitizeLane(value) {
+  if (!isPlainObject(value)) return null;
+  if (typeof value.attemptId !== 'string' || !value.attemptId) return null;
+  if (value.inputMode && !INPUT_MODES.has(value.inputMode)) return null;
+  return {
+    earnedAt: isIsoDate(value.earnedAt) ? value.earnedAt : null,
+    attemptId: value.attemptId,
+    inputMode: value.inputMode || 'touch',
+    midiVerified: value.inputMode === 'midi' && value.midiVerified === true,
+    assisted: value.assisted === true,
+    patternId: typeof value.patternId === 'string' ? value.patternId : null,
+    tempoBpm: Number.isFinite(value.tempoBpm) ? value.tempoBpm : null,
+    skillVersion: typeof value.skillVersion === 'string' ? value.skillVersion : null,
+    invalidated: value.invalidated === true
+  };
+}
+
+function sanitizeLanes(value) {
+  const src = isPlainObject(value) ? value : {};
+  return {
+    explored: sanitizeLane(src.explored),
+    practiced: sanitizeLane(src.practiced),
+    independent: sanitizeLane(src.independent),
+    retained: sanitizeLane(src.retained)
   };
 }
 
@@ -96,10 +155,14 @@ export function sanitizeInputDevice(value) {
 
 export function createAttempt(lessonId, extras = {}) {
   const id = globalThis.crypto?.randomUUID?.() || `att-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+  const restore = sanitizeRestore(extras.restore || {});
+  if (extras.patternId && PATTERN_IDS.has(extras.patternId)) restore.patternId = extras.patternId;
   return {
     attemptId: id,
     lessonId,
     curriculumVersion: CURRICULUM_VERSION,
+    skillIds: sanitizeSkillIds(extras.skillIds, lessonId),
+    skillVersion: typeof extras.skillVersion === 'string' ? extras.skillVersion : CURRICULUM_VERSION,
     startedAt: new Date().toISOString(),
     completedAt: null,
     inputMode: extras.inputMode && INPUT_MODES.has(extras.inputMode) ? extras.inputMode : 'touch',
@@ -112,8 +175,12 @@ export function createAttempt(lessonId, extras = {}) {
     octavePolicyUsed: extras.octavePolicyUsed && OCTAVE_POLICIES.has(extras.octavePolicyUsed)
       ? extras.octavePolicyUsed
       : 'pitch-class',
+    assistance: sanitizeAssistance(extras.assistance, restore),
+    tempoBpm: Number.isFinite(extras.tempoBpm) ? extras.tempoBpm : null,
+    patternId: extras.patternId && PATTERN_IDS.has(extras.patternId) ? extras.patternId : restore.patternId,
+    sessionId: typeof extras.sessionId === 'string' ? extras.sessionId : null,
     exportable: true,
-    restore: sanitizeRestore({})
+    restore
   };
 }
 
@@ -121,7 +188,7 @@ export function validateAttempt(value, lessonId) {
   if (!isPlainObject(value)) return null;
   if (typeof value.attemptId !== 'string' || !value.attemptId) return null;
   if (value.lessonId !== lessonId) return null;
-  if (value.curriculumVersion !== CURRICULUM_VERSION) return null;
+  if (typeof value.curriculumVersion !== 'string' || !value.curriculumVersion) return null;
   if (!isIsoDate(value.startedAt)) return null;
   if (value.completedAt !== null && !isIsoDate(value.completedAt)) return null;
   if (!INPUT_MODES.has(value.inputMode)) return null;
@@ -133,11 +200,15 @@ export function validateAttempt(value, lessonId) {
   if (value.exportable !== true) return null;
   if (value.octavePolicyUsed && !OCTAVE_POLICIES.has(value.octavePolicyUsed)) return null;
   const adult = isPlainObject(value.adultObserved) ? value.adultObserved : {};
-  const events = Array.isArray(value.events) ? value.events.map(sanitizeEvent).filter(Boolean).slice(-40) : [];
+  const events = Array.isArray(value.events) ? value.events.map(sanitizeEvent).filter(Boolean).slice(-80) : [];
+  const restore = sanitizeRestore(value.restore);
+  const historical = value.curriculumVersion !== CURRICULUM_VERSION;
   return {
     attemptId: value.attemptId,
     lessonId,
-    curriculumVersion: CURRICULUM_VERSION,
+    curriculumVersion: value.curriculumVersion,
+    skillIds: sanitizeSkillIds(value.skillIds, lessonId),
+    skillVersion: typeof value.skillVersion === 'string' ? value.skillVersion : value.curriculumVersion,
     startedAt: value.startedAt,
     completedAt: value.completedAt,
     inputMode: value.inputMode,
@@ -152,22 +223,54 @@ export function validateAttempt(value, lessonId) {
       note: typeof adult.note === 'string' ? adult.note.slice(0, 160) : undefined
     },
     octavePolicyUsed: value.octavePolicyUsed || 'pitch-class',
+    assistance: sanitizeAssistance(value.assistance, restore),
+    tempoBpm: Number.isFinite(value.tempoBpm) ? value.tempoBpm : null,
+    patternId: value.patternId && PATTERN_IDS.has(value.patternId) ? value.patternId : restore.patternId,
+    sessionId: typeof value.sessionId === 'string' ? value.sessionId : null,
+    historical,
     exportable: true,
-    restore: sanitizeRestore(value.restore)
+    restore
   };
+}
+
+function lanesFromAttempts(attempts, existing) {
+  const lanes = sanitizeLanes(existing);
+  for (const attempt of attempts) {
+    if (!attempt.completedAt || attempt.historical) continue;
+    const state = attempt.evidenceState;
+    if (!state || !Object.prototype.hasOwnProperty.call(lanes, state)) continue;
+    if (lanes[state]) continue;
+    lanes[state] = sanitizeLane({
+      earnedAt: attempt.completedAt,
+      attemptId: attempt.attemptId,
+      inputMode: attempt.inputMode,
+      midiVerified: attempt.inputMode === 'midi',
+      assisted: attempt.assistance?.helpRequested === true,
+      patternId: attempt.patternId,
+      tempoBpm: attempt.tempoBpm,
+      skillVersion: attempt.skillVersion
+    });
+  }
+  return lanes;
 }
 
 export function validateLesson(value, lessonId) {
   if (!isPlainObject(value)) return emptyLesson(lessonId);
   const attempts = Array.isArray(value.attempts)
-    ? value.attempts.map((item) => validateAttempt(item, lessonId)).filter(Boolean).slice(-20)
+    ? value.attempts.map((item) => validateAttempt(item, lessonId)).filter(Boolean).slice(-40)
     : [];
+  const liveAttempts = attempts.filter((attempt) => !attempt.historical);
   let evidenceState = value.evidenceState == null ? null : value.evidenceState;
   if (evidenceState !== null && !EVIDENCE.has(evidenceState)) evidenceState = null;
   if (evidenceState === 'independent' || evidenceState === 'retained') {
-    const earned = attempts.some((attempt) => attempt.evidenceState === evidenceState && attempt.completedAt);
-    if (!earned) evidenceState = promoteEvidence(null, attempts.reduce((best, attempt) => promoteEvidence(best, attempt.evidenceState), null));
+    const earned = liveAttempts.some((attempt) => attempt.evidenceState === evidenceState && attempt.completedAt);
+    if (!earned) {
+      evidenceState = promoteEvidence(null, liveAttempts.reduce((best, attempt) => promoteEvidence(best, attempt.evidenceState), null));
+    }
   }
+  const evidenceLanes = lanesFromAttempts(liveAttempts, value.evidenceLanes);
+  const fromLanes = highestLane(evidenceLanes);
+  if (fromLanes) evidenceState = promoteEvidence(evidenceState, fromLanes);
   const currentAttemptId = typeof value.currentAttemptId === 'string' ? value.currentAttemptId : null;
   const knownCurrent = currentAttemptId && attempts.some((attempt) => attempt.attemptId === currentAttemptId)
     ? currentAttemptId
@@ -175,6 +278,7 @@ export function validateLesson(value, lessonId) {
   return {
     lessonId,
     evidenceState,
+    evidenceLanes,
     currentAttemptId: knownCurrent,
     firstCompletionRewarded: value.firstCompletionRewarded === true && Boolean(evidenceState && EVIDENCE_RANK[evidenceState] >= 3),
     firstCompletedAt: isIsoDate(value.firstCompletedAt) ? value.firstCompletedAt : null,
@@ -182,21 +286,63 @@ export function validateLesson(value, lessonId) {
   };
 }
 
+function sanitizeSkill(value, skillId) {
+  const base = emptySkill(skillId);
+  if (!isPlainObject(value)) return base;
+  const lanes = sanitizeLanes(value.lanes);
+  const live = value.invalidated === true ? highestLane(lanes) : (value.evidenceState && EVIDENCE.has(value.evidenceState) ? value.evidenceState : highestLane(lanes));
+  return {
+    skillId,
+    skillVersion: typeof value.skillVersion === 'string' ? value.skillVersion : base.skillVersion,
+    evidenceState: live,
+    liveEvidenceState: highestLane(lanes),
+    invalidated: value.invalidated === true,
+    invalidReason: typeof value.invalidReason === 'string' ? value.invalidReason.slice(0, 80) : null,
+    lanes
+  };
+}
+
+function sanitizeSession(value) {
+  if (!isPlainObject(value)) return null;
+  if (typeof value.sessionId !== 'string' || !value.sessionId) return null;
+  if (!isIsoDate(value.startedAt)) return null;
+  return {
+    sessionId: value.sessionId,
+    startedAt: value.startedAt,
+    lastSeenAt: isIsoDate(value.lastSeenAt) ? value.lastSeenAt : value.startedAt,
+    isNew: value.isNew === true
+  };
+}
+
 export function validateStore(value) {
   if (!isPlainObject(value)) return { ok: false, reason: 'not-object' };
-  if (value.schemaVersion !== SCHEMA_VERSION) return { ok: false, reason: 'schema' };
-  if (value.curriculumVersion !== CURRICULUM_VERSION) return { ok: false, reason: 'curriculum' };
+  if (value.schemaVersion !== SCHEMA_VERSION && value.schemaVersion !== LEGACY_SCHEMA_VERSION) {
+    return { ok: false, reason: 'schema' };
+  }
+  if (typeof value.curriculumVersion !== 'string' || !value.curriculumVersion) {
+    return { ok: false, reason: 'curriculum' };
+  }
   if (!isPlainObject(value.lessons)) return { ok: false, reason: 'lessons' };
   const lessons = {};
   for (const [lessonId, lesson] of Object.entries(value.lessons)) {
     if (typeof lessonId !== 'string' || !/^L\d{2}$/.test(lessonId)) continue;
     lessons[lessonId] = validateLesson(lesson, lessonId);
   }
+  const skills = {};
+  if (isPlainObject(value.skills)) {
+    for (const [skillId, skill] of Object.entries(value.skills)) {
+      if (!knownSkillId(skillId)) continue;
+      skills[skillId] = sanitizeSkill(skill, skillId);
+    }
+  }
   return {
     ok: true,
     store: {
       schemaVersion: SCHEMA_VERSION,
       curriculumVersion: CURRICULUM_VERSION,
+      skillCatalogVersion: typeof value.skillCatalogVersion === 'string' ? value.skillCatalogVersion : SKILL_CATALOG_VERSION,
+      session: sanitizeSession(value.session),
+      skills,
       lessons
     }
   };
@@ -206,6 +352,10 @@ export function mergeInputMode(current, next) {
   if (!INPUT_MODES.has(next)) return current || 'touch';
   if (!current || current === next) return next;
   return 'mixed';
+}
+
+function newSessionId() {
+  return globalThis.crypto?.randomUUID?.() || `ses-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
 export function createProgress(storage) {
@@ -287,5 +437,36 @@ export function createProgress(storage) {
     return lesson;
   }
 
-  return { read, write, lessonState, saveLesson, memory };
+  function touchSession(now = Date.now()) {
+    const { store } = read();
+    const last = store.session?.lastSeenAt;
+    const lastMs = last ? Date.parse(last) : NaN;
+    const gap = !last || Number.isNaN(lastMs) || (now - lastMs) >= SESSION_GAP_MS;
+    const dayChanged = Boolean(last) && !Number.isNaN(lastMs)
+      && new Date(lastMs).toDateString() !== new Date(now).toDateString();
+    const isNew = gap || dayChanged || !store.session?.sessionId;
+    if (isNew) {
+      store.session = {
+        sessionId: newSessionId(),
+        startedAt: new Date(now).toISOString(),
+        lastSeenAt: new Date(now).toISOString(),
+        isNew: true
+      };
+    } else {
+      store.session.lastSeenAt = new Date(now).toISOString();
+      store.session.isNew = false;
+    }
+    write(store);
+    return store.session;
+  }
+
+  function applyOutcome(lesson, attempt, requested) {
+    const { store } = read();
+    store.lessons[lesson.lessonId] = lesson;
+    const granted = applyLessonOutcome(store, lesson, attempt, requested, store.session);
+    write(store);
+    return granted;
+  }
+
+  return { read, write, lessonState, saveLesson, touchSession, applyOutcome, memory };
 }
