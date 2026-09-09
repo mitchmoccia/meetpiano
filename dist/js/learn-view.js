@@ -198,6 +198,42 @@ function guidedTitles(lessonId, phase) {
   if (['L17', 'L18', 'L19', 'L20'].includes(lessonId) && phase === 'transfer') {
     return { perform: 'A new together pattern', done: 'Saved' };
   }
+  if (lessonId === 'L21' && phase === 'guided') {
+    return { hear: 'Just listening', notes: 'Quieter, then stronger', listen: 'A grown-up listen', cousin: 'A cousin — just listening', done: 'Ready for a quiet check' };
+  }
+  if (lessonId === 'L21' && phase === 'independent') {
+    return { play: 'Shape Soft Walk, no glow', notes: 'Shape Soft Walk, no glow', done: 'Ready for the cousin' };
+  }
+  if (lessonId === 'L21' && phase === 'transfer') {
+    return { play: 'Down, then stronger', notes: 'Down, then stronger', done: 'Saved' };
+  }
+  if (lessonId === 'L22' && phase === 'guided') {
+    return { pick: 'Pick an ending', play: 'Play the one you picked', cousin: 'A cousin — just listening', done: 'Ready for a quiet check' };
+  }
+  if (lessonId === 'L22' && phase === 'independent') {
+    return { pick: 'Pick again, no glow', play: 'Your ending, no glow', done: 'Ready for a new start' };
+  }
+  if (lessonId === 'L22' && phase === 'transfer') {
+    return { pick: 'A new start, your ending', play: 'Down the hill, your ending', done: 'Saved' };
+  }
+  if (lessonId === 'L23' && phase === 'guided') {
+    return { pick: 'Name the job', work: 'Do only that job', whole: 'Put Little Wave back', cousin: 'A cousin — just listening', done: 'Ready for a quiet check' };
+  }
+  if (lessonId === 'L23' && phase === 'independent') {
+    return { pick: 'Name the job again', work: 'The job, no glow', play: 'The job, no glow', done: 'Ready for the other wave' };
+  }
+  if (lessonId === 'L23' && phase === 'transfer') {
+    return { pick: 'Same kind of job', work: 'The cousin job', play: 'The cousin job', done: 'Saved' };
+  }
+  if (lessonId === 'L24' && phase === 'guided') {
+    return { pick: 'Pick a piece to share', remind: 'One reminder', play: 'Play it through', listen: 'A grown-up listened', done: 'Ready for recital mode' };
+  }
+  if (lessonId === 'L24' && phase === 'independent') {
+    return { pick: 'Pick the piece', play: 'Recital mode — no glow', done: 'Ready for another share' };
+  }
+  if (lessonId === 'L24' && phase === 'transfer') {
+    return { pick: 'A different piece', play: 'Another share, no glow', done: 'Saved' };
+  }
   return {};
 }
 
@@ -213,6 +249,33 @@ function resultCopy(view) {
     return { eyebrow: copy.eyebrow, title: copy.practicedTitle, paragraphs: [sentence, honesty, 'Independent is still waiting if you want a quiet check next time.'] };
   }
   return { eyebrow: copy.eyebrow, title: copy.startedTitle, paragraphs: [sentence, honesty, 'Nothing here claims a finished skill. Come back on this same device to continue.'] };
+}
+
+export function renderResultCard(card) {
+  if (!card) return null;
+  const rows = [
+    ['Notes', laneWord(card.notes)],
+    ['Rhythm', laneWord(card.rhythm)],
+    ['Assistance', card.assistance === 'assisted' ? 'help used' : 'none'],
+    ['Self-observation', card.selfObservation ? 'marked' : 'not marked'],
+    ['We listened', card.listened ? 'yes' : 'not yet'],
+    ['Later transfer', laneWord(card.transferLater)]
+  ];
+  if (card.dynamics != null) rows.splice(2, 0, ['Dynamics', laneWord(card.dynamics)]);
+  if (card.finishedThrough != null) rows.push(['Finished through wobbles', card.finishedThrough ? 'yes' : 'not yet']);
+  return el('ol', { className: 'result-card', 'aria-label': 'How this try is stored' },
+    ...rows.map(([label, value]) => el('li', {}, el('strong', {}, label), el('span', {}, value)))
+  );
+}
+
+function laneWord(value) {
+  if (value === 'pass' || value === true) return 'pass';
+  if (value === 'miss' || value === false) return 'miss';
+  if (value === 'unavailable') return 'unavailable on this input';
+  if (value === 'not-asked' || value === 'not asked') return 'not asked';
+  if (value === 'later') return 'later check';
+  if (value === 'done') return 'done';
+  return 'not scored';
 }
 
 export function evidenceSentence(state, lessonSpec) {
@@ -268,15 +331,15 @@ export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit, onEx
       el('span', { className: 'game-xp' }, 'Device-local only')
     ),
     el('section', { className: 'unit-intro' },
-      el('p', { className: 'mission-eyebrow' }, 'FIVE WORLDS · SAME DEVICE'),
-      el('h1', {}, 'First Notes, Rhythm Club, Read and play, Left hand, then Together.'),
-      el('p', {}, 'Explore, find C, walk the neighbors, play Little Wave. Tap with a heartbeat. Read F, G, and a little tune. Meet the left hand. Then play two rooms on the same click. The next activity unlocks when this device is ready. Nothing here is a teacher grade.')
+      el('p', { className: 'mission-eyebrow' }, 'SIX WORLDS · SAME DEVICE'),
+      el('h1', {}, 'First Notes through Expression — all 24 lessons.'),
+      el('p', {}, 'Explore, find C, walk the neighbors, play Little Wave. Tap with a heartbeat. Read F, G, and a little tune. Meet the left hand. Play two rooms on the same click. Then shape the sound, make an ending yours, practice on purpose, and share a first recital. The next activity unlocks when this device is ready. Nothing here is a teacher grade.')
     ),
     nextSessionCard(rec, onContinue),
     extraContinue,
     ...view.units.map((unit) => unitSection(unit, onOpen, focusUnit)),
     portabilityCard(onExport, onImport),
-    el('p', { className: 'unit-limit' }, 'Playable lessons are L01–L20. Later lessons are not here yet — there are no buttons to L21 or beyond. On-screen keys are an exploration stand-in, not proof of hand coordination. MIDI reports pitch and time only. A grown-up marks which hand. Export stays on the browsers you control. There is no account.')
+    el('p', { className: 'unit-limit' }, 'Playable lessons are L01–L24 when earlier activities on this device are ready. On-screen keys are an exploration stand-in, not proof of hand coordination or quiet-versus-strong. MIDI reports pitch, time, and velocity if the keyboard sent it — never technique. A grown-up marks listening for a recital. Export stays on the browsers you control. There is no account.')
   ].filter(Boolean));
 }
 
@@ -374,6 +437,7 @@ function evidenceLaneList(lanes) {
 }
 
 function lockNoteForUnit(unitId) {
+  if (unitId === 'expression') return 'Expression unlocks when Complete little piece is Independent on this device.';
   if (unitId === 'together') return 'Together unlocks when Two parts one pulse is Independent on this device.';
   if (unitId === 'left-hand') return 'Left hand unlocks when Read a little tune is Independent on this device.';
   if (unitId === 'read-and-play') return 'Read and play unlocks when Notes with a beat is Independent on this device.';

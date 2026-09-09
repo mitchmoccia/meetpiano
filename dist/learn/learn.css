@@ -390,6 +390,23 @@
   background: #fff6d6;
 }
 .import-label { cursor: pointer; display: inline-flex; align-items: center; }
+.result-card {
+  display: grid;
+  gap: 6px;
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 12px 14px;
+  border: 1.5px solid var(--ink);
+  border-radius: 14px;
+  background: #fffdf8;
+}
+.result-card li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 13px;
+}
+.result-card strong { font-weight: 750; }
 .staff-card {
   margin: 18px 0 0;
   padding: 12px 14px;

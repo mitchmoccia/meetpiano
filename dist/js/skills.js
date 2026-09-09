@@ -33,7 +33,11 @@ export const SKILL_CATALOG = {
   'S-TOGETHER': { title: 'First together', version: 'beginner-v1', lessonId: 'L17' },
   'S-KEEP-GOING': { title: 'Keep going together', version: 'beginner-v1', lessonId: 'L18' },
   'S-SMALL-HARMONY': { title: 'Small harmony', version: 'beginner-v1', lessonId: 'L19' },
-  'S-LITTLE-PIECE': { title: 'A complete little piece', version: 'beginner-v1', lessonId: 'L20' }
+  'S-LITTLE-PIECE': { title: 'A complete little piece', version: 'beginner-v1', lessonId: 'L20' },
+  'S-DYNAMIC': { title: 'Quiet and strong', version: 'beginner-v1', lessonId: 'L21' },
+  'S-MAKE-YOURS': { title: 'Make a chosen ending', version: 'beginner-v1', lessonId: 'L22' },
+  'S-PURPOSE': { title: 'Practice with a purpose', version: 'beginner-v1', lessonId: 'L23' },
+  'S-SHARE': { title: 'Share a first recital', version: 'beginner-v1', lessonId: 'L24' }
 };
 
 export const LESSON_SKILLS = {
@@ -56,7 +60,11 @@ export const LESSON_SKILLS = {
   L17: ['S-TOGETHER', 'S-HAND-CHOICE'],
   L18: ['S-KEEP-GOING', 'S-HAND-CHOICE'],
   L19: ['S-SMALL-HARMONY', 'S-HAND-CHOICE'],
-  L20: ['S-LITTLE-PIECE', 'S-HAND-CHOICE']
+  L20: ['S-LITTLE-PIECE', 'S-HAND-CHOICE'],
+  L21: ['S-DYNAMIC'],
+  L22: ['S-MAKE-YOURS'],
+  L23: ['S-PURPOSE'],
+  L24: ['S-SHARE']
 };
 
 export function skillIdsFor(lessonId) {
