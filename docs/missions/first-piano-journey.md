@@ -20,7 +20,8 @@ This phase does not claim that the app replaces a teacher, that MIDI proves tech
 - A playable `/learn` path that reuses the existing dependency-free static site, Web Audio, and input patterns rather than replacing them.
 - Device-local progress with four evidence states: Explored, Practiced, Independent, Retained.
 - Honest measurement limits, including adult-observed labels for posture, hand shape, and fingering.
-- Later-slice export/import of device-local records. No accounts or cloud progress in this mission.
+- Device-local export/import of records (shipped in MP-06). No accounts or cloud progress in this mission.
+- MP-11 closeout is a release *packet* (verification, honest labels, merge order). It does not merge or promote production.
 - Preview deploys on the existing Vercel project so a grown-up can try `/learn` without a production merge.
 
 ### Out of scope (explicitly excluded)
@@ -34,7 +35,7 @@ This phase does not claim that the app replaces a teacher, that MIDI proves tech
 
 ### Device and progress scope (this phase)
 
-Progress is **device-local only**. Records stay on the browser that created them. The UI must disclose that fact when progress is shown. Export and import are planned for later slices (see MP-11), not this one. Reloading the current marketing playground still resets session-only XP; that existing behavior is not curriculum progress.
+Progress is **device-local only**. Records stay on the browser that created them. The UI must disclose that fact when progress is shown. Export and import shipped in MP-06. Reloading the current marketing playground still resets session-only XP; that existing behavior is not curriculum progress.
 
 ## Permissions and authority
 
@@ -59,7 +60,7 @@ Recorded 2026-09-08. Only list what was actually checked.
 | Vercel project `meetpiano` | Works | `framework: null`, empty install/build, `outputDirectory: dist` in repo `vercel.json`; production alias `meetpiano.vercel.app` returns HTTP 200 |
 | Custom domain `https://meetpiano.app` | Works | HTTP 200 from Vercel on 2026-09-08 (~18:23 America/New_York). Brand domain is already live. |
 | `www.meetpiano.app` | Does not resolve | DNS lookup failed on 2026-09-08. Not a blocker for this mission. |
-| `/learn` on production | Works | `https://meetpiano.app/learn` returns HTTP 200 and serves the First Notes hub (verified after MP-03 merged to `main`). |
+| `/learn` on production | Works | `https://meetpiano.app/learn` returns HTTP 200 and serves First Notes + Rhythm Club + Read and play (L01–L12) on live `main` @ `3da09b9` (verified 2026-09-09). Left hand through Expression are on the stacked PRs only. |
 | GitHub-linked Vercel project `meetpiano-app` | Deleted | Removed. Canonical hosting is the single Vercel project `meetpiano` plus `https://meetpiano.app`. |
 | Hourly resume routines | Not configured | No scheduled resume, heartbeat, or slice-runner automation is set up yet. |
 
@@ -68,7 +69,7 @@ Recorded 2026-09-08. Only list what was actually checked.
 Inspected **2026-09-08 ~18:23 America/New_York**.
 
 - Repo: https://github.com/mitchmoccia/meetpiano
-- Live `main` SHA (MP-00 inspect): `2385bd72a176c140aaf4a50849d197adea69579b`. Current `main` after MP-02+MP-03 merge: `96860fa8262bfe2f8a902910c55745054d21eeb5`.
+- Live `main` SHA (MP-00 inspect): `2385bd72a176c140aaf4a50849d197adea69579b`. Current live `main` (2026-09-09): `3da09b909fc54aaf54f0be8b00b374c3adf5cf5f` (PR #9 / MP-06). Production deploy `dpl_CMUa49cvzShs9x59RDrpQVJ6iMJ3`.
 - Message: `Import complete MeetPiano site, artwork, piano demo, and Vercel configuration`
 - Extra branch `cursor/setup-cloud-agent-env-d108` is **+1 commit** (`b141d3489fb29845937a63d5361b21e9ca3125aa`) adding only `.cursor/environment.json`. Do not merge or delete it. Leave it alone.
 - Hosting: single Vercel project `meetpiano` in `mitchmoccias-projects` plus `https://meetpiano.app`. The former GitHub-linked project `meetpiano-app` was deleted. `vercel.json` uses `outputDirectory: dist` and empty build/install commands.
@@ -90,7 +91,7 @@ Inspected **2026-09-08 ~18:23 America/New_York**.
 2. **`/learn` is the curriculum surface.** MP-01 adds it. The home-page mini-adventure remains a preview, not the lesson engine.
 3. **Reuse, do not rewrite.** Later slices extend the existing static files, Web Audio, and input handling. No new framework.
 4. **Pitch policy is lesson-specific.** Early exploration may accept a pitch-class in any octave. Location and notation checks require an exact MIDI pitch when the lesson names a register.
-5. **Progress is device-local this phase.** Disclose it. Export/import comes later. No silent cloud sync.
+5. **Progress is device-local this phase.** Disclose it. Export/import shipped in MP-06. No silent cloud sync.
 6. **Evidence states are Explored / Practiced / Independent / Retained.** MIDI or tap data alone cannot promote a posture or fingering skill past adult-observed Independent.
 7. **Original curriculum copy.** Do not quote or reconstruct Faber, RCM, or other published method text.
 8. **Production stays gated.** Mitch approval is required to merge or deploy. Piany prepares branches and PRs.
@@ -128,6 +129,6 @@ After MP-00 is merged or Mitch chooses to stack, the next action is **start MP-0
 | MP-08 | Together L17–L20 | Working |
 | MP-09 | Expression and first recital L21–L24 (Checkpoint B) | Working |
 | MP-10 | A seven-year-old can use it and a grown-up can help | Working |
-| MP-11 | Export/import, disclosure, mission closeout | Queued |
+| MP-11 | Validate, correct, and release the journey | Working (packet; merge gated) |
 
 Acceptance summaries for each card are in [`first-piano-journey-slices.md`](first-piano-journey-slices.md).
