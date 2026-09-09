@@ -46,7 +46,7 @@ The full learning curriculum, coaching, accounts, billing, and family profiles a
 
 ## Documentation
 
-First Piano Journey mission and lesson specification: [`docs/missions/first-piano-journey.md`](docs/missions/first-piano-journey.md). MP-11 release packet: [`docs/missions/first-piano-journey-release.md`](docs/missions/first-piano-journey-release.md).
+First Piano Journey mission and lesson specification: [`docs/missions/first-piano-journey.md`](docs/missions/first-piano-journey.md). MP-11 release packet: [`docs/missions/first-piano-journey-release.md`](docs/missions/first-piano-journey-release.md). Pilot pack (materials only; outreach blocked until Mitch says go): [`docs/pilots/first-piano-journey-v1/`](docs/pilots/first-piano-journey-v1/).
 
 ## Checks
 
@@ -65,6 +65,7 @@ node scripts/mp-10-check.mjs
 node scripts/mp-11-check.mjs
 node scripts/copyright-check.mjs
 node scripts/aeo-check.mjs
+node scripts/pilot-cta-check.mjs
 ```
 
 Hardware MIDI compatibility depends on the browser, operating system, keyboard, and adapter. The current preview does not assess fingering, posture, sustain pedal technique, or microphone input.
