@@ -184,6 +184,7 @@ function mapCards(list, store) {
     return {
       ...card,
       evidenceState: lesson.evidenceState,
+      evidenceLanes: lesson.evidenceLanes || null,
       unlocked,
       inProgress,
       firstCompletionRewarded: lesson.firstCompletionRewarded === true

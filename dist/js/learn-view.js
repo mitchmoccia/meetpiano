@@ -1,5 +1,7 @@
 import { PHASE_ORDER } from './player.js';
 import { evidenceRank, JOURNEY_LESSONS, nextLessonId, unitView } from './unit.js';
+import { recommendNext, laneSummary } from './recommend.js';
+import { sourceHonesty } from './evidence.js';
 
 const STEP_LABELS = ['Explain', 'See', 'Try', 'Check', 'Done'];
 
@@ -40,6 +42,16 @@ export function phaseCopy(view) {
   if (phase === 'independent') return stepCopy(copy.independent, guidedTitles(lessonSpec.lessonId, 'independent'), independentStep);
   if (phase === 'transfer') return stepCopy(copy.transfer, guidedTitles(lessonSpec.lessonId, 'transfer'), transferStep);
   if (phase === 'review') return copy.review;
+  if (phase === 'remediation') {
+    return {
+      eyebrow: 'EASIER PATH',
+      title: 'A smaller try',
+      paragraphs: [
+        'Same skill, an easier pattern. Repeating the identical hard check again would not help.',
+        view.lessonSpec.copy.independent?.remediation || view.lessonSpec.copy.guided?.remediation || ''
+      ].filter(Boolean)
+    };
+  }
   return resultCopy(view);
 }
 
@@ -141,13 +153,14 @@ function resultCopy(view) {
   const state = view.lesson.evidenceState;
   const copy = view.lessonSpec.copy.result;
   const sentence = evidenceSentence(state, view.lessonSpec);
+  const honesty = sourceHonesty(view.attempt?.inputMode);
   if (state === 'independent' || state === 'retained') {
-    return { ...copy, paragraphs: [sentence, view.firstCompletionNow ? copy.firstRewardNote : copy.repeatNote] };
+    return { ...copy, paragraphs: [sentence, honesty, view.firstCompletionNow ? copy.firstRewardNote : copy.repeatNote] };
   }
   if (state === 'practiced') {
-    return { eyebrow: copy.eyebrow, title: copy.practicedTitle, paragraphs: [sentence, 'Independent is still waiting if you want a quiet check next time.'] };
+    return { eyebrow: copy.eyebrow, title: copy.practicedTitle, paragraphs: [sentence, honesty, 'Independent is still waiting if you want a quiet check next time.'] };
   }
-  return { eyebrow: copy.eyebrow, title: copy.startedTitle, paragraphs: [sentence, 'Nothing here claims a finished skill. Come back on this same device to continue.'] };
+  return { eyebrow: copy.eyebrow, title: copy.startedTitle, paragraphs: [sentence, honesty, 'Nothing here claims a finished skill. Come back on this same device to continue.'] };
 }
 
 export function evidenceSentence(state, lessonSpec) {
@@ -179,8 +192,9 @@ export function renderPhraseTiles(root, phrase) {
   }));
 }
 
-export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit } = {}) {
+export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit, onExport, onImport } = {}) {
   const view = unitView(store);
+  const rec = recommendNext(store, store.session);
   const continueCard = [...view.units.flatMap((unit) => unit.cards)]
     .find((card) => card.lessonId === view.continueLessonId);
   root.replaceChildren(
@@ -191,19 +205,64 @@ export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit } = {
     el('section', { className: 'unit-intro' },
       el('p', { className: 'mission-eyebrow' }, 'THREE WORLDS · SAME DEVICE'),
       el('h1', {}, 'First Notes, Rhythm Club, then Read and play.'),
-      el('p', {}, 'Explore, find C, walk the neighbors, play Little Wave. Tap with a heartbeat. Then meet F and G, name steps and skips, put patterns on the staff, and read a little tune. The next activity unlocks when this device is ready. Nothing here is a teacher grade.'),
-      continueCard ? el('button', {
-        className: 'button button-dark',
+      el('p', {}, 'Explore, find C, walk the neighbors, play Little Wave. Tap with a heartbeat. Then meet F and G, name steps and skips, put patterns on the staff, and read a little tune. The next activity unlocks when this device is ready. Nothing here is a teacher grade.')
+    ),
+    nextSessionCard(rec, onContinue),
+    continueCard && rec.lessonId !== continueCard.lessonId ? el('p', { className: 'unit-limit' },
+      el('button', {
+        className: 'button button-outline',
         type: 'button',
         onClick: () => onContinue(continueCard.lessonId)
       }, continueCard.inProgress
         ? `Continue ${continueCard.title}`
         : evidenceRank(continueCard.evidenceState) >= 3
           ? `Replay ${continueCard.title}`
-          : `Start ${continueCard.title}`) : null
-    ),
+          : `Start ${continueCard.title}`)
+    ) : null,
     ...view.units.map((unit) => unitSection(unit, onOpen, focusUnit)),
-    el('p', { className: 'unit-limit' }, 'Playable lessons are L01–L12. Later lessons are not here yet — there are no buttons to them.')
+    portabilityCard(onExport, onImport),
+    el('p', { className: 'unit-limit' }, 'Playable lessons are L01–L12. Later lessons are not here yet — there are no buttons to them. Export stays on the browsers you control. There is no account.')
+  );
+}
+
+function nextSessionCard(rec, onContinue) {
+  if (!rec) return null;
+  return el('section', { className: 'next-session', id: 'next-session' },
+    el('p', { className: 'mission-eyebrow' }, 'NEXT ON THIS DEVICE'),
+    el('h2', {}, rec.title),
+    el('p', {}, rec.reason),
+    rec.kind === 'rest'
+      ? null
+      : el('button', {
+        className: 'button button-dark',
+        type: 'button',
+        onClick: () => onContinue(rec.lessonId, rec)
+      }, rec.action)
+  );
+}
+
+function portabilityCard(onExport, onImport) {
+  if (!onExport && !onImport) return null;
+  return el('section', { className: 'progress-port', id: 'progress-port' },
+    el('p', { className: 'mission-eyebrow' }, 'THIS DEVICE ONLY'),
+    el('h2', {}, 'Copy records between browsers you control'),
+    el('p', {}, 'Export is a JSON file of lesson and attempt records. Import checks versions and skips duplicate attempt IDs. It cannot invent Independent or Retained. Nothing is uploaded to an account.'),
+    el('div', { className: 'phase-actions' },
+      onExport ? el('button', { className: 'button button-outline', type: 'button', onClick: onExport }, 'Export JSON') : null,
+      onImport ? el('label', { className: 'button button-outline import-label' },
+        'Import JSON',
+        el('input', {
+          type: 'file',
+          accept: 'application/json,.json',
+          hidden: true,
+          onChange: (event) => {
+            const file = event.target.files?.[0];
+            if (file && onImport) onImport(file);
+            event.target.value = '';
+          }
+        })
+      ) : null
+    )
   );
 }
 
@@ -233,11 +292,13 @@ function unitCard(card, onOpen) {
       : evidenceRank(card.evidenceState) >= 3
         ? 'Replay'
         : 'Open';
+  const lanes = laneSummary(card);
   return el('li', { className: `unit-card ${locked ? 'locked' : 'open'} ${card.inProgress ? 'current' : ''}` },
     el('span', { className: 'unit-id' }, card.lessonId),
     el('strong', {}, card.title),
     el('span', { className: 'unit-blurb' }, card.blurb),
     el('span', { className: 'unit-state' }, locked ? 'Locked' : state),
+    locked ? null : evidenceLaneList(lanes),
     locked
       ? el('p', { className: 'unit-lock-note' }, action)
       : el('button', {
@@ -245,6 +306,15 @@ function unitCard(card, onOpen) {
         type: 'button',
         onClick: () => onOpen(card.lessonId)
       }, action)
+  );
+}
+
+function evidenceLaneList(lanes) {
+  return el('ol', { className: 'evidence-lanes', 'aria-label': 'Evidence on this device' },
+    ...lanes.map((lane) => el('li', {
+      className: `evidence-lane ${lane.earned ? 'earned' : 'empty'}`,
+      title: lane.honesty || ''
+    }, evidenceLabel(lane.state === 'explored' ? 'explored' : lane.state)))
   );
 }
 

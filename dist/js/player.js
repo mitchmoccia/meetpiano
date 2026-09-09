@@ -5,6 +5,8 @@ import {
   sanitizeInputDevice,
   shouldGrantFirstCompletion
 } from './progress.js';
+import { recordMissOn, sourceHonesty } from './evidence.js';
+import { skillIdsFor } from './skills.js';
 import { L01 } from './lessons/l01.js';
 import { createL02Player } from './lessons/l02-play.js';
 import { createL03Player } from './lessons/l03-play.js';
@@ -41,6 +43,14 @@ function createL01Player({ progress }) {
   }
 
   function persist() {
+    attempt.assistance = {
+      hintsUsed: Boolean(attempt.restore.hintsOn || attempt.restore.helped),
+      helpRequested: Boolean(attempt.restore.helped),
+      reducedTempo: false
+    };
+    if (!attempt.skillIds?.length) attempt.skillIds = skillIdsFor(lessonId);
+    if (!attempt.skillVersion) attempt.skillVersion = lessonSpec.curriculumVersion;
+    if (!attempt.sessionId) attempt.sessionId = progress.memory?.store?.session?.sessionId || null;
     const index = lesson.attempts.findIndex((item) => item.attemptId === attempt.attemptId);
     if (index >= 0) lesson.attempts[index] = attempt;
     else lesson.attempts.push(attempt);
@@ -56,7 +66,10 @@ function createL01Player({ progress }) {
 
   function begin(existing) {
     attempt = existing || createAttempt(lessonId, {
-      octavePolicyUsed: resolveOctavePolicy(lessonSpec.octavePolicy)
+      octavePolicyUsed: resolveOctavePolicy(lessonSpec.octavePolicy),
+      skillIds: skillIdsFor(lessonId),
+      skillVersion: lessonSpec.curriculumVersion,
+      sessionId: progress.memory?.store?.session?.sessionId || null
     });
     if (!existing) {
       lesson.attempts.push(attempt);
@@ -148,7 +161,7 @@ function createL01Player({ progress }) {
       return { ignore: true, reason: 'not-assessed', counted: true };
     }
     markExplored();
-    if (attempt.phase === 'guided') return handleGuidedNote(note);
+    if (attempt.phase === 'guided' || attempt.phase === 'remediation') return handleGuidedNote(note);
     if (attempt.phase === 'independent') return handleIndependentNote(note);
     if (attempt.phase === 'transfer') return handleTransferNote(note);
     persist();
@@ -217,8 +230,13 @@ function createL01Player({ progress }) {
         ? (close ? lessonSpec.copy.feedback.tooClose : lessonSpec.copy.feedback.needHigherFirst)
         : lessonSpec.copy.feedback.tooClose;
       recordEvent('note-on', { heard: note, expected: first, match: false });
-      persist();
-      return { ok: false, message, remediate: mode === 'independent' && note >= first };
+      const miss = recordMiss('high-low');
+      return {
+        ok: false,
+        message: miss.easier ? `${message} Let's try an easier version — not the same hard check again.` : message,
+        remediate: mode === 'independent' && note >= first,
+        easier: miss.easier
+      };
     }
     recordEvent('note-on', { heard: note, expected: first, match: true });
     if (mode === 'guided') attempt.restore.guidedStep = 2;
@@ -235,8 +253,14 @@ function createL01Player({ progress }) {
     const group = blackGroupId(note);
     const kind = groupKind(group);
     if (!kind) {
-      persist();
-      return { ok: false, message: lessonSpec.copy.feedback.whiteKey };
+      const miss = recordMiss('groups');
+      return {
+        ok: false,
+        message: miss.easier
+          ? `${lessonSpec.copy.feedback.whiteKey} Let's try an easier version — not the same hard check again.`
+          : lessonSpec.copy.feedback.whiteKey,
+        easier: miss.easier
+      };
     }
     if (mode === 'guided') {
       if (!pending.two && kind !== 'two') {
@@ -276,17 +300,56 @@ function createL01Player({ progress }) {
     setPhase('transfer');
   }
 
-  function completeTransfer() {
+  function completeTransfer(evidence = 'independent') {
     attempt.completedAt = new Date().toISOString();
-    attempt.evidenceState = promoteEvidence(attempt.evidenceState, 'independent');
+    attempt.restore.patternId = attempt.restore.sessionCheck || evidence === 'retained' ? 'transfer' : (attempt.restore.patternId || 'home');
+    attempt.patternId = attempt.restore.patternId;
+    const granted = progress.applyOutcome
+      ? progress.applyOutcome(lesson, attempt, evidence)
+      : evidence;
+    if (granted) attempt.evidenceState = promoteEvidence(attempt.evidenceState, granted);
     const grantedBefore = lesson.firstCompletionRewarded;
     setPhase('result');
-    return { firstCompletion: !grantedBefore && lesson.firstCompletionRewarded };
+    return { firstCompletion: !grantedBefore && lesson.firstCompletionRewarded, granted };
+  }
+
+  function recordMiss(kind) {
+    const miss = recordMissOn(attempt, kind);
+    persist();
+    return miss;
+  }
+
+  function startEasierWork() {
+    attempt.restore.easierWork = true;
+    attempt.restore.hintsOn = true;
+    attempt.restore.patternId = 'easier';
+    attempt.patternId = 'easier';
+    if (attempt.phase === 'independent' || attempt.phase === 'transfer' || attempt.phase === 'review') {
+      attempt.phase = 'remediation';
+    }
+    recordEvent('phase-change');
+    persist();
+    return { easier: true, phase: attempt.phase };
+  }
+
+  function beginSessionCheck() {
+    if (lesson.evidenceState !== 'independent' && lesson.evidenceState !== 'retained') return false;
+    if (attempt.completedAt || attempt.phase === 'result') begin(null);
+    attempt.restore.hintsOn = false;
+    attempt.restore.sessionCheck = true;
+    attempt.restore.patternId = 'transfer';
+    attempt.patternId = 'transfer';
+    setPhase('transfer');
+    return true;
   }
 
   function finishForNow() {
     attempt.completedAt = new Date().toISOString();
-    attempt.evidenceState = promoteEvidence(attempt.evidenceState, attempt.phase === 'independent' || attempt.phase === 'transfer' ? 'practiced' : attempt.evidenceState);
+    const keep = attempt.phase === 'independent' || attempt.phase === 'transfer' || attempt.phase === 'review'
+      ? 'practiced'
+      : attempt.evidenceState;
+    if (progress.applyOutcome) progress.applyOutcome(lesson, attempt, keep);
+    else attempt.evidenceState = promoteEvidence(attempt.evidenceState, keep);
     setPhase('result');
   }
 
@@ -375,7 +438,10 @@ function createL01Player({ progress }) {
       notice: progress.memory.notice,
       firstCompletionNow: lastGrant,
       alreadyRewarded: lesson.firstCompletionRewarded && !lastGrant,
-      phaseIndex: Math.max(0, PHASE_ORDER.indexOf(phase === 'transfer' ? 'independent' : phase))
+      easierWork: attempt.restore.easierWork === true,
+      sessionCheck: attempt.restore.sessionCheck === true,
+      sourceHonesty: sourceHonesty(attempt.inputMode),
+      phaseIndex: Math.max(0, PHASE_ORDER.indexOf(phase === 'transfer' || phase === 'remediation' ? 'independent' : phase))
     };
   }
 
@@ -399,7 +465,10 @@ function createL01Player({ progress }) {
     finishForNow,
     persist,
     recordEvent,
-    markExplored
+    markExplored,
+    recordMiss,
+    startEasierWork,
+    beginSessionCheck
   };
 }
 

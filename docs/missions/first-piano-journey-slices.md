@@ -196,17 +196,23 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 
 | Field | Value |
 | --- | --- |
-| Status | **queued** |
-| Depends on | MP-01 (can stack after MP-05) |
+| Status | **working** |
+| Depends on | MP-01 (stacked after MP-05) |
 
-**Learner outcome.** A grown-up can see Explored / Practiced / Independent / Retained for lessons the device has actually attempted, with a clear “saved on this device only” disclosure.
+**Learner outcome.** A grown-up can see Explored / Practiced / Independent / Retained for lessons the device has actually attempted, with a clear “saved on this device only” disclosure. A new visit recommends a next step from that evidence, not an identical retry.
 
 **Acceptance**
 
-- States match the curriculum contract. No silent promotion.
+- States match the curriculum contract. No silent promotion. Practiced, Independent, and Retained are stored and shown as separate lanes.
+- Attempts persist assistance, tempo, input source, skill ids, and curriculum/skill versions. Touch practice cannot be labeled MIDI verified.
+- Replay in the same visit cannot manufacture Retained. A new-session check revisits an earlier Independent skill with another pattern.
+- Repeated misses switch to targeted easier work instead of the same hard check.
+- Curriculum or skill-contract updates keep historical attempts and invalidate only affected live evidence.
+- Device-local export/import validates versions and merges repeat-safe attempt IDs. Import cannot invent Independent or Retained.
+- `/learn` hub shows a useful next-session recommendation.
 - Posture and fingering cannot reach Independent without an adult-observed mark.
 - Reload keeps device-local records. Marketing XP on `/` stays session-only.
-- No accounts. No server write.
+- No accounts. No server write. Hardware MIDI remains unverified.
 
 ---
 

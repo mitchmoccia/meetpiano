@@ -6,6 +6,8 @@ import {
   shouldGrantFirstCompletion
 } from './progress.js';
 import { assessHeardPitch, resolveOctavePolicy, shouldCountTowardProgress } from './assess.js';
+import { recordMissOn, sourceHonesty } from './evidence.js';
+import { skillIdsFor } from './skills.js';
 
 export const PHASE_ORDER = ['explanation', 'demo', 'guided', 'independent', 'transfer', 'result'];
 
@@ -21,7 +23,21 @@ export function createRuntime({ progress, lessonSpec }) {
     return lesson.attempts.find((item) => item.attemptId === lesson.currentAttemptId) || null;
   }
 
+  function syncAttemptMeta() {
+    attempt.assistance = {
+      hintsUsed: Boolean(attempt.restore.hintsOn || attempt.restore.helped || attempt.assistance?.hintsUsed),
+      helpRequested: Boolean(attempt.restore.helped || attempt.assistance?.helpRequested),
+      reducedTempo: Boolean(attempt.restore.reducedTempo || attempt.assistance?.reducedTempo)
+    };
+    if (attempt.restore.patternId) attempt.patternId = attempt.restore.patternId;
+    if (attempt.restore.reducedTempo && !Number.isFinite(attempt.tempoBpm)) attempt.tempoBpm = attempt.tempoBpm ?? null;
+    if (!attempt.skillIds?.length) attempt.skillIds = skillIdsFor(lessonId);
+    if (!attempt.skillVersion) attempt.skillVersion = lessonSpec.curriculumVersion || 'beginner-v1';
+    if (!attempt.sessionId) attempt.sessionId = progress.memory?.store?.session?.sessionId || null;
+  }
+
   function persist() {
+    syncAttemptMeta();
     const index = lesson.attempts.findIndex((item) => item.attemptId === attempt.attemptId);
     if (index >= 0) lesson.attempts[index] = attempt;
     else lesson.attempts.push(attempt);
@@ -41,7 +57,10 @@ export function createRuntime({ progress, lessonSpec }) {
 
   function begin(existing) {
     attempt = existing || createAttempt(lessonId, {
-      octavePolicyUsed: resolveOctavePolicy(lessonSpec.octavePolicy)
+      octavePolicyUsed: resolveOctavePolicy(lessonSpec.octavePolicy),
+      skillIds: skillIdsFor(lessonId),
+      skillVersion: lessonSpec.curriculumVersion,
+      sessionId: progress.memory?.store?.session?.sessionId || null
     });
     if (!existing) {
       lesson.attempts.push(attempt);
@@ -144,10 +163,14 @@ export function createRuntime({ progress, lessonSpec }) {
 
   function finishAttempt(evidence) {
     attempt.completedAt = new Date().toISOString();
-    if (evidence) attempt.evidenceState = promoteEvidence(attempt.evidenceState, evidence);
+    const requested = evidence || attempt.evidenceState;
+    const granted = progress.applyOutcome
+      ? progress.applyOutcome(lesson, attempt, requested)
+      : requested;
+    if (granted) attempt.evidenceState = promoteEvidence(attempt.evidenceState, granted);
     const grantedBefore = lesson.firstCompletionRewarded;
     setPhase('result');
-    return { firstCompletion: !grantedBefore && lesson.firstCompletionRewarded };
+    return { firstCompletion: !grantedBefore && lesson.firstCompletionRewarded, granted };
   }
 
   function finishForNow() {
@@ -162,7 +185,43 @@ export function createRuntime({ progress, lessonSpec }) {
   }
 
   function completeTransfer(evidence = 'independent') {
+    if (!attempt.patternId && !attempt.restore.patternId) {
+      attempt.restore.patternId = evidence === 'retained' || attempt.phase === 'review' || attempt.restore.sessionCheck
+        ? 'transfer'
+        : 'home';
+    }
     return finishAttempt(evidence);
+  }
+
+  function recordMiss(kind) {
+    const miss = recordMissOn(attempt, kind);
+    persist();
+    return miss;
+  }
+
+  function startEasierWork() {
+    attempt.restore.easierWork = true;
+    attempt.restore.hintsOn = true;
+    attempt.restore.patternId = 'easier';
+    attempt.patternId = 'easier';
+    if (attempt.phase === 'independent' || attempt.phase === 'transfer' || attempt.phase === 'review') {
+      attempt.phase = 'remediation';
+    }
+    recordEvent('phase-change');
+    persist();
+    return { easier: true, phase: attempt.phase };
+  }
+
+  function beginSessionCheck() {
+    if (lesson.evidenceState !== 'independent' && lesson.evidenceState !== 'retained') return false;
+    if (attempt.completedAt || attempt.phase === 'result') begin(null);
+    attempt.restore.hintsOn = false;
+    attempt.restore.helped = false;
+    attempt.restore.sessionCheck = true;
+    attempt.restore.patternId = 'transfer';
+    attempt.patternId = 'transfer';
+    setPhase('transfer');
+    return true;
   }
 
   function restart() {
@@ -207,6 +266,9 @@ export function createRuntime({ progress, lessonSpec }) {
     finishAttempt,
     completeIndependent,
     completeTransfer,
+    recordMiss,
+    startEasierWork,
+    beginSessionCheck,
     restart,
     shouldCount(source) {
       return shouldCountTowardProgress(source, playingDemo);
@@ -223,7 +285,10 @@ export function createRuntime({ progress, lessonSpec }) {
         notice: progress.memory.notice,
         firstCompletionNow: lastGrant,
         alreadyRewarded: lesson.firstCompletionRewarded && !lastGrant,
-        phaseIndex: Math.max(0, PHASE_ORDER.indexOf(phase === 'transfer' || phase === 'review' ? 'independent' : phase)),
+        easierWork: attempt.restore.easierWork === true,
+        sessionCheck: attempt.restore.sessionCheck === true,
+        sourceHonesty: sourceHonesty(attempt.inputMode),
+        phaseIndex: Math.max(0, PHASE_ORDER.indexOf(phase === 'transfer' || phase === 'review' || phase === 'remediation' ? 'independent' : phase)),
         ...extra
       };
     }
@@ -236,6 +301,9 @@ export function bindStandardPlayer(runtime, handlers) {
       return { ignore: true, reason: 'demo-playback', counted: false };
     }
     runtime.addInput(source, extras);
+    if (source && runtime.attempt.inputMode !== 'midi' && source !== 'midi') {
+      runtime.attempt.restore.midiVerified = false;
+    }
     if (extras.expected != null) {
       const scored = runtime.scorePitch(note, extras.expected, extras);
       runtime.attempt.octavePolicyUsed = scored.octavePolicyUsed;
@@ -261,7 +329,17 @@ export function bindStandardPlayer(runtime, handlers) {
       return { ignore: true, reason: 'not-assessed', counted: true };
     }
     runtime.markExplored();
-    return handlers.onNote(note, extras);
+    const result = handlers.onNote(note, extras);
+    if (result && result.ok === false && !result.ignore) {
+      const miss = runtime.recordMiss(result.reason || result.message || 'miss');
+      if (miss.easier) {
+        result.easier = true;
+        result.message = result.message
+          ? `${result.message} Let's try an easier version — not the same hard check again.`
+          : 'Let us try an easier version.';
+      }
+    }
+    return result;
   }
 
   return {
@@ -284,6 +362,9 @@ export function bindStandardPlayer(runtime, handlers) {
     persist: runtime.persist,
     recordEvent: runtime.recordEvent,
     markExplored: runtime.markExplored,
+    recordMiss: runtime.recordMiss,
+    startEasierWork: runtime.startEasierWork,
+    beginSessionCheck: runtime.beginSessionCheck,
     runtime
   };
 }
