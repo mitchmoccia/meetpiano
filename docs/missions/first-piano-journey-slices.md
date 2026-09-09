@@ -331,6 +331,7 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 | Branch | `piany/mp-11-release-packet` |
 | Base | `piany/mp-10-kid-grownup-ux` @ `2fdcfad0e8bdc62bb6511f0790855c532a0cc198` |
 | Packet | [`first-piano-journey-release.md`](first-piano-journey-release.md) |
+| PR | https://github.com/mitchmoccia/meetpiano/pull/14 (draft into `piany/mp-10-kid-grownup-ux`) |
 
 **Learner outcome.** No new lesson. A grown-up reviewing the stack can read what was actually checked, what is live versus stacked, how to merge, and what public copy must not say.
 
