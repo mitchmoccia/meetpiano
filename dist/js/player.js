@@ -6,6 +6,9 @@ import {
   shouldGrantFirstCompletion
 } from './progress.js';
 import { L01 } from './lessons/l01.js';
+import { createL02Player } from './lessons/l02-play.js';
+import { createL03Player } from './lessons/l03-play.js';
+import { createL04Player } from './lessons/l04-play.js';
 import { blackGroupId, groupKind } from './piano.js';
 import { assessHeardPitch, resolveOctavePolicy, shouldCountTowardProgress } from './assess.js';
 
@@ -14,7 +17,8 @@ const GUIDED_STEPS = ['unlock', 'high-low', 'groups', 'posture'];
 const INDEPENDENT_STEPS = ['high-low', 'groups'];
 const TRANSFER_STEPS = ['other-two', 'three'];
 
-export function createPlayer({ progress, lessonId = 'L01' }) {
+function createL01Player({ progress }) {
+  const lessonId = 'L01';
   const lessonSpec = L01;
   let lesson = progress.lessonState(lessonId);
   let attempt = currentAttempt();
@@ -283,6 +287,13 @@ export function createPlayer({ progress, lessonId = 'L01' }) {
     persist();
   }
 
+  function requestHelp() {
+    attempt.restore.hintsOn = true;
+    attempt.restore.helped = true;
+    recordEvent('hint-shown');
+    persist();
+  }
+
   function setPosture(checked) {
     attempt.adultObserved.posture = Boolean(checked);
     if (checked) markExplored();
@@ -369,6 +380,7 @@ export function createPlayer({ progress, lessonId = 'L01' }) {
     setDemoPlaying,
     isDemoPlaying,
     setHints,
+    requestHelp,
     setPosture,
     setAdultTwo,
     setAdultThree,
@@ -382,4 +394,12 @@ export function createPlayer({ progress, lessonId = 'L01' }) {
   };
 }
 
+export function createPlayer({ progress, lessonId = 'L01' }) {
+  if (lessonId === 'L02') return createL02Player({ progress });
+  if (lessonId === 'L03') return createL03Player({ progress });
+  if (lessonId === 'L04') return createL04Player({ progress });
+  return createL01Player({ progress });
+}
+
 export { PHASE_ORDER, GUIDED_STEPS };
+
