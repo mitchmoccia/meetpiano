@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ffdc63">
   <title>First Piano Journey · MeetPiano</title>
-  <meta name="description" content="First Notes, Rhythm Club, and Read and play: meet the keyboard, find C, play Little Wave, tap with a heartbeat, then read F, G, and a little tune. Progress stays on this device.">
+  <meta name="description" content="First Notes, Rhythm Club, Read and play, and Left hand: meet the keyboard, find C, play Little Wave, tap with a heartbeat, read a little tune, then meet the left hand. Progress stays on this device.">
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/learn/learn.css">
@@ -90,9 +90,21 @@
               </svg>
               <figcaption>Little Wave rises, then comes home.</figcaption>
             </figure>
+            <div class="region-labels" id="region-labels" hidden>
+              <span class="region-tag region-left-tag">Left room</span>
+              <span class="region-tag region-right-tag">Right room</span>
+            </div>
+            <div class="hand-focus" id="hand-focus" hidden>
+              <p>Practice one hand, then come back. This step stays. MIDI hears pitch and time, not which hand.</p>
+              <div class="hand-focus-row">
+                <button type="button" class="button button-small button-outline" data-focus="left" aria-pressed="false">Left</button>
+                <button type="button" class="button button-small button-outline" data-focus="right" aria-pressed="false">Right</button>
+                <button type="button" class="button button-small button-outline" data-focus="both" aria-pressed="true">Both</button>
+              </div>
+            </div>
             <div class="piano" id="piano"></div>
             <div class="keyboard-help">
-              <span>This on-screen keyboard is a stand-in. Tap keys <span class="computer-help">or use A S D F G H J</span></span>
+              <span>This on-screen keyboard is a stand-in. Tap keys <span class="computer-help">or use A S D F G H J for the right room, Z X C V B N M for the left room</span></span>
               <button type="button" id="sound-toggle" aria-pressed="false" aria-label="Mute sound"><svg class="icon"><use href="#volume"/></svg><span>Sound on</span></button>
             </div>
             <figure class="seating-card" id="seating-card" hidden>
@@ -135,6 +147,26 @@
                 <text x="154" y="20" text-anchor="middle" font-size="12" font-weight="800">3</text>
               </svg>
               <figcaption>A grown-up checks fingers. MIDI cannot.</figcaption>
+            </figure>
+            <figure class="hand-card" id="left-hand-card" hidden>
+              <svg viewBox="0 0 260 130" role="img" aria-labelledby="left-hand-title left-hand-desc">
+                <title id="left-hand-title">Left-hand fingers 5 4 3 on C D E</title>
+                <desc id="left-hand-desc">A simple left-hand diagram with pinky on C, ring on D, and middle on E. A grown-up checks fingers and which hand. MIDI cannot.</desc>
+                <rect x="112" y="86" width="36" height="28" rx="4" fill="#fffdf6" stroke="#29251f" stroke-width="2"/>
+                <rect x="154" y="86" width="36" height="28" rx="4" fill="#fffdf6" stroke="#29251f" stroke-width="2"/>
+                <rect x="196" y="86" width="36" height="28" rx="4" fill="#fffdf6" stroke="#29251f" stroke-width="2"/>
+                <text x="130" y="106" text-anchor="middle" font-size="14" font-weight="700">C</text>
+                <text x="172" y="106" text-anchor="middle" font-size="14" font-weight="700">D</text>
+                <text x="214" y="106" text-anchor="middle" font-size="14" font-weight="700">E</text>
+                <path d="M130 86 C 136 60, 124 28, 106 34" fill="none" stroke="#29251f" stroke-width="5" stroke-linecap="round"/>
+                <path d="M172 86 C 172 58, 174 22, 172 18" fill="none" stroke="#29251f" stroke-width="5" stroke-linecap="round"/>
+                <path d="M214 86 C 212 56, 206 18, 202 16" fill="none" stroke="#29251f" stroke-width="5" stroke-linecap="round"/>
+                <circle cx="106" cy="42" r="16" fill="#f1aec0" stroke="#29251f" stroke-width="2"/>
+                <text x="130" y="78" text-anchor="middle" font-size="12" font-weight="800">5</text>
+                <text x="172" y="14" text-anchor="middle" font-size="12" font-weight="800">4</text>
+                <text x="190" y="20" text-anchor="middle" font-size="12" font-weight="800">3</text>
+              </svg>
+              <figcaption>Left hand 5–4–3. A grown-up checks fingers and which hand. MIDI cannot.</figcaption>
             </figure>
             <figure class="staff-card" id="staff-card" hidden></figure>
             <figure class="house-card" id="three-house-card" hidden>
@@ -180,7 +212,7 @@
               <p>A held key counts once until you let go. A silent MIDI note (velocity zero) is treated as letting go. Playing the same key again after a note-off counts as a new try. Leaving this tab silences sound; a key you kept holding does not keep adding progress. After you come back, let go and press again if you want it to sound. Demo notes you only listen to never count. If MIDI is missing or a keyboard is unplugged, the on-screen keys and computer keys still work. Physical MIDI hardware is not claimed as verified from this page.</p>
             </details>
           </div>
-          <span class="preview-label" id="preview-label">First Notes + Rhythm Club + Read and play · L01–L12. Not a teacher. Not a grade.</span>
+          <span class="preview-label" id="preview-label">First Notes + Rhythm Club + Read and play + Left hand · L01–L16. Not a teacher. Not a grade. MIDI does not certify hand choice.</span>
         </div>
       </div>
       <p class="learn-footnote"><svg class="icon"><use href="#headphones"/></svg> Headphones help. A mute control stays available. MIDI depends on your browser and instrument — this is not a claim of universal support or a hardware check.</p>
@@ -189,7 +221,7 @@
   <footer>
     <div class="wrap footer-main">
       <a href="/" class="brand"><span class="brand-keys" aria-hidden="true"><i></i><i></i><i></i></span>meetpiano<span class="brand-period">.</span></a>
-      <p>First Piano Journey · First Notes + Rhythm Club + Read and play · beginner-v1 · device-local only</p>
+      <p>First Piano Journey · First Notes + Rhythm Club + Read and play + Left hand · beginner-v1 · device-local only</p>
       <a href="/">Back to the playground</a>
     </div>
     <div class="wrap footer-bottom">

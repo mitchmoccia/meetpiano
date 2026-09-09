@@ -1,6 +1,6 @@
 export const SKILL_CATALOG_VERSION = 'beginner-v1';
 
-const ADULT_ONLY = new Set(['S-POSTURE', 'S-FINGER-CDE']);
+const ADULT_ONLY = new Set(['S-POSTURE', 'S-FINGER-CDE', 'S-FINGER-LH', 'S-HAND-CHOICE']);
 const NEVER_AUTO_RETAIN = new Set(['S-POSTURE']);
 
 export const SKILL_CATALOG = {
@@ -23,7 +23,13 @@ export const SKILL_CATALOG = {
   'S-FIND-FG': { title: 'Find F and G', version: 'beginner-v1', lessonId: 'L09' },
   'S-STEP-SKIP': { title: 'Steps and skips', version: 'beginner-v1', lessonId: 'L10' },
   'S-STAFF-MAP': { title: 'Patterns on the staff', version: 'beginner-v1', lessonId: 'L11' },
-  'S-READ-PHRASE': { title: 'Read a little tune', version: 'beginner-v1', lessonId: 'L12' }
+  'S-READ-PHRASE': { title: 'Read a little tune', version: 'beginner-v1', lessonId: 'L12' },
+  'S-LH-C': { title: 'Left-hand C', version: 'beginner-v1', lessonId: 'L13' },
+  'S-FINGER-LH': { title: 'Left-hand fingers 5-4-3', version: 'beginner-v1', lessonId: 'L13', adultObserved: 'fingering' },
+  'S-HAND-CHOICE': { title: 'Which hand', version: 'beginner-v1', lessonId: 'L13', adultObserved: 'hand' },
+  'S-BASS-MAP': { title: 'Bass staff map', version: 'beginner-v1', lessonId: 'L14' },
+  'S-TURNS': { title: 'Hands take turns', version: 'beginner-v1', lessonId: 'L15' },
+  'S-TWO-PULSE': { title: 'Two parts one pulse', version: 'beginner-v1', lessonId: 'L16' }
 };
 
 export const LESSON_SKILLS = {
@@ -38,7 +44,11 @@ export const LESSON_SKILLS = {
   L09: ['S-FIND-FG'],
   L10: ['S-STEP-SKIP'],
   L11: ['S-STAFF-MAP'],
-  L12: ['S-READ-PHRASE']
+  L12: ['S-READ-PHRASE'],
+  L13: ['S-LH-C', 'S-FINGER-LH', 'S-HAND-CHOICE'],
+  L14: ['S-BASS-MAP', 'S-HAND-CHOICE'],
+  L15: ['S-TURNS', 'S-HAND-CHOICE'],
+  L16: ['S-TWO-PULSE', 'S-HAND-CHOICE']
 };
 
 export function skillIdsFor(lessonId) {

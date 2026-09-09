@@ -20,6 +20,10 @@ import { createL09Player } from './lessons/l09-play.js';
 import { createL10Player } from './lessons/l10-play.js';
 import { createL11Player } from './lessons/l11-play.js';
 import { createL12Player } from './lessons/l12-play.js';
+import { createL13Player } from './lessons/l13-play.js';
+import { createL14Player } from './lessons/l14-play.js';
+import { createL15Player } from './lessons/l15-play.js';
+import { L16 } from './lessons/l16.js';
 import { blackGroupId, groupKind } from './piano.js';
 import { assessHeardPitch, resolveOctavePolicy, shouldCountTowardProgress } from './assess.js';
 
@@ -484,6 +488,10 @@ export function createPlayer({ progress, lessonId = 'L01', clock, now } = {}) {
   if (lessonId === 'L10') return createL10Player({ progress });
   if (lessonId === 'L11') return createL11Player({ progress });
   if (lessonId === 'L12') return createL12Player({ progress });
+  if (lessonId === 'L13') return createL13Player({ progress });
+  if (lessonId === 'L14') return createL14Player({ progress });
+  if (lessonId === 'L15') return createL15Player({ progress });
+  if (lessonId === 'L16') return createRhythmLessonPlayer({ progress, lessonSpec: L16, clock, now });
   return createL01Player({ progress });
 }
 

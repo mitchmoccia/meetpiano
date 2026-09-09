@@ -6,6 +6,8 @@ export const RHYTHM_UNIT_ID = 'rhythm-club';
 export const RHYTHM_UNIT_TITLE = 'Rhythm Club';
 export const READ_UNIT_ID = 'read-and-play';
 export const READ_UNIT_TITLE = 'Read and play';
+export const LEFT_UNIT_ID = 'left-hand';
+export const LEFT_UNIT_TITLE = 'Left hand';
 export const CURRICULUM_VERSION = 'beginner-v1';
 
 const EVIDENCE_RANK = { explored: 1, practiced: 2, independent: 3, retained: 4 };
@@ -115,7 +117,42 @@ export const READ_AND_PLAY_LESSONS = [
   }
 ];
 
-export const JOURNEY_LESSONS = [...FIRST_NOTES_LESSONS, ...RHYTHM_CLUB_LESSONS, ...READ_AND_PLAY_LESSONS];
+export const LEFT_HAND_LESSONS = [
+  {
+    lessonId: 'L13',
+    title: 'Meet the left hand',
+    blurb: 'Lower C. Fingers 5–4–3.',
+    unlocksAfter: 'L12',
+    unlockNeeds: 'independent',
+    unitId: LEFT_UNIT_ID
+  },
+  {
+    lessonId: 'L14',
+    title: 'Left-hand reading',
+    blurb: 'Bass clef. F on the F line.',
+    unlocksAfter: 'L13',
+    unlockNeeds: 'practiced',
+    unitId: LEFT_UNIT_ID
+  },
+  {
+    lessonId: 'L15',
+    title: 'Musical conversation',
+    blurb: 'Ask, then answer. Turns.',
+    unlocksAfter: 'L14',
+    unlockNeeds: 'practiced',
+    unitId: LEFT_UNIT_ID
+  },
+  {
+    lessonId: 'L16',
+    title: 'Two parts one pulse',
+    blurb: 'Hold C. Walk on the clock.',
+    unlocksAfter: 'L15',
+    unlockNeeds: 'independent',
+    unitId: LEFT_UNIT_ID
+  }
+];
+
+export const JOURNEY_LESSONS = [...FIRST_NOTES_LESSONS, ...RHYTHM_CLUB_LESSONS, ...READ_AND_PLAY_LESSONS, ...LEFT_HAND_LESSONS];
 
 export function evidenceRank(state) {
   return EVIDENCE_RANK[state] || 0;
@@ -142,9 +179,18 @@ export function isReadLesson(lessonId) {
   return READ_AND_PLAY_LESSONS.some((item) => item.lessonId === lessonId);
 }
 
+export function isLeftLesson(lessonId) {
+  return LEFT_HAND_LESSONS.some((item) => item.lessonId === lessonId);
+}
+
+export function usesRhythmTake(lessonId) {
+  return isRhythmLesson(lessonId) || lessonId === 'L16';
+}
+
 export function unitTitleFor(lessonId) {
   if (isRhythmLesson(lessonId)) return RHYTHM_UNIT_TITLE;
   if (isReadLesson(lessonId)) return READ_UNIT_TITLE;
+  if (isLeftLesson(lessonId)) return LEFT_UNIT_TITLE;
   return UNIT_TITLE;
 }
 
@@ -173,6 +219,7 @@ export function parseUnitId(value) {
   if (id === UNIT_ID || id === 'first-notes') return UNIT_ID;
   if (id === RHYTHM_UNIT_ID || id === 'rhythm') return RHYTHM_UNIT_ID;
   if (id === READ_UNIT_ID || id === 'read') return READ_UNIT_ID;
+  if (id === LEFT_UNIT_ID || id === 'left') return LEFT_UNIT_ID;
   return null;
 }
 
@@ -202,7 +249,8 @@ export function unitView(store) {
   const firstCards = mapCards(FIRST_NOTES_LESSONS, store);
   const rhythmCards = mapCards(RHYTHM_CLUB_LESSONS, store);
   const readCards = mapCards(READ_AND_PLAY_LESSONS, store);
-  const all = [...firstCards, ...rhythmCards, ...readCards];
+  const leftCards = mapCards(LEFT_HAND_LESSONS, store);
+  const all = [...firstCards, ...rhythmCards, ...readCards, ...leftCards];
   const continueCard = pickContinue(all);
   return {
     unitId: UNIT_ID,
@@ -229,6 +277,13 @@ export function unitView(store) {
         kicker: 'WORLD · READ AND PLAY',
         unlocked: isLessonUnlocked(store, 'L09'),
         cards: readCards
+      },
+      {
+        unitId: LEFT_UNIT_ID,
+        title: LEFT_UNIT_TITLE,
+        kicker: 'WORLD · LEFT HAND',
+        unlocked: isLessonUnlocked(store, 'L13'),
+        cards: leftCards
       }
     ],
     continueLessonId: continueCard?.lessonId || 'L01'

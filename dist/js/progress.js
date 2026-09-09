@@ -95,7 +95,8 @@ function sanitizeRestore(restore) {
     mistakeKinds: sanitizeMistakeKinds(src.mistakeKinds),
     easierWork: src.easierWork === true,
     sessionCheck: src.sessionCheck === true,
-    patternId: typeof src.patternId === 'string' && PATTERN_IDS.has(src.patternId) ? src.patternId : null
+    patternId: typeof src.patternId === 'string' && PATTERN_IDS.has(src.patternId) ? src.patternId : null,
+    handFocus: src.handFocus === 'left' || src.handFocus === 'right' || src.handFocus === 'both' ? src.handFocus : null
   };
 }
 
@@ -220,6 +221,7 @@ export function validateAttempt(value, lessonId) {
     adultObserved: {
       posture: adult.posture === true,
       fingering: adult.fingering === true,
+      hand: adult.hand === true,
       note: typeof adult.note === 'string' ? adult.note.slice(0, 160) : undefined
     },
     octavePolicyUsed: value.octavePolicyUsed || 'pitch-class',
