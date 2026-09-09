@@ -104,53 +104,23 @@ Claim only what was actually exercised. Empty cells are **unverified**.
 
 Do not publish “works on every browser” or “MIDI verified.”
 
-## 3. Pilot packet outline (materials only)
+## 3. Pilot packet (materials only)
 
-**Do not contact** anyone from this slice. Mitch/Gort pick people later.
+**Do not contact** anyone from this packet. Outreach stays blocked until Mitch says go.
 
-### Who (suggested, not invited)
+The thin sitting outline that used to live here is replaced by the v1 pack:
 
-- One piano educator or teaching-artist reviewer.
-- One learner (about seven) plus one nearby grown-up.
-- Optional: a second grown-up who does not play piano.
+**[`../pilots/first-piano-journey-v1/`](../pilots/first-piano-journey-v1/)**
 
-### What to give them
+| File | Use |
+| --- | --- |
+| [`README.md`](../pilots/first-piano-journey-v1/README.md) | Purpose, 3–5 family cap, usability-not-efficacy success, Chrome evidence limit, device-local honesty |
+| [`session-script.md`](../pilots/first-piano-journey-v1/session-script.md) | What the facilitator says (setup, L01→toward L04, grown-up view, export optional) |
+| [`observation-checklist.md`](../pilots/first-piano-journey-v1/observation-checklist.md) | Setup friction, stalls, assistance, tools, input mode; adult posture/fingers kept separate |
+| [`grown-up-prompt.md`](../pilots/first-piano-journey-v1/grown-up-prompt.md) | Short grown-up sheet — no grading language |
+| [`recruiting-notes.md`](../pilots/first-piano-journey-v1/recruiting-notes.md) | Draft invite marked **DO NOT SEND until Mitch authorizes outreach** |
 
-- A **preview** URL after they authorize one — not a claim that `meetpiano.app/learn` already has six worlds.
-- This packet’s honesty lines (below).
-- A paper or real keyboard if they have one. On-screen keys are a stand-in.
-
-### Sitting 1 — setup (10 minutes)
-
-1. Grown-up opens the preview on Chrome (the only browser we have evidence for).
-2. Read the yellow disclosure: saved on this device only; not an account; touch is never MIDI verified.
-3. Optional: try MIDI only if they already own a compatible keyboard. Record make/OS/browser. Do not fail the sitting if MIDI is absent.
-4. Open `/learn/?view=grown-up`. Confirm it lists nothing invented.
-
-### Sitting 2 — First Notes (20–25 minutes)
-
-1. L01 Meet the keyboard: high/low, clumps of two and three. Adult marks sitting if they checked it.
-2. Pause once. Resume. Confirm the try is waiting.
-3. Continue only as far as the child wants (L02–L04). Stop before frustration.
-4. Grown-up writes: what was confusing, what the child said, which skills the **adult** saw (posture, fingers).
-
-### Sitting 3 — later units only if Sitting 2 felt kind
-
-Do not rush L05–L24 in one day. If they continue, keep the same honesty: rhythm is an audio clock, not exam grade; two hands are not certified by MIDI; recital is a share, not a jury.
-
-### What to collect
-
-- Confusion notes and one offline practice they actually tried.
-- Whether Pause / Hear the words / grown-up view helped.
-- Device, browser, and (if used) MIDI hardware.
-
-### What not to collect
-
-- Email lists, accounts, recordings, “improvement scores,” or endorsement quotes for marketing.
-
-### What the script must say out loud
-
-The app is an engineering preview of a first journey. It is not a teacher, not a grade, and tests alone do not authorize a live release.
+Still true: no educator names as “approved,” no learning-effectiveness claims, no recording upload, tests alone do not authorize a live release.
 
 ## 4. Merge order recommendation (#10 → #13, then this packet)
 

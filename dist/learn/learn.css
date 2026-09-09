@@ -404,6 +404,18 @@
   margin: 6px 0 10px;
 }
 .next-session p, .progress-port p { max-width: 52ch; color: var(--muted); }
+.hub-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 4px;
+}
+.hub-cta-row .hub-continue {
+  font-size: 16px;
+  padding: 16px 22px;
+}
+.hub-grownup-foot { padding-top: 4px; }
 .evidence-lanes {
   display: flex;
   flex-wrap: wrap;
