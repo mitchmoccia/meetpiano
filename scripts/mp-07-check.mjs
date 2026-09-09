@@ -22,6 +22,8 @@ import { createRhythmTake } from '../dist/js/rhythm-score.js';
 import { HOME_PHRASE as PORCH } from '../dist/js/lessons/l12.js';
 
 const fixtures = JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), 'fixtures/mp-07-left.json'), 'utf8'));
+const learnViewSrc = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../dist/js/learn-view.js'), 'utf8');
+assert(learnViewSrc.includes('].filter(Boolean)'), 'hub replaceChildren drops null children');
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);

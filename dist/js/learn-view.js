@@ -233,7 +233,20 @@ export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit, onEx
   const rec = recommendNext(store, store.session);
   const continueCard = [...view.units.flatMap((unit) => unit.cards)]
     .find((card) => card.lessonId === view.continueLessonId);
-  root.replaceChildren(
+  const extraContinue = continueCard && rec?.lessonId !== continueCard.lessonId
+    ? el('p', { className: 'unit-limit' },
+      el('button', {
+        className: 'button button-outline',
+        type: 'button',
+        onClick: () => onContinue(continueCard.lessonId)
+      }, continueCard.inProgress
+        ? `Continue ${continueCard.title}`
+        : evidenceRank(continueCard.evidenceState) >= 3
+          ? `Replay ${continueCard.title}`
+          : `Start ${continueCard.title}`)
+    )
+    : null;
+  root.replaceChildren(...[
     el('div', { className: 'game-topline' },
       el('span', { className: 'game-label' }, el('span', { className: 'game-live-dot' }), ' FIRST PIANO JOURNEY'),
       el('span', { className: 'game-xp' }, 'Device-local only')
@@ -244,21 +257,11 @@ export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit, onEx
       el('p', {}, 'Explore, find C, walk the neighbors, play Little Wave. Tap with a heartbeat. Read F, G, and a little tune. Then meet the left hand, read the bass staff, take turns, and share one pulse. The next activity unlocks when this device is ready. Nothing here is a teacher grade.')
     ),
     nextSessionCard(rec, onContinue),
-    continueCard && rec.lessonId !== continueCard.lessonId ? el('p', { className: 'unit-limit' },
-      el('button', {
-        className: 'button button-outline',
-        type: 'button',
-        onClick: () => onContinue(continueCard.lessonId)
-      }, continueCard.inProgress
-        ? `Continue ${continueCard.title}`
-        : evidenceRank(continueCard.evidenceState) >= 3
-          ? `Replay ${continueCard.title}`
-          : `Start ${continueCard.title}`)
-    ) : null,
+    extraContinue,
     ...view.units.map((unit) => unitSection(unit, onOpen, focusUnit)),
     portabilityCard(onExport, onImport),
     el('p', { className: 'unit-limit' }, 'Playable lessons are L01–L16. Later lessons are not here yet — there are no buttons to them. MIDI reports pitch and time only. A grown-up marks which hand. Export stays on the browsers you control. There is no account.')
-  );
+  ].filter(Boolean));
 }
 
 function nextSessionCard(rec, onContinue) {
