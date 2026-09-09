@@ -69,7 +69,7 @@
     <div class="nav-wrap wrap">
       <a href="#" class="brand" aria-label="MeetPiano home"><span class="brand-keys" aria-hidden="true"><i></i><i></i><i></i></span>meetpiano<span class="brand-period">.</span></a>
       <nav aria-label="Main navigation"><a href="/learn">Learn</a><a href="#adventure">The adventure</a><a href="#grown-ups">For grown-ups</a><a href="#questions">Good questions</a></nav>
-      <a href="#playground" class="button button-small button-dark">Let’s play <svg class="icon"><use href="#arrow"/></svg></a>
+      <a href="/learn/" class="button button-small button-dark">Journey <svg class="icon"><use href="#arrow"/></svg></a>
     </div>
   </header>
   <main id="main">
@@ -79,8 +79,11 @@
           <div class="eyebrow"><span class="tiny-star">✦</span> REAL PIANO. A WHOLE WORLD OF PLAY.</div>
           <h1>Little keys.<br>Big <span class="dreams">dreams.</span><br>Let’s play.</h1>
           <p>A piano adventure for the “one more go!” kids.<br class="desktop-br"> And the grown-ups cheering them on.</p>
-          <a href="#playground" class="button button-dark hero-cta"><svg class="icon play-icon"><use href="#play"/></svg> Play the mini adventure <svg class="icon"><use href="#arrow"/></svg></a>
-          <span class="cta-note">Free to try. No account. Just a little curiosity.</span>
+          <div class="hero-cta-row">
+            <a href="/learn/" class="button button-dark hero-cta"><svg class="icon play-icon"><use href="#play"/></svg> Start First Piano Journey <svg class="icon"><use href="#arrow"/></svg></a>
+            <a href="#playground" class="button button-outline hero-cta-secondary">Play the mini adventure</a>
+          </div>
+          <span class="cta-note">Saved on this device · short jobs · grown-up nearby for setup.</span>
         </div>
         <div class="hero-art">
           <img src="/assets/piano-world.webp" width="1200" height="900" alt="Two playful musical creatures exploring a piano keyboard in a sunny yellow world" fetchpriority="high">
@@ -126,10 +129,10 @@
             </div>
           </div>
           <div class="game-bottomline"><div><button id="midi-button"><svg class="icon"><use href="#keyboard"/></svg> Have a keyboard? Connect it <span aria-hidden="true">↗</span></button><span id="midi-status" role="status"></span></div><span class="preview-label">A playable preview of what’s coming</span></div>
-          <div class="game-celebration" id="game-celebration" hidden><span class="celebration-star">✦</span><span class="eyebrow">FIRST ADVENTURE · COMPLETE</span><h3>You’ve got music<br>in you.</h3><p>Three little missions. A very good beginning.</p><div class="reward-pill"><svg class="icon"><use href="#trophy"/></svg> FIRST NOTES BADGE <span>+60 XP</span></div><div class="celebration-actions"><button class="button button-dark" id="replay-button">Play again <span aria-hidden="true">↻</span></button><a class="button button-outline" href="#adventure" id="explore-button">See what’s next <svg class="icon"><use href="#arrow"/></svg></a></div></div>
+          <div class="game-celebration" id="game-celebration" hidden><span class="celebration-star">✦</span><span class="eyebrow">FIRST ADVENTURE · COMPLETE</span><h3>You’ve got music<br>in you.</h3><p>Three little missions. A very good beginning.</p><div class="reward-pill"><svg class="icon"><use href="#trophy"/></svg> FIRST NOTES BADGE <span>+60 XP</span></div><div class="celebration-actions"><button class="button button-outline" id="replay-button">Play again <span aria-hidden="true">↻</span></button><a class="button button-dark" href="/learn/" id="explore-button">Continue into First Piano Journey <svg class="icon"><use href="#arrow"/></svg></a></div></div>
         </div>
         <div class="playground-footnote"><svg class="icon"><use href="#headphones"/></svg> Little tip: headphones make this even better.</div>
-        <p class="learn-entry">Want the real first lessons? <a href="/learn">Open First Notes</a> · <a href="/learn/?lesson=L01">Meet the keyboard (L01)</a> · <a href="/learn/?unit=rhythm-club">Rhythm Club</a> · <a href="/learn/?unit=read-and-play">Read and play</a> · <a href="/learn/?unit=left-hand">Left hand</a> · <a href="/learn/?unit=together">Together</a> · <a href="/learn/?unit=expression">Expression</a></p>
+        <p class="learn-entry"><a class="learn-entry-primary" href="/learn/">Start First Piano Journey</a><span class="learn-entry-more"> Optional deep links: <a href="/learn/?lesson=L01">Meet the keyboard (L01)</a> · <a href="/learn/?unit=first-notes">First Notes</a> · <a href="/learn/?unit=rhythm-club">Rhythm Club</a> · <a href="/learn/?unit=read-and-play">Read and play</a> · <a href="/learn/?unit=left-hand">Left hand</a> · <a href="/learn/?unit=together">Together</a> · <a href="/learn/?unit=expression">Expression</a></span></p>
       </div>
     </section>
 
@@ -144,7 +147,7 @@
           <button class="journey-stop" data-world="3" aria-pressed="false"><span class="world-orbit"><svg class="world-icon"><use href="#spark"/></svg><span class="world-number">04</span></span><strong>Make It Yours</strong><span>A little musical mischief</span></button>
           <button class="journey-stop" data-world="4" aria-pressed="false"><span class="world-orbit"><svg class="world-icon"><use href="#trophy"/></svg><span class="world-number">05</span></span><strong>The Big Stage</strong><span>Your time to shine</span></button>
         </div>
-        <div class="world-detail" aria-live="polite"><div><span class="world-detail-kicker" id="world-kicker">WORLD 01 · THE BEGINNING</span><h3 id="world-title">A first note worth celebrating.</h3><p id="world-description">Discover the keys, hear the difference, and put your first little melody together. Confidence starts here.</p><p class="world-learn-link" id="world-learn-link"><a href="/learn/">Open First Notes</a></p></div><div class="skill-tags" id="skill-tags"><span>Finding notes</span><span>Listening</span><span>First melodies</span></div></div>
+        <div class="world-detail" aria-live="polite"><div><span class="world-detail-kicker" id="world-kicker">WORLD 01 · THE BEGINNING</span><h3 id="world-title">A first note worth celebrating.</h3><p id="world-description">Discover the keys, hear the difference, and put your first little melody together. Confidence starts here.</p><p class="world-learn-link" id="world-learn-link"><a href="/learn/?unit=first-notes">Open First Notes on /learn</a></p></div><div class="skill-tags" id="skill-tags"><span>Finding notes</span><span>Listening</span><span>First melodies</span></div></div>
       </div>
     </section>
 

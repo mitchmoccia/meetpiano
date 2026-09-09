@@ -422,7 +422,7 @@ export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit, onEx
     extraContinue,
     ...view.units.map((unit) => unitSection(unit, onOpen, focusUnit)),
     portabilityCard(onExport, onImport, onReset),
-    el('p', { className: 'unit-limit' },
+    el('p', { className: 'unit-limit hub-grownup-foot' },
       el('a', { className: 'button button-outline', href: '/learn/?view=grown-up' }, 'Grown-up view')
     ),
     el('p', { className: 'unit-limit' }, 'Playable lessons are L01–L24 when earlier activities on this device are ready. On-screen keys are an exploration stand-in, not proof of hand coordination or quiet-versus-strong. MIDI reports pitch, time, and velocity if the keyboard sent it — never technique. A grown-up marks listening for a recital. Export stays on the browsers you control. There is no account.')
@@ -431,17 +431,25 @@ export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit, onEx
 
 function nextSessionCard(rec, onContinue) {
   if (!rec) return null;
+  const primaryLabel = rec.kind === 'forward' && rec.lessonId === 'L01' && !rec.reason.includes('Practiced')
+    ? 'Start Meet the keyboard'
+    : rec.kind === 'continue' || rec.kind === 'forward'
+      ? `Continue ${rec.title}`
+      : rec.action;
   return el('section', { className: 'next-session', id: 'next-session' },
     el('p', { className: 'mission-eyebrow' }, 'NEXT ON THIS DEVICE'),
     el('h2', {}, rec.title),
     el('p', {}, rec.reason),
-    rec.kind === 'rest'
-      ? null
-      : el('button', {
-        className: 'button button-dark',
-        type: 'button',
-        onClick: () => onContinue(rec.lessonId, rec)
-      }, rec.action)
+    el('div', { className: 'hub-cta-row' },
+      rec.kind === 'rest'
+        ? null
+        : el('button', {
+          className: 'button button-dark hub-continue',
+          type: 'button',
+          onClick: () => onContinue(rec.lessonId, rec)
+        }, primaryLabel),
+      el('a', { className: 'button button-outline hub-grownup', href: '/learn/?view=grown-up' }, 'Grown-up view')
+    )
   );
 }
 
