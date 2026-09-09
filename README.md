@@ -43,7 +43,7 @@ The full learning curriculum, coaching, accounts, billing, and family profiles a
 
 ## Documentation
 
-First Piano Journey mission and lesson specification: [`docs/missions/first-piano-journey.md`](docs/missions/first-piano-journey.md).
+First Piano Journey mission and lesson specification: [`docs/missions/first-piano-journey.md`](docs/missions/first-piano-journey.md). MP-11 release packet: [`docs/missions/first-piano-journey-release.md`](docs/missions/first-piano-journey-release.md).
 
 ## Checks
 
@@ -59,6 +59,7 @@ node scripts/mp-07-check.mjs
 node scripts/mp-08-check.mjs
 node scripts/mp-09-check.mjs
 node scripts/mp-10-check.mjs
+node scripts/mp-11-check.mjs
 node scripts/copyright-check.mjs
 ```
 

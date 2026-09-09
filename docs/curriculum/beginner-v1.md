@@ -101,7 +101,7 @@ AttemptRecord {
     note?: string            // short helper note, not a grade
   }
   octavePolicyUsed   "pitch-class" | "exact-pitch"
-  exportable         true            // always, even before MP-11 ships import UI
+  exportable         true            // export/import shipped in MP-06; MP-11 is the release packet
 }
 
 AttemptEvent {
