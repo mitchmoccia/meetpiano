@@ -11,9 +11,9 @@ Single active-slice board. Update this file at the start and end of each slice.
 | Branch | `piany/mp-05-read-and-play` |
 | Base | `piany/mp-04-rhythm-club` @ `d144baa88357f69b90caf7a427b6bd3c3c2731db` |
 | Start time | 2026-09-09 00:00 UTC |
-| Last evidence | [`../evidence/first-piano-journey/mp-05.md`](../evidence/first-piano-journey/mp-05.md) (stub; fill after software and browser checks) |
+| Last evidence | [`../evidence/first-piano-journey/mp-05.md`](../evidence/first-piano-journey/mp-05.md) (filled 2026-09-09; product `c9c95de`, checks `50b940c`, PR #7) |
 | Blockers | Physical MIDI keyboard not available in this environment — hardware check unverified |
-| Next action | Software and browser verification, then Mitch review of draft PR into `piany/mp-04-rhythm-club`. Do not merge or deploy production from this slice. |
+| Next action | Mitch review of draft PR into `piany/mp-04-rhythm-club`. Do not merge or deploy production from this slice. |
 | Next eligible slice | MP-06 — Device-local progress polish (or MP-08 leftover neighborhood skills) |
 
 ## Notes
