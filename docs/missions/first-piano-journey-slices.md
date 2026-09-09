@@ -4,7 +4,7 @@ Ordered cards **MP-00 through MP-11**. Status values: `verified` · `working` ·
 
 Acceptance summaries are taken from the runbook [`first-piano-journey.md`](first-piano-journey.md). Teaching detail is in [`../curriculum/beginner-v1.md`](../curriculum/beginner-v1.md).
 
-MP-00 is marked **verified** because the mission and lesson specification docs are complete. MP-01 is **verified** and merged to `main`. MP-02 is **software/fixture verified** (Gort accepted; hardware MIDI unverified — not a MIDI-verified release). MP-03 is **working** (First Notes Checkpoint A: L01–L04). Later cards stay **queued**.
+MP-00 is marked **verified** because the mission and lesson specification docs are complete. MP-01 is **verified** and merged to `main`. MP-02 is **software/fixture verified** (Gort accepted; hardware MIDI unverified — not a MIDI-verified release). MP-03 First Notes is **working** and merged to `main`. MP-04 Rhythm Club (L05–L08) is **working** on `piany/mp-04-rhythm-club`. Later cards stay **queued**. The original isolated MP-04/MP-05 cards (L03/L04) landed with Checkpoint A.
 
 ---
 
@@ -84,10 +84,10 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 
 | Field | Value |
 | --- | --- |
-| Status | **working** |
+| Status | **working** (merged to `main`) |
 | Depends on | MP-02 |
-| Branch | `piany/mp-03-first-notes` |
-| Base | `piany/mp-02-midi-input` @ `f478ed60993227c04f47427c217d3b90b2e0981f` |
+| Branch | `piany/mp-03-first-notes` (merged) |
+| Base | `main` now includes this slice @ `96860fa8262bfe2f8a902910c55745054d21eeb5` |
 
 **Learner outcome.** A beginner can explore the keyboard (L01), find C (L02), play neighboring C–D–E (L03), and complete the original *Little Wave* tune (L04) as a First Notes unit. The next activity unlocks only when this device is ready. No buttons lead to lessons beyond L04.
 
@@ -101,17 +101,42 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 - Demos show keyboard geometry and intentional fingering. Hints fade. Help/replay do not erase saved progress.
 - MIDI hardware remains **unverified**. No accounts, billing, educator-approval, or learning-effectiveness claims.
 
-**Handoff.** Teaching for L02–L04 is on this branch. Isolated MP-04 / MP-05 cards below record the original split; do not re-implement those lessons from scratch.
+**Handoff.** First Notes is on `main`. Isolated historical L03/L04 cards below record the original split. MP-04 now means Rhythm Club.
 
 ---
 
-## MP-04 — L03 Neighbors C–D–E
+## MP-04 — Rhythm Club L05–L08
+
+| Field | Value |
+| --- | --- |
+| Status | **working** |
+| Depends on | MP-03 |
+| Branch | `piany/mp-04-rhythm-club` |
+| Base | `main` @ `96860fa8262bfe2f8a902910c55745054d21eeb5` |
+
+**Learner outcome.** After First Notes is Independent on this device, a beginner can hear a heartbeat (L05), hold long and tap short (L06), leave a rest empty (L07), and walk C–D–E–C on the beat (L08). Guided windows are wider than performance windows. Correct pitches at arbitrary times do not pass.
+
+**Acceptance**
+
+- Rhythm Club unit on `/learn` with unlock from L04 Independent. No buttons to L09+.
+- Shared audio-clock transport and scoring (not rAF-only). Visual pulse may use rAF for display only.
+- Guided vs performance modes differ by window size and helpers.
+- Synthetic fixtures cover correct, early, late, missed, extra, releases, count-in, replay, tempo reduction, pause/resume, and disconnect without unfair failures.
+- L08 rhythmic variation cannot pass by dumping C–D–E–C as fast as possible.
+- Device-local progress. Hardware MIDI remains unverified.
+- Marketing playground stays a separate preview. No Vercel / DNS changes.
+
+**Handoff.** L05–L08 teaching is on this branch. Neighborhood skills once outlined as L05–L08 (F/G, fingers, steps, skips) wait for a later slice.
+
+---
+
+## MP-04b — L03 Neighbors C–D–E (historical)
 
 | Field | Value |
 | --- | --- |
 | Status | **working** (landed with MP-03 Checkpoint A) |
 | Depends on | MP-03 |
-| Branch | `piany/mp-03-first-notes` |
+| Branch | `main` |
 
 **Learner outcome.** The learner plays C, D, and E as adjacent white keys with a demonstrated fingering, then a new three-note order without highlight.
 
@@ -178,19 +203,19 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 
 ---
 
-## MP-08 — L05–L10 sequence
+## MP-08 — Neighborhood skills after Rhythm Club
 
 | Field | Value |
 | --- | --- |
 | Status | **queued** |
-| Depends on | MP-05, MP-02 |
+| Depends on | MP-04 |
 
-**Learner outcome.** The learner continues the First Piano Journey through F and G, finger names, steps, skips, a steady pulse, and the C five-note path, using the outlines in `beginner-v1.md`.
+**Learner outcome.** After Rhythm Club, the learner meets F and G, names fingers 1–5, steps, skips, and the C five-note path. Pulse and long/short first teaching already live in L05–L08.
 
 **Acceptance**
 
-- L05–L10 exist as playable lessons with the shared loop.
-- Full teaching contracts may be expanded from the outlines in this slice or a follow-up; outlines must not be silently treated as finished copy.
+- Playable lessons for the deferred neighborhood skills, with the shared loop.
+- Do not rebind L05–L08 to F/G/fingers/steps/skips.
 - Measurement limits still apply.
 
 ---

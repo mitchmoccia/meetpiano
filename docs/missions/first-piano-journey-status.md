@@ -5,23 +5,24 @@ Single active-slice board. Update this file at the start and end of each slice.
 | Field | Value |
 | --- | --- |
 | Mission | First Piano Journey |
-| Active slice | **MP-03** First Notes L01–L04 (Checkpoint A) |
+| Active slice | **MP-04** Rhythm Club L05–L08 |
 | Slice status | **working** |
-| Run ID | `piany-mp03-20260908-2330UTC` |
-| Branch | `piany/mp-03-first-notes` |
-| Base | `piany/mp-02-midi-input` @ `f478ed60993227c04f47427c217d3b90b2e0981f` |
-| Start time | 2026-09-08 23:30 UTC |
-| Last evidence | [`../evidence/first-piano-journey/mp-03.md`](../evidence/first-piano-journey/mp-03.md) (filled 2026-09-08; product `912e6bc`, HEAD `72f4e5b`, PR #5) |
+| Run ID | `piany-mp04-20260909-0000UTC` |
+| Branch | `piany/mp-04-rhythm-club` |
+| Base | `main` @ `96860fa8262bfe2f8a902910c55745054d21eeb5` |
+| Start time | 2026-09-09 00:00 UTC |
+| Last evidence | [`../evidence/first-piano-journey/mp-04.md`](../evidence/first-piano-journey/mp-04.md) |
 | Blockers | Physical MIDI keyboard not available in this environment — hardware check unverified |
-| Next action | Mitch review of draft PR into `piany/mp-02-midi-input`. Do not merge or deploy production from this slice. |
-| Next eligible slice | MP-06 — Device-local progress polish (L03/L04 teaching already in this Checkpoint A branch) |
+| Next action | Mitch review of draft PR into `main`. Do not merge or deploy production from this slice. |
+| Next eligible slice | MP-06 — Device-local progress polish (or MP-08 neighborhood skills) |
 
 ## Notes
 
-- Stacked on `piany/mp-02-midi-input` (Gort accepted MP-02 as software/fixture verified; hardware MIDI unverified — not a MIDI-verified release). If that base disappears, retarget `main`.
-- Canonical hosting is a single Vercel project `meetpiano` plus `https://meetpiano.app`. The former `meetpiano-app` project was deleted.
-- `/learn` is the First Notes unit hub. L01 remains at `/learn/?lesson=L01`.
-- L02 Find C, L03 Neighbors, and L04 Little Wave are playable on this branch (Checkpoint A). Unlock: L02 after L01 Practiced, L03 after L02 Practiced, L04 after L03 Independent.
+- Stacked on current `main` after Mitch merged MP-02 + MP-03 (`96860fa`). Draft PR targets `main`, not the old stack branches.
+- Canonical hosting is a single Vercel project `meetpiano` plus `https://meetpiano.app`. `https://meetpiano.app/learn` already serves the First Notes hub (HTTP 200). The former `meetpiano-app` project was deleted.
+- `/learn` is the journey hub: First Notes (L01–L04) and Rhythm Club (L05–L08). L01 remains at `/learn/?lesson=L01`.
+- Unlock: L05 after L04 Independent; L06 after L05 Practiced; L07 after L06 Practiced; L08 after L07 Independent. No buttons to L09+.
+- Rhythm scoring uses a shared audio clock (not rAF-only). Guided windows are wider than performance windows.
 - Progress key: `localStorage` `meetpiano:beginner-v1`. Device-local only. Demo playback cannot earn progress. Help/replay do not erase saved evidence.
 - Branch `cursor/setup-cloud-agent-env-d108` was left untouched.
 - Do not change Vercel projects, domains, or DNS.

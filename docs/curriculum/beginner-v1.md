@@ -29,7 +29,7 @@ Skills are identifiers. A lesson lists which ones it needs and which one it intr
 | `S-TRANSFER-PHRASE` | Play a related new phrase without the home-phrase highlight | App: sequence vs the transfer phrase |
 | `S-REPLAY` | Play a known phrase again after a gap | App: sequence; Retained requires the gap rule below |
 
-Later outlines (L05–L24) add skills such as F/G, named fingers 1–5, steps, skips, pulse, left-hand C, turns, three-black-key landmark, dynamics, long/short, smooth/separate, held bass, question/answer, and memory. Those skill IDs are introduced in each outline.
+Rhythm Club (L05–L08) adds `S-PULSE`, `S-LONG-SHORT`, `S-REST`, and `S-RHYTHM-PHRASE`. Later outlines (L09–L24) add F/G, named fingers 1–5, steps, skips, left-hand C, turns, three-black-key landmark, dynamics, smooth/separate, held bass, question/answer, and memory. Those skill IDs are introduced in each outline. L09 pulse and L17 long/short are later reviews of Rhythm Club skills, not a second first teaching.
 
 ## Input modes
 
@@ -113,7 +113,7 @@ Promotion is one-way only when the new evidence is real. A failed independent ch
 - MIDI note-on proves a pitch (and maybe velocity), not a finger, not posture, not a relaxed wrist.
 - Touch and computer keys prove a *represented* pitch, not a piano action.
 - Early exploration may accept **pitch-class in any octave** (`note % 12`). Location and notation checks use **exact MIDI pitch** when the lesson names a register (for example “the C under this group,” “a higher C”).
-- Timing is coarse. This version does not score rubato, swing, or exam-grade rhythm.
+- Timing is coarse. Rhythm Club scores onsets (and holds when a lesson names long or short) against an audio-clock transport. It does not score rubato, swing, or exam-grade rhythm. Guided windows are wider than performance windows by design.
 - No camera, microphone, or pedal data.
 - Do not display “teacher approved,” “grade 1 complete,” or effectiveness percentages.
 
@@ -372,29 +372,243 @@ After a gap (new session, or a pause the UI names as “play something else, the
 
 ---
 
-## L05–L24 — outlines (First Piano Journey sequence)
+## L05 — Hear the heartbeat
+
+| Field | Value |
+| --- | --- |
+| Stable ID | `L05` |
+| Title | Hear the heartbeat |
+| Curriculum version | `beginner-v1` |
+| Unit | Rhythm Club |
+| Prerequisites | `S-PHRASE` (First Notes complete on this device) |
+| Primary new skill | `S-PULSE` (coarse) |
+| Octave policy | Pitch-class C in any octave. This lesson scores **when**, not which room. |
+
+### Short explanation
+
+Music has a heartbeat. We can wait for it, then tap with it. The computer uses a shared audio clock — not the screen’s animation — to listen. A late picture on the screen does not move the beat.
+
+### Visual demo
+
+- A yellow pulse marks each beat. Caption: “The glow is a helper. The clock is the sound.”
+- Four taps on C, one per beat, after a four-beat count-in.
+
+### Replayable audio notes
+
+- Count-in clicks, then four C heartbeats at a walking tempo (default 80 bpm).
+- Optional slower heartbeat (about 60 bpm) for a calmer try.
+
+### Guided practice (hints optional)
+
+1. Hear the heartbeat with the pulse glow on.
+2. Echo four C taps with the pulse. Guided timing windows are wide on purpose.
+3. A rushed tap (too early) or a sleepy tap (too late) is named, not silently passed.
+
+### Independent check (no hints)
+
+Four C taps after a count-in, **performance** windows, pulse glow off. Correct C at arbitrary times does not pass.
+
+### Transfer pattern
+
+Four C taps at a slightly quicker heartbeat (96 bpm). Same skill, new pace.
+
+### Remediation for a common error
+
+**Error:** Taps bunch together, or chase the picture instead of the click.  
+**Response:** “Wait for the next heartbeat. The click is the boss, not the glow.” Replay the count-in.
+
+### Later review
+
+After a named pause or a new visit, four performance taps. Success after a gap → `S-PULSE` may move to Retained.
+
+### Equipment, alternatives, cannot observe
+
+- Required: one playable C (on-screen stand-in is enough).
+- Alternatives: grown-up taps while the learner counts aloud — mark adult-supported, not independent pulse skill.
+- Cannot observe: inner counting, body movement, or exam-grade steadiness.
+
+---
+
+## L06 — Long and short
+
+| Field | Value |
+| --- | --- |
+| Stable ID | `L06` |
+| Title | Long and short |
+| Curriculum version | `beginner-v1` |
+| Unit | Rhythm Club |
+| Prerequisites | `S-PULSE` |
+| Primary new skill | `S-LONG-SHORT` |
+| Octave policy | Pitch-class C. Releases are scored, not only presses. |
+
+### Short explanation
+
+Some notes stay. Some notes wave hello and go. A long note needs a hold. A short note needs a let-go. The clock listens to both the press and the release.
+
+### Visual demo
+
+- A wide yellow bar (long) then two short pink taps, all on C.
+- Count-in, then **long – short – short**.
+
+### Replayable audio notes
+
+- Home pattern: hold C for two beats, then two short C taps.
+- Transfer pattern: two short C taps, then one long C.
+
+### Guided practice (hints optional)
+
+1. Hear long then short-short.
+2. Echo it. Duration bars may show. Guided hold windows are kinder.
+3. Letting go too soon on the long note, or sitting on a short note, is named.
+
+### Independent check (no hints)
+
+Home pattern with bars off, performance windows. Correct C presses at the right times still fail if the long note is chopped or a short note is held.
+
+### Transfer pattern
+
+**Short – short – long.** A copied home pattern does not count.
+
+### Remediation for a common error
+
+**Error:** Every tap is the same length.  
+**Response:** “The first one stays for two heartbeats. The next two are quick waves.” Isolate the long hold.
+
+### Later review
+
+Replay long–short–short after a gap. Hold quality is still coarse, not studio sustain.
+
+### Equipment, alternatives, cannot observe
+
+- Required: a key that can be held and released (touch, computer key, or MIDI).
+- Alternatives: grown-up holds while the learner says “stay… now short.”
+- Cannot observe: arm weight, legato, or pedal.
+
+---
+
+## L07 — Silence belongs
+
+| Field | Value |
+| --- | --- |
+| Stable ID | `L07` |
+| Title | Silence belongs |
+| Curriculum version | `beginner-v1` |
+| Unit | Rhythm Club |
+| Prerequisites | `S-LONG-SHORT` |
+| Primary new skill | `S-REST` |
+| Octave policy | Pitch-class C. A note in the quiet slot is an extra, not a pass. |
+
+### Short explanation
+
+Quiet is part of the music. A rest is a place we leave empty on purpose. Playing the right note in the hole does not count as keeping the beat.
+
+### Visual demo
+
+- Four beat boxes. Beat 2 is a rest (“shh”). C on 1, quiet on 2, C on 3, C on 4.
+- Caption: “The empty box is a note too — a silent one.”
+
+### Replayable audio notes
+
+- Home: C, rest, C, C.
+- Transfer: C, C, rest, C.
+
+### Guided practice (hints optional)
+
+1. Hear the hole.
+2. Echo C — (shh) — C — C. The rest box may glow. Guided windows stay wide.
+3. A tap in the rest is named “that hole was music too.”
+
+### Independent check (no hints)
+
+Home rest pattern, rest glow off, performance windows. Extra notes in the rest fail the take. Missing the C after the rest also fails.
+
+### Transfer pattern
+
+Rest moves to beat 3: C, C, rest, C.
+
+### Remediation for a common error
+
+**Error:** Filling every beat because silence feels like a mistake.  
+**Response:** “Leave beat two empty. The quiet is the point.” Hear only the rest slot.
+
+### Later review
+
+Home rest pattern after a gap, hints off.
+
+### Equipment, alternatives, cannot observe
+
+- Required: one playable C and a way to wait.
+- Alternatives: learner claps the sounding beats and holds still on the rest.
+- Cannot observe: whether they counted “1-2-3-4” internally.
+
+---
+
+## L08 — Notes with a beat
+
+| Field | Value |
+| --- | --- |
+| Stable ID | `L08` |
+| Title | Notes with a beat |
+| Curriculum version | `beginner-v1` |
+| Unit | Rhythm Club |
+| Prerequisites | `S-REST` |
+| Primary new skill | `S-RHYTHM-PHRASE` |
+| Octave policy | Guided may accept C–D–E pitch-class. Independent and transfer use the named preview register (C4–D4–E4 = 60–62–64) when those keys are visible. |
+
+### Short explanation
+
+Neighbors can walk **on** the heartbeat. The home walk is **C – D – E – C**, one note per beat. The same letters at any old time are a different piece. Rhythm Club does not pass pitch-only.
+
+### Visual demo
+
+- Tiles C D E C lighting with the pulse.
+- Contrast clip labeled “same letters, wrong time” (rushed C–D–E–C) that must not be treated as a pass.
+
+### Replayable audio notes
+
+- Home walk at 80 bpm, four beats, count-in.
+- Transfer walk: long C (two beats), then D, then E — same letters, new rhythm.
+
+### Guided practice (hints optional)
+
+1. Hear the walk.
+2. Echo C–D–E–C with the pulse. Optional next-tile hint.
+3. Hear the cousin rhythm once without playing it yet.
+
+### Independent check (no hints)
+
+Home walk, tiles off, performance windows. A correct C–D–E–C dumped as fast as possible fails. Early, late, missed, or extra notes fail.
+
+### Transfer pattern
+
+Long C, then D, then E. A copied even walk does not count.
+
+### Remediation for a common error
+
+**Error:** Playing the right keys as soon as they remember the letters.  
+**Response:** “The letters wait for the heartbeat. One key per click.” Clap four slots, then play.
+
+### Later review
+
+Home walk after a named pause. Pass → `S-RHYTHM-PHRASE` may move to Retained.
+
+### Equipment, alternatives, cannot observe
+
+- Required: C, D, and E playable.
+- Alternatives: learner sings the walk while a grown-up plays — adult-supported, not independent keyboard rhythm.
+- Cannot observe: fingering, reading vs ear, or swing.
+
+---
+
+## L09–L24 — outlines (First Piano Journey sequence)
 
 These are sequence outlines, not full contracts. Later slices expand them. IDs and titles are stable.
 
-### L05 — Friends F and G
-
-Meet the next two white keys to the right of E. Landmark reminder: F sits at the left of a **three**-black-key group. Play C–D–E–F–G as a neighborhood, not a named scale exam. New skill: `S-NEIGHBOR` extended to F and G.
-
-### L06 — Finger names 1 to 5
-
-Name fingers 1–5 on both hands (thumb is 1). Play five slow taps on one key, one finger at a time, adult-observed. App hears repetition only. New skill: `S-FINGERS-15` (adult-observed).
-
-### L07 — Steps next door
-
-A **step** is the next white key. Step up from C to D to E; step down from E to D to C. No skips. New skill: `S-STEP`.
-
-### L08 — Skips over a neighbor
-
-A **skip** lands on the white key beyond the next one (C to E, D to F). Contrast one step with one skip. New skill: `S-SKIP`.
+Friends F and G, finger names 1–5, steps, and skips were earlier placeholder titles on L05–L08. Those skills are **not** bound to L05–L08 anymore; they wait for a later slice. Rhythm Club owns L05–L08.
 
 ### L09 — Steady walking notes
 
-Play known notes in an even walking pulse. The app may show a silent visual pulse; it does not fail the lesson on millisecond timing. New skill: `S-PULSE` (coarse).
+Play known notes in an even walking pulse as a later review of `S-PULSE`. The app may show a silent visual pulse; it does not fail the lesson on millisecond timing. New skill review: `S-PULSE` (coarse).
 
 ### L10 — The C five-note path
 
