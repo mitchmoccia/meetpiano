@@ -5,12 +5,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ffdc63">
   <title>First Piano Journey · MeetPiano</title>
-  <meta name="description" content="First Piano Journey: twenty-four little jobs from Meet the keyboard through a first recital. Short jobs a child can follow, with a nearby grown-up helper card. Progress stays on this device.">
+  <meta name="description" content="First Piano Journey: twenty-four little jobs from Meet the keyboard through a first recital. Nearby grown-up helper. Progress stays on this device. Not a teacher or grade program.">
+  <meta property="og:title" content="First Piano Journey · MeetPiano">
+  <meta property="og:description" content="First Piano Journey: twenty-four little jobs a child can follow, with a nearby grown-up helper. Progress stays on this device.">
+  <meta property="og:url" content="https://meetpiano.app/learn/">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="https://meetpiano.app/learn/">
+  <link rel="describedby" href="/llms.txt">
+  <link rel="alternate" type="text/markdown" href="/learn/index.md">
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/learn/learn.css">
   <script type="module" src="/learn/learn.js"></script>
   <script type="module" src="/js/copyright.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": "https://meetpiano.app/learn/#webpage",
+        "url": "https://meetpiano.app/learn/",
+        "name": "First Piano Journey",
+        "description": "Device-local beginner piano journey for younger learners with a nearby grown-up helper. Not a certified teacher or grade program.",
+        "isPartOf": { "@id": "https://meetpiano.app/#website" }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://meetpiano.app/learn/#journey",
+        "name": "First Piano Journey",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Web browser",
+        "url": "https://meetpiano.app/learn/",
+        "description": "Twenty-four short jobs (L01–L24) saved on this device only. Optional Web MIDI. Physical MIDI hardware is not verified. Not a teacher or grade program.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "publisher": { "@id": "https://meetpiano.app/#organization" }
+      }
+    ]
+  }
+  </script>
 </head>
 <body class="learn-page" id="unlock-area">
   <a class="skip-link" href="#main">Skip to content</a>
@@ -48,7 +81,13 @@
     <p class="device-disclosure wrap" id="device-disclosure">Saved on this device only. Not an account. A grown-up can export or reset. Touch practice is never MIDI verified.</p>
     <p class="storage-notice wrap" id="storage-notice" hidden role="status"></p>
     <div class="wrap">
-      <div class="learn-shell first-notes-hub" id="unit-hub" hidden></div>
+      <div class="learn-shell first-notes-hub" id="unit-hub" hidden>
+        <section class="unit-intro">
+          <p class="mission-eyebrow">SIX WORLDS · SAME DEVICE</p>
+          <h1>First Piano Journey</h1>
+          <p>Twenty-four little jobs. Play, listen, try again. A yellow job tells you what to do now. A grown-up can sit nearby. Nothing here is a teacher grade.</p>
+        </section>
+      </div>
       <div class="learn-shell grownup-shell" id="grownup-shell" hidden></div>
       <div class="pause-overlay" id="pause-overlay" hidden>
         <div class="pause-card" role="dialog" aria-labelledby="pause-title" aria-modal="true">
