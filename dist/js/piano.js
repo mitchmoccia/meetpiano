@@ -105,3 +105,18 @@ export function cLeftOfTwoGroup(note) {
   if (pc === 1 || pc === 3) return note - (pc === 1 ? 1 : 3);
   return null;
 }
+
+export function fLeftOfThreeGroup(note) {
+  const pc = ((note % 12) + 12) % 12;
+  if (pc === 6) return note - 1;
+  if (pc === 8) return note - 3;
+  if (pc === 10) return note - 5;
+  return null;
+}
+
+export function gRightOfF(note) {
+  if (!Number.isFinite(note)) return null;
+  const pc = ((note % 12) + 12) % 12;
+  if (pc !== 5) return null;
+  return note + 2;
+}

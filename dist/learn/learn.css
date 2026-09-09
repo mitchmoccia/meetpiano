@@ -316,6 +316,19 @@
 .unit-state { font-size: 13px; font-weight: 700; color: var(--red); }
 .unit-card.locked .unit-state { color: var(--muted); }
 .unit-limit { padding: 8px 27px 22px; font-size: 13px; color: var(--muted); }
+.staff-card {
+  margin: 18px 0 0;
+  padding: 12px 14px;
+  border: 1.5px solid var(--ink);
+  border-radius: 14px;
+  background: #fffdf8;
+}
+.staff-card svg { width: min(100%, 420px); height: auto; display: block; }
+.staff-card figcaption {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--muted);
+}
 .hand-card, .house-card, .wave-card {
   margin: 18px 0 0;
   padding: 12px 14px;

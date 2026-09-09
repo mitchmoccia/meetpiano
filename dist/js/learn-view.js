@@ -98,6 +98,42 @@ function guidedTitles(lessonId, phase) {
   if (['L05', 'L06', 'L07', 'L08'].includes(lessonId) && phase === 'transfer') {
     return { perform: 'A new pattern', done: 'Saved' };
   }
+  if (lessonId === 'L09' && phase === 'guided') {
+    return { find: 'The longer doorstep', name: 'Name it', neighbor: 'Next door — G', fingering: 'A grown-up check', done: 'Ready for a quiet check' };
+  }
+  if (lessonId === 'L09' && phase === 'independent') {
+    return { find: 'This F, then this G', done: 'Ready for neighbors the other way' };
+  }
+  if (lessonId === 'L09' && phase === 'transfer') {
+    return { neighbors: 'G then F', done: 'Saved' };
+  }
+  if (lessonId === 'L10' && phase === 'guided') {
+    return { step: 'A step', repeat: 'A repeat', skip: 'A skip', make: 'A three-note goodbye', done: 'Ready for a quiet check' };
+  }
+  if (lessonId === 'L10' && phase === 'independent') {
+    return { chain: 'Step, repeat, skip', done: 'Ready for the other way' };
+  }
+  if (lessonId === 'L10' && phase === 'transfer') {
+    return { chain: 'Down the path', done: 'Saved' };
+  }
+  if (lessonId === 'L11' && phase === 'guided') {
+    return { walk: 'The staff walk', neighbors: 'F and G on the picture', ear: 'Hear, then find', done: 'Ready for a quiet check' };
+  }
+  if (lessonId === 'L11' && phase === 'independent') {
+    return { walk: 'The picture is the boss', done: 'Ready for a new order' };
+  }
+  if (lessonId === 'L11' && phase === 'transfer') {
+    return { order: 'Same friends, new picture', done: 'Saved' };
+  }
+  if (lessonId === 'L12' && phase === 'guided') {
+    return { hear: 'Hear Porch Steps', head: 'First four', tail: 'Last three', all: 'The whole porch', make: 'A three-note goodbye', cousin: 'A cousin — just listening', done: 'Ready for a quiet check' };
+  }
+  if (lessonId === 'L12' && phase === 'independent') {
+    return { home: 'Porch Steps, no letters', done: 'Now the cousin' };
+  }
+  if (lessonId === 'L12' && phase === 'transfer') {
+    return { cousin: 'Porch the other way', done: 'Saved' };
+  }
   return {};
 }
 
@@ -153,9 +189,9 @@ export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit } = {
       el('span', { className: 'game-xp' }, 'Device-local only')
     ),
     el('section', { className: 'unit-intro' },
-      el('p', { className: 'mission-eyebrow' }, 'TWO WORLDS · SAME DEVICE'),
-      el('h1', {}, 'First Notes, then Rhythm Club.'),
-      el('p', {}, 'Explore, find C, walk the neighbors, play Little Wave. Then tap with a heartbeat, hold and let go, leave a rest, and walk C–D–E on the clock. The next activity unlocks when this device is ready. Nothing here is a teacher grade.'),
+      el('p', { className: 'mission-eyebrow' }, 'THREE WORLDS · SAME DEVICE'),
+      el('h1', {}, 'First Notes, Rhythm Club, then Read and play.'),
+      el('p', {}, 'Explore, find C, walk the neighbors, play Little Wave. Tap with a heartbeat. Then meet F and G, name steps and skips, put patterns on the staff, and read a little tune. The next activity unlocks when this device is ready. Nothing here is a teacher grade.'),
       continueCard ? el('button', {
         className: 'button button-dark',
         type: 'button',
@@ -167,7 +203,7 @@ export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit } = {
           : `Start ${continueCard.title}`) : null
     ),
     ...view.units.map((unit) => unitSection(unit, onOpen, focusUnit)),
-    el('p', { className: 'unit-limit' }, 'Playable lessons are L01–L08. Later lessons are not here yet — there are no buttons to them.')
+    el('p', { className: 'unit-limit' }, 'Playable lessons are L01–L12. Later lessons are not here yet — there are no buttons to them.')
   );
 }
 
@@ -180,7 +216,7 @@ function unitSection(unit, onOpen, focusUnit) {
     el('h2', {}, unit.title),
     unit.unlocked
       ? null
-      : el('p', { className: 'unit-lock-note' }, 'Rhythm Club unlocks when First little tune is Independent on this device.'),
+      : el('p', { className: 'unit-lock-note' }, lockNoteForUnit(unit.unitId)),
     el('ol', { className: 'unit-map', 'aria-label': `${unit.title} activities` },
       ...unit.cards.map((card) => unitCard(card, onOpen))
     )
@@ -210,6 +246,11 @@ function unitCard(card, onOpen) {
         onClick: () => onOpen(card.lessonId)
       }, action)
   );
+}
+
+function lockNoteForUnit(unitId) {
+  if (unitId === 'read-and-play') return 'Read and play unlocks when Notes with a beat is Independent on this device.';
+  return 'Rhythm Club unlocks when First little tune is Independent on this device.';
 }
 
 function lockReason(card) {
