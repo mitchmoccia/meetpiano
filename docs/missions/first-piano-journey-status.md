@@ -11,7 +11,7 @@ Single active-slice board. Update this file at the start and end of each slice.
 | Branch | `piany/mp-10-kid-grownup-ux` |
 | Base | `piany/mp-09-expression-recital` @ `980bf17a22223a4279ac50ccca3cf0814d454307` |
 | Start time | 2026-09-09 03:52 UTC |
-| Last evidence | [`../evidence/first-piano-journey/mp-10.md`](../evidence/first-piano-journey/mp-10.md) |
+| Last evidence | [`../evidence/first-piano-journey/mp-10.md`](../evidence/first-piano-journey/mp-10.md) (browser + fixtures; PR #13) |
 | Blockers | Physical MIDI keyboard not available in this environment — hardware check unverified |
 | Next action | Mitch review of draft PR into `piany/mp-09-expression-recital`. Do not merge or deploy production from this slice. |
 | Next eligible slice | Later leftover outlines or MP-11 closeout |

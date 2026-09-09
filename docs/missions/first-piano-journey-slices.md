@@ -304,6 +304,7 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 | Depends on | MP-09 |
 | Branch | `piany/mp-10-kid-grownup-ux` |
 | Base | `piany/mp-09-expression-recital` @ `980bf17a22223a4279ac50ccca3cf0814d454307` |
+| PR | https://github.com/mitchmoccia/meetpiano/pull/13 (draft into `piany/mp-09-expression-recital`) |
 
 **Learner outcome.** A child can follow a short yellow job on every L01–L24 step, hear optional spoken words, pause or exit and come back, and keep using the page if speech fails. A nearby grown-up can open a helper view of skills this device actually stored and get one offline practice idea. That view is not a login and not privacy protection.
 
