@@ -67,7 +67,8 @@ export const L01 = {
       groups: 'Play inside any two-black group and any three-black group, in either order. Outlines stay off.',
       remediation: 'Higher means the sound climbs, usually to the right — not which key is taller.',
       hearWhite: 'Hear two white keys: high, then low',
-      finishForNow: 'Save and finish for now'
+      finishForNow: 'Save and finish for now',
+      done: 'That check is in. Next is a different pair of two, or a grown-up confirm.'
     },
     transfer: {
       eyebrow: 'ONE MORE LOOK',

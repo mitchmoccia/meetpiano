@@ -58,6 +58,11 @@ function sanitizeEvent(event) {
   };
 }
 
+function sanitizeNoteList(value) {
+  if (!Array.isArray(value)) return [];
+  return value.filter((item) => Number.isInteger(item)).slice(-16);
+}
+
 function sanitizeRestore(restore) {
   const src = isPlainObject(restore) ? restore : {};
   return {
@@ -65,11 +70,30 @@ function sanitizeRestore(restore) {
     independentStep: Number.isInteger(src.independentStep) && src.independentStep >= 0 ? src.independentStep : 0,
     transferStep: Number.isInteger(src.transferStep) && src.transferStep >= 0 ? src.transferStep : 0,
     guidedTwoGroup: typeof src.guidedTwoGroup === 'string' ? src.guidedTwoGroup : null,
-    hintsOn: src.hintsOn !== false
+    hintsOn: src.hintsOn !== false,
+    helped: src.helped === true,
+    guidedC: Number.isInteger(src.guidedC) ? src.guidedC : null,
+    lastC: Number.isInteger(src.lastC) ? src.lastC : null,
+    sequence: sanitizeNoteList(src.sequence),
+    heardTransfer: src.heardTransfer === true,
+    homeDone: src.homeDone === true,
+    independentStarted: src.independentStarted === true,
+    reviewPausedAt: isIsoDate(src.reviewPausedAt) ? src.reviewPausedAt : null
   };
 }
 
-export function createAttempt(lessonId) {
+export function sanitizeInputDevice(value) {
+  if (!isPlainObject(value)) return null;
+  const id = typeof value.id === 'string' && value.id ? value.id.slice(0, 80) : null;
+  const name = typeof value.name === 'string' && value.name ? value.name.slice(0, 80) : null;
+  const manufacturer = typeof value.manufacturer === 'string' && value.manufacturer
+    ? value.manufacturer.slice(0, 80)
+    : null;
+  if (!id && !name && !manufacturer) return null;
+  return { id, name, manufacturer };
+}
+
+export function createAttempt(lessonId, extras = {}) {
   const id = globalThis.crypto?.randomUUID?.() || `att-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
   return {
     attemptId: id,
@@ -77,13 +101,16 @@ export function createAttempt(lessonId) {
     curriculumVersion: CURRICULUM_VERSION,
     startedAt: new Date().toISOString(),
     completedAt: null,
-    inputMode: 'touch',
+    inputMode: extras.inputMode && INPUT_MODES.has(extras.inputMode) ? extras.inputMode : 'touch',
+    inputDevice: sanitizeInputDevice(extras.inputDevice),
     audioUnlocked: false,
     phase: 'explanation',
     evidenceState: null,
     events: [],
     adultObserved: {},
-    octavePolicyUsed: 'pitch-class',
+    octavePolicyUsed: extras.octavePolicyUsed && OCTAVE_POLICIES.has(extras.octavePolicyUsed)
+      ? extras.octavePolicyUsed
+      : 'pitch-class',
     exportable: true,
     restore: sanitizeRestore({})
   };
@@ -113,6 +140,7 @@ export function validateAttempt(value, lessonId) {
     startedAt: value.startedAt,
     completedAt: value.completedAt,
     inputMode: value.inputMode,
+    inputDevice: sanitizeInputDevice(value.inputDevice),
     audioUnlocked: value.audioUnlocked,
     phase: value.phase,
     evidenceState,

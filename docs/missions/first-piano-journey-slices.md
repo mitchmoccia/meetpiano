@@ -4,7 +4,7 @@ Ordered cards **MP-00 through MP-11**. Status values: `verified` · `working` ·
 
 Acceptance summaries are taken from the runbook [`first-piano-journey.md`](first-piano-journey.md). Teaching detail is in [`../curriculum/beginner-v1.md`](../curriculum/beginner-v1.md).
 
-MP-00 is marked **verified** because the mission and lesson specification docs are complete. MP-01 is **verified**. All later cards stay **queued**.
+MP-00 is marked **verified** because the mission and lesson specification docs are complete. MP-01 is **verified** and merged to `main`. MP-02 is **software/fixture verified** (Gort accepted; hardware MIDI unverified — not a MIDI-verified release). MP-03 is **working** (First Notes Checkpoint A: L01–L04). Later cards stay **queued**.
 
 ---
 
@@ -37,7 +37,7 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 | Status | **verified** |
 | Depends on | MP-00 |
 | Branch | `piany/mp-01-learn-l01` |
-| PR | https://github.com/mitchmoccia/meetpiano/pull/3 |
+| PR | https://github.com/mitchmoccia/meetpiano/pull/3 (merged to `main`) |
 
 **Learner outcome.** A child and grown-up can open `/learn`, start L01 *Meet the keyboard*, hear notes after a gesture, explore high/low and black-key groups of two and three, and leave an on-device Explored or Practiced record. Posture is adult-observed and labeled.
 
@@ -49,43 +49,59 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 - Device-local disclosure is visible if any progress is stored.
 - No accounts, no L02–L24 implementation, no framework rewrite.
 
-**Handoff.** MP-02 can add the shared teaching loop without restating L01 copy.
+**Handoff.** MP-02 adds trustworthy physical-keyboard / MIDI input on the existing L01 loop.
 
 ---
 
-## MP-02 — Teaching-loop engine
+## MP-02 — Trustworthy keyboard / MIDI input
 
 | Field | Value |
 | --- | --- |
-| Status | **queued** |
+| Status | **software/fixture verified** (Gort accepted; hardware MIDI unverified) |
 | Depends on | MP-01 |
+| Branch | `piany/mp-02-midi-input` |
+| Base | `main` @ `13fbd6b29f0f78278a72e25ea0fbfb65e609a1aa` |
+| PR | https://github.com/mitchmoccia/meetpiano/pull/4 (draft into `main`) |
 
-**Learner outcome.** Every implemented lesson can move through explanation → visual demo → replayable audio → guided practice with optional hints → independent check without hints → transfer → remediation.
+**Learner outcome.** A grown-up can connect a compatible Web MIDI keyboard when the browser offers it, see clear connect / disconnect / unsupported copy, and know that on-screen and computer keys still work. Learner presses are counted once per hold. Demo audio never earns progress. Lessons can require an exact MIDI pitch or allow a pitch-class in any octave.
 
 **Acceptance**
 
-- One shared loop used by L01 and ready for L02–L04.
-- Attempt records persist the versioned shape in `beginner-v1.md`.
-- Hints can be hidden for independent checks.
-- No new design system. Reuse current typography and piano chrome.
+- Device setup UX: request access, list connected inputs, reconnect / disconnect messaging, honest unsupported or no-device fallback. On-screen and computer keys stay usable.
+- Input normalization: note-on, velocity-zero note-off, repeated notes, held keys (no multi-count while held). Browser blur silences sound and does not keep incrementing a held key.
+- Octave-aware assessment: exploratory lessons may accept pitch-class in any octave; location lessons can require exact MIDI pitch. Wired into the L01 player path and ready for L02+.
+- Demo events stay separate from learner events. Demo notes never count toward progress.
+- Each AttemptRecord stores `inputMode` and MIDI device identity when the browser exposes it.
+- Simulated fixtures cover held key, note-off, wrong octave when exact is required, and ignored demo notes.
+- Real hardware check is recorded separately. Do not claim a physical keyboard was verified unless one was actually used.
+- Marketing `/` and `/learn` L01 still work. No Next.js rewrite. No Vercel / DNS changes.
+
+**Handoff.** L02 can require exact pitch when a register is named. The L01 teaching loop remains the current lesson path.
 
 ---
 
-## MP-03 — L02 Find C
+## MP-03 — First Notes L01–L04 (Checkpoint A)
 
 | Field | Value |
 | --- | --- |
-| Status | **queued** |
+| Status | **working** |
 | Depends on | MP-02 |
+| Branch | `piany/mp-03-first-notes` |
+| Base | `piany/mp-02-midi-input` @ `f478ed60993227c04f47427c217d3b90b2e0981f` |
 
-**Learner outcome.** The learner finds C from the two-black-key landmark, then finds C in a new register without a glow hint.
+**Learner outcome.** A beginner can explore the keyboard (L01), find C (L02), play neighboring C–D–E (L03), and complete the original *Little Wave* tune (L04) as a First Notes unit. The next activity unlocks only when this device is ready. No buttons lead to lessons beyond L04.
 
 **Acceptance**
 
-- Guided: two-black-key group → nearest C. Exact pitch required when a register is named.
-- Independent: a different C, no glow.
-- Adult-observed fingering is not required for “found C.”
-- Common-error remediation from the L02 contract is present.
+- Playable First Notes world at `/learn` with continue/resume and device-local disclosure.
+- L01 path stays healthy at `/learn/?lesson=L01`. Marketing preview on `/` stays a separate playground.
+- L02: two-black-key group → nearest C; independent C with no glow; new register via another MIDI C or adult mark; doorstep remediation present. Fingering is not required to find C.
+- L03: visual/audio C–D–E and fingers 1–2–3; fingering is adult-observed; independent order is a changed pattern (not C–D–E and not the marketing sequences alone).
+- L04: Little Wave and Wave the other way match `beginner-v1.md`; independent is without hints; later replay after a named pause can become Retained.
+- Demos show keyboard geometry and intentional fingering. Hints fade. Help/replay do not erase saved progress.
+- MIDI hardware remains **unverified**. No accounts, billing, educator-approval, or learning-effectiveness claims.
+
+**Handoff.** Teaching for L02–L04 is on this branch. Isolated MP-04 / MP-05 cards below record the original split; do not re-implement those lessons from scratch.
 
 ---
 
@@ -93,8 +109,9 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 
 | Field | Value |
 | --- | --- |
-| Status | **queued** |
+| Status | **working** (landed with MP-03 Checkpoint A) |
 | Depends on | MP-03 |
+| Branch | `piany/mp-03-first-notes` |
 
 **Learner outcome.** The learner plays C, D, and E as adjacent white keys with a demonstrated fingering, then a new three-note order without highlight.
 
@@ -110,8 +127,9 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 
 | Field | Value |
 | --- | --- |
-| Status | **queued** |
+| Status | **working** (landed with MP-03 Checkpoint A) |
 | Depends on | MP-04 |
+| Branch | `piany/mp-03-first-notes` |
 
 **Learner outcome.** The learner plays the original home phrase *Little Wave*, a related transfer phrase, and a later replay of the home phrase.
 

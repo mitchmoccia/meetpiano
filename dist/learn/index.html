@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ffdc63">
-  <title>Meet the keyboard · First Piano Journey · MeetPiano</title>
-  <meta name="description" content="A first MeetPiano lesson: meet the keyboard, hear high and low, and find black-key groups of two and three. Progress stays on this device.">
+  <title>First Notes · First Piano Journey · MeetPiano</title>
+  <meta name="description" content="First Notes: meet the keyboard, find C, walk C–D–E, and play Little Wave. Progress stays on this device.">
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/learn/learn.css">
@@ -29,20 +29,25 @@
     <div class="nav-wrap wrap">
       <a href="/" class="brand" aria-label="MeetPiano home"><span class="brand-keys" aria-hidden="true"><i></i><i></i><i></i></span>meetpiano<span class="brand-period">.</span></a>
       <nav aria-label="Main navigation">
-        <a href="/learn" aria-current="page">First lesson</a>
+        <a href="/learn" aria-current="page">First Notes</a>
         <a href="/#adventure">The adventure</a>
         <a href="/#grown-ups">For grown-ups</a>
       </nav>
-      <button type="button" class="button button-small button-outline" id="restart-button">Start over</button>
+      <div class="learn-nav-actions">
+        <a class="button button-small button-outline" id="hub-link" href="/learn/">First Notes</a>
+        <button type="button" class="button button-small button-outline" id="help-button">Help</button>
+        <button type="button" class="button button-small button-outline" id="restart-button">Start over</button>
+      </div>
     </div>
   </header>
   <main id="main" class="learn-main">
     <p class="device-disclosure wrap" id="device-disclosure">Progress is saved on this device only. It does not sync to other browsers, phones, or accounts. There is no account.</p>
     <p class="storage-notice wrap" id="storage-notice" hidden role="status"></p>
     <div class="wrap">
-      <div class="learn-shell">
+      <div class="learn-shell first-notes-hub" id="unit-hub" hidden></div>
+      <div class="learn-shell" id="lesson-shell">
         <div class="game-topline">
-          <span class="game-label"><span class="game-live-dot"></span> FIRST PIANO JOURNEY · L01</span>
+          <span class="game-label" id="lesson-label"><span class="game-live-dot"></span> FIRST PIANO JOURNEY · L01</span>
           <span class="game-xp" id="evidence-pill">Not yet explored</span>
         </div>
         <p class="continue-note" id="continue-note" hidden>Picking up where you left off on this device.</p>
@@ -61,6 +66,17 @@
               <span class="group-tag tag-two">2</span>
               <span class="group-tag tag-three">3</span>
             </div>
+            <div class="note-sequence" id="phrase-tiles" hidden></div>
+            <figure class="wave-card" id="wave-card" hidden>
+              <svg viewBox="0 0 220 56" role="img" aria-labelledby="wave-title">
+                <title id="wave-title">A small arc that rises then falls</title>
+                <path d="M12 40 C 50 8, 110 8, 148 40 S 200 52, 208 36" fill="none" stroke="#29251f" stroke-width="4" stroke-linecap="round"/>
+                <circle cx="12" cy="40" r="5" fill="#ffdc63" stroke="#29251f" stroke-width="2"/>
+                <circle cx="110" cy="12" r="5" fill="#de4936" stroke="#29251f" stroke-width="2"/>
+                <circle cx="208" cy="36" r="5" fill="#f1aec0" stroke="#29251f" stroke-width="2"/>
+              </svg>
+              <figcaption>Little Wave rises, then comes home.</figcaption>
+            </figure>
             <div class="piano" id="piano"></div>
             <div class="keyboard-help">
               <span>This on-screen keyboard is a stand-in. Tap keys <span class="computer-help">or use A S D F G H J</span></span>
@@ -87,29 +103,70 @@
               </svg>
               <figcaption>A grown-up checks this. The app cannot see your sitting.</figcaption>
             </figure>
+            <figure class="hand-card" id="hand-card" hidden>
+              <svg viewBox="0 0 260 130" role="img" aria-labelledby="hand-title hand-desc">
+                <title id="hand-title">Right-hand fingers 1 2 3 on C D E</title>
+                <desc id="hand-desc">A simple hand diagram with thumb on C, index on D, and middle on E. A grown-up checks fingers. MIDI cannot.</desc>
+                <rect x="28" y="86" width="36" height="28" rx="4" fill="#fffdf6" stroke="#29251f" stroke-width="2"/>
+                <rect x="70" y="86" width="36" height="28" rx="4" fill="#fffdf6" stroke="#29251f" stroke-width="2"/>
+                <rect x="112" y="86" width="36" height="28" rx="4" fill="#fffdf6" stroke="#29251f" stroke-width="2"/>
+                <text x="46" y="106" text-anchor="middle" font-size="14" font-weight="700">C</text>
+                <text x="88" y="106" text-anchor="middle" font-size="14" font-weight="700">D</text>
+                <text x="130" y="106" text-anchor="middle" font-size="14" font-weight="700">E</text>
+                <path d="M46 86 C 40 60, 52 28, 70 34" fill="none" stroke="#29251f" stroke-width="5" stroke-linecap="round"/>
+                <path d="M88 86 C 88 58, 86 22, 88 18" fill="none" stroke="#29251f" stroke-width="5" stroke-linecap="round"/>
+                <path d="M130 86 C 132 56, 138 18, 142 16" fill="none" stroke="#29251f" stroke-width="5" stroke-linecap="round"/>
+                <circle cx="70" cy="42" r="16" fill="#ffdc63" stroke="#29251f" stroke-width="2"/>
+                <text x="46" y="78" text-anchor="middle" font-size="12" font-weight="800">1</text>
+                <text x="88" y="14" text-anchor="middle" font-size="12" font-weight="800">2</text>
+                <text x="154" y="20" text-anchor="middle" font-size="12" font-weight="800">3</text>
+              </svg>
+              <figcaption>A grown-up checks fingers. MIDI cannot.</figcaption>
+            </figure>
+            <figure class="house-card" id="house-card" hidden>
+              <svg viewBox="0 0 240 120" role="img" aria-labelledby="house-title house-desc">
+                <title id="house-title">Two black keys as a tiny house</title>
+                <desc id="house-desc">Two black keys make a tiny house. C is the doorstep on the left, not the room in the middle.</desc>
+                <rect x="86" y="28" width="22" height="52" fill="#29251f"/>
+                <rect x="122" y="28" width="22" height="52" fill="#29251f"/>
+                <path d="M78 28 L115 8 L152 28" fill="#de4936" stroke="#29251f" stroke-width="2"/>
+                <rect x="48" y="78" width="36" height="18" rx="3" fill="#ffdc63" stroke="#29251f" stroke-width="2"/>
+                <text x="66" y="92" text-anchor="middle" font-size="12" font-weight="800">C</text>
+                <rect x="92" y="78" width="28" height="18" rx="3" fill="#fffdf6" stroke="#29251f" stroke-width="2"/>
+                <text x="106" y="92" text-anchor="middle" font-size="11">D</text>
+              </svg>
+              <figcaption>C is the doorstep on the left, not the room in the middle.</figcaption>
+            </figure>
           </section>
         </div>
         <div class="game-bottomline">
-          <div>
-            <button type="button" id="midi-button"><svg class="icon"><use href="#keyboard"/></svg> Have a compatible keyboard? Try connecting it <span aria-hidden="true">↗</span></button>
-            <span id="midi-status" role="status"></span>
+          <div class="midi-setup">
+            <div class="midi-setup-row">
+              <button type="button" id="midi-button"><svg class="icon"><use href="#keyboard"/></svg> <span id="midi-button-label">Have a compatible keyboard? Try connecting it</span> <span aria-hidden="true">↗</span></button>
+              <span id="midi-status" role="status">Optional. A piano or MIDI keyboard is best for transfer. This on-screen keyboard is a stand-in if none is connected.</span>
+            </div>
+            <ul id="midi-devices" class="midi-devices" hidden></ul>
+            <details class="midi-help">
+              <summary>How keyboard input is counted</summary>
+              <p>A held key counts once until you let go. A silent MIDI note (velocity zero) is treated as letting go. Playing the same key again after a note-off counts as a new try. Leaving this tab silences sound; a key you kept holding does not keep adding progress. After you come back, let go and press again if you want it to sound. Demo notes you only listen to never count. If MIDI is missing or a keyboard is unplugged, the on-screen keys and computer keys still work. Physical MIDI hardware is not claimed as verified from this page.</p>
+            </details>
           </div>
-          <span class="preview-label">Lesson L01 only. Not a teacher. Not a grade.</span>
+          <span class="preview-label" id="preview-label">First Notes · L01–L04. Not a teacher. Not a grade.</span>
         </div>
       </div>
-      <p class="learn-footnote"><svg class="icon"><use href="#headphones"/></svg> Headphones help. A mute control stays available. MIDI depends on your browser and instrument — this is not a claim of universal support.</p>
+      <p class="learn-footnote"><svg class="icon"><use href="#headphones"/></svg> Headphones help. A mute control stays available. MIDI depends on your browser and instrument — this is not a claim of universal support or a hardware check.</p>
     </div>
   </main>
   <footer>
     <div class="wrap footer-main">
       <a href="/" class="brand"><span class="brand-keys" aria-hidden="true"><i></i><i></i><i></i></span>meetpiano<span class="brand-period">.</span></a>
-      <p>First Piano Journey · beginner-v1 · device-local only</p>
+      <p>First Piano Journey · First Notes · beginner-v1 · device-local only</p>
       <a href="/">Back to the playground</a>
     </div>
     <div class="wrap footer-bottom">
       <span>© 2026 MeetPiano</span>
       <span>Original lesson copy. No accounts. No cloud progress.</span>
-      <a href="/learn">Back to the top ↑</a>
+      <a href="/learn">Back to First Notes ↑</a>
     </div>
   </footer>
 </body>

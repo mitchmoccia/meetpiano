@@ -2,17 +2,23 @@ import {
   createAttempt,
   mergeInputMode,
   promoteEvidence,
+  sanitizeInputDevice,
   shouldGrantFirstCompletion
 } from './progress.js';
 import { L01 } from './lessons/l01.js';
+import { createL02Player } from './lessons/l02-play.js';
+import { createL03Player } from './lessons/l03-play.js';
+import { createL04Player } from './lessons/l04-play.js';
 import { blackGroupId, groupKind } from './piano.js';
+import { assessHeardPitch, resolveOctavePolicy, shouldCountTowardProgress } from './assess.js';
 
 const PHASE_ORDER = ['explanation', 'demo', 'guided', 'independent', 'transfer', 'result'];
 const GUIDED_STEPS = ['unlock', 'high-low', 'groups', 'posture'];
 const INDEPENDENT_STEPS = ['high-low', 'groups'];
 const TRANSFER_STEPS = ['other-two', 'three'];
 
-export function createPlayer({ progress, lessonId = 'L01' }) {
+function createL01Player({ progress }) {
+  const lessonId = 'L01';
   const lessonSpec = L01;
   let lesson = progress.lessonState(lessonId);
   let attempt = currentAttempt();
@@ -40,7 +46,9 @@ export function createPlayer({ progress, lessonId = 'L01' }) {
   }
 
   function begin(existing) {
-    attempt = existing || createAttempt(lessonId);
+    attempt = existing || createAttempt(lessonId, {
+      octavePolicyUsed: resolveOctavePolicy(lessonSpec.octavePolicy)
+    });
     if (!existing) {
       lesson.attempts.push(attempt);
       lesson.currentAttemptId = attempt.attemptId;
@@ -73,8 +81,23 @@ export function createPlayer({ progress, lessonId = 'L01' }) {
     persist();
   }
 
-  function addInput(source) {
-    attempt.inputMode = mergeInputMode(attempt.inputMode, source);
+  function addInput(source, extras = {}) {
+    if (source === 'demo') return;
+    const unused = !attempt.events.some((event) => event.type === 'note-on') && !attempt.inputDevice;
+    attempt.inputMode = unused ? mergeInputMode(source, source) : mergeInputMode(attempt.inputMode, source);
+    const device = sanitizeInputDevice(extras.device);
+    if (device) attempt.inputDevice = device;
+  }
+
+  function setOctavePolicyUsed(policy) {
+    attempt.octavePolicyUsed = resolveOctavePolicy(lessonSpec.octavePolicy, policy);
+    persist();
+    return attempt.octavePolicyUsed;
+  }
+
+  function scorePitch(heard, expected, extras = {}) {
+    const policy = resolveOctavePolicy(lessonSpec.octavePolicy, extras.octavePolicy || attempt.octavePolicyUsed);
+    return assessHeardPitch({ heard, expected, octavePolicy: policy });
   }
 
   function setDemoPlaying(value) {
@@ -86,17 +109,35 @@ export function createPlayer({ progress, lessonId = 'L01' }) {
     return playingDemo;
   }
 
-  function handleNote(note, source) {
-    if (playingDemo) {
-      return { ignore: true, reason: 'demo-playback' };
+  function handleNote(note, source, extras = {}) {
+    if (!shouldCountTowardProgress(source, playingDemo)) {
+      return { ignore: true, reason: 'demo-playback', counted: false };
+    }
+    addInput(source, extras);
+    if (extras.expected != null) {
+      const scored = scorePitch(note, extras.expected, extras);
+      attempt.octavePolicyUsed = scored.octavePolicyUsed;
+      recordEvent('note-on', { heard: note, expected: extras.expected, match: scored.match });
+      if (scored.match) markExplored();
+      persist();
+      return {
+        ok: scored.match,
+        counted: true,
+        match: scored.match,
+        reason: scored.reason,
+        octavePolicyUsed: scored.octavePolicyUsed,
+        message: extras.message || (scored.match
+          ? null
+          : scored.reason === 'wrong-octave'
+            ? 'That is the same note name in a different octave. This check wants the named key.'
+            : 'That was not the requested key.')
+      };
     }
     if (attempt.phase === 'demo' || attempt.phase === 'explanation' || attempt.phase === 'result') {
-      addInput(source);
       markExplored();
       persist();
-      return { ignore: true, reason: 'not-assessed' };
+      return { ignore: true, reason: 'not-assessed', counted: true };
     }
-    addInput(source);
     markExplored();
     if (attempt.phase === 'guided') return handleGuidedNote(note);
     if (attempt.phase === 'independent') return handleIndependentNote(note);
@@ -246,6 +287,13 @@ export function createPlayer({ progress, lessonId = 'L01' }) {
     persist();
   }
 
+  function requestHelp() {
+    attempt.restore.hintsOn = true;
+    attempt.restore.helped = true;
+    recordEvent('hint-shown');
+    persist();
+  }
+
   function setPosture(checked) {
     attempt.adultObserved.posture = Boolean(checked);
     if (checked) markExplored();
@@ -327,9 +375,12 @@ export function createPlayer({ progress, lessonId = 'L01' }) {
     begin,
     view,
     handleNote,
+    scorePitch,
+    setOctavePolicyUsed,
     setDemoPlaying,
     isDemoPlaying,
     setHints,
+    requestHelp,
     setPosture,
     setAdultTwo,
     setAdultThree,
@@ -343,4 +394,12 @@ export function createPlayer({ progress, lessonId = 'L01' }) {
   };
 }
 
+export function createPlayer({ progress, lessonId = 'L01' }) {
+  if (lessonId === 'L02') return createL02Player({ progress });
+  if (lessonId === 'L03') return createL03Player({ progress });
+  if (lessonId === 'L04') return createL04Player({ progress });
+  return createL01Player({ progress });
+}
+
 export { PHASE_ORDER, GUIDED_STEPS };
+

@@ -5,21 +5,25 @@ Single active-slice board. Update this file at the start and end of each slice.
 | Field | Value |
 | --- | --- |
 | Mission | First Piano Journey |
-| Active slice | **MP-01** Playable `/learn` + L01 |
-| Slice status | **verified** |
-| Run ID | `piany-mp01-20260908-2230UTC` |
-| Branch | `piany/mp-01-learn-l01` |
-| Base | `piany/mp-00-mission-foundation` @ `1cf494ffb73ca33d037b7b47ced6d74d5161d5e5` |
-| Start time | 2026-09-08 22:30 UTC |
-| Last evidence | [`../evidence/first-piano-journey/mp-01.md`](../evidence/first-piano-journey/mp-01.md) |
-| Blockers | None |
-| Next action | Mitch merge-or-preview decision. Do not merge or deploy production from this slice. |
-| Next eligible slice | MP-02 — teaching-loop engine |
+| Active slice | **MP-03** First Notes L01–L04 (Checkpoint A) |
+| Slice status | **working** |
+| Run ID | `piany-mp03-20260908-2330UTC` |
+| Branch | `piany/mp-03-first-notes` |
+| Base | `piany/mp-02-midi-input` @ `f478ed60993227c04f47427c217d3b90b2e0981f` |
+| Start time | 2026-09-08 23:30 UTC |
+| Last evidence | [`../evidence/first-piano-journey/mp-03.md`](../evidence/first-piano-journey/mp-03.md) (filled 2026-09-08; product `912e6bc`, HEAD `72f4e5b`, PR #5) |
+| Blockers | Physical MIDI keyboard not available in this environment — hardware check unverified |
+| Next action | Mitch review of draft PR into `piany/mp-02-midi-input`. Do not merge or deploy production from this slice. |
+| Next eligible slice | MP-06 — Device-local progress polish (L03/L04 teaching already in this Checkpoint A branch) |
 
 ## Notes
 
-- `/learn` is a static `dist/learn/index.html` surface. `vercel.json` rewrites `/learn` and `/learn/` to that file. Marketing home at `/` is unchanged in purpose.
-- Progress key: `localStorage` `meetpiano:beginner-v1`. Device-local only. Demo playback cannot earn progress.
-- Draft PR: https://github.com/mitchmoccia/meetpiano/pull/3 into `piany/mp-00-mission-foundation`.
+- Stacked on `piany/mp-02-midi-input` (Gort accepted MP-02 as software/fixture verified; hardware MIDI unverified — not a MIDI-verified release). If that base disappears, retarget `main`.
+- Canonical hosting is a single Vercel project `meetpiano` plus `https://meetpiano.app`. The former `meetpiano-app` project was deleted.
+- `/learn` is the First Notes unit hub. L01 remains at `/learn/?lesson=L01`.
+- L02 Find C, L03 Neighbors, and L04 Little Wave are playable on this branch (Checkpoint A). Unlock: L02 after L01 Practiced, L03 after L02 Practiced, L04 after L03 Independent.
+- Progress key: `localStorage` `meetpiano:beginner-v1`. Device-local only. Demo playback cannot earn progress. Help/replay do not erase saved evidence.
 - Branch `cursor/setup-cloud-agent-env-d108` was left untouched.
+- Do not change Vercel projects, domains, or DNS.
 - Production deploy is not part of this slice. Mitch approval is required to merge or deploy production.
+- Do not mark physical MIDI verified.

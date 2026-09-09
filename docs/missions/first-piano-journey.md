@@ -60,7 +60,7 @@ Recorded 2026-09-08. Only list what was actually checked.
 | Custom domain `https://meetpiano.app` | Works | HTTP 200 from Vercel on 2026-09-08 (~18:23 America/New_York). Brand domain is already live. |
 | `www.meetpiano.app` | Does not resolve | DNS lookup failed on 2026-09-08. Not a blocker for this mission. |
 | `/learn` on production | Missing | `https://meetpiano.app/learn` returns HTTP 404. Expected until MP-01. |
-| GitHub-linked Vercel project `meetpiano-app` | Present, secondary | `prj_2Y10k6je8CHOKAAdWHdtZBePoqat` is linked to this repo and also serves the static site. Do not treat it as the brand-domain project. Confirm with Mitch before changing it. |
+| GitHub-linked Vercel project `meetpiano-app` | Deleted | Removed. Canonical hosting is the single Vercel project `meetpiano` plus `https://meetpiano.app`. |
 | Hourly resume routines | Not configured | No scheduled resume, heartbeat, or slice-runner automation is set up yet. |
 
 ## Inspected baseline (live remote)
@@ -71,7 +71,7 @@ Inspected **2026-09-08 ~18:23 America/New_York**.
 - Live `main` SHA: `2385bd72a176c140aaf4a50849d197adea69579b`
 - Message: `Import complete MeetPiano site, artwork, piano demo, and Vercel configuration`
 - Extra branch `cursor/setup-cloud-agent-env-d108` is **+1 commit** (`b141d3489fb29845937a63d5361b21e9ca3125aa`) adding only `.cursor/environment.json`. Do not merge or delete it. Leave it alone.
-- Hosting: Vercel project `meetpiano` in `mitchmoccias-projects`; `vercel.json` uses `outputDirectory: dist` and empty build/install commands.
+- Hosting: single Vercel project `meetpiano` in `mitchmoccias-projects` plus `https://meetpiano.app`. The former GitHub-linked project `meetpiano-app` was deleted. `vercel.json` uses `outputDirectory: dist` and empty build/install commands.
 - `dist/` is authored source, not generated output, and stays tracked.
 
 ### Product behavior on that SHA
@@ -119,7 +119,7 @@ After MP-00 is merged or Mitch chooses to stack, the next action is **start MP-0
 | --- | --- | --- |
 | MP-00 | Mission and lesson specification | Verified (docs complete) |
 | MP-01 | Playable `/learn` + L01 | Verified |
-| MP-02 | Teaching-loop engine | Queued |
+| MP-02 | Trustworthy keyboard / MIDI input | Working |
 | MP-03 | L02 Find C | Queued |
 | MP-04 | L03 Neighbors C–D–E | Queued |
 | MP-05 | L04 First little tune | Queued |

@@ -1,0 +1,47 @@
+{
+  "heldKey": [
+    { "data": [144, 60, 100], "expect": { "type": "note-on", "scored": true } },
+    { "data": [144, 60, 90], "expect": { "type": "note-on", "scored": false, "reason": "already-held" } },
+    { "data": [128, 60, 64], "expect": { "type": "note-off", "released": true } },
+    { "data": [144, 60, 100], "expect": { "type": "note-on", "scored": true } }
+  ],
+  "velocityZeroNoteOff": [
+    { "data": [144, 64, 80], "expect": { "type": "note-on", "scored": true } },
+    { "data": [144, 64, 0], "expect": { "type": "note-off", "released": true } },
+    { "data": [144, 64, 70], "expect": { "type": "note-on", "scored": true } }
+  ],
+  "repeatedNotes": [
+    { "data": [144, 62, 100], "expect": { "type": "note-on", "scored": true } },
+    { "data": [128, 62, 0], "expect": { "type": "note-off", "released": true } },
+    { "data": [144, 62, 100], "expect": { "type": "note-on", "scored": true } }
+  ],
+  "channelNoteOn": [
+    { "data": [146, 67, 110], "expect": { "type": "note-on", "scored": true, "channel": 2 } }
+  ],
+  "ignoredControl": [
+    { "data": [176, 7, 100], "expect": { "ignored": true } }
+  ],
+  "exactPitchWrongOctave": {
+    "expected": 60,
+    "octavePolicy": "exact-pitch",
+    "heard": 72,
+    "match": false,
+    "reason": "wrong-octave"
+  },
+  "pitchClassAnyOctave": {
+    "expected": 60,
+    "octavePolicy": "pitch-class",
+    "heard": 72,
+    "match": true,
+    "reason": "match"
+  },
+  "demoIgnored": {
+    "note": 71,
+    "source": "demo"
+  },
+  "device": {
+    "id": "fixture-keyboard",
+    "name": "Simulated USB Piano",
+    "manufacturer": "MeetPiano Fixtures"
+  }
+}

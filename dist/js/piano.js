@@ -78,3 +78,30 @@ export function setSweep(root, note) {
   root.querySelectorAll('.piano-key.sweep').forEach((key) => key.classList.remove('sweep'));
   if (note != null) keyElement(root, note)?.classList.add('sweep');
 }
+
+export function setKeyCaptions(root, captions = {}) {
+  root.querySelectorAll('.piano-key').forEach((key) => {
+    key.querySelectorAll('.key-caption, .finger-mark').forEach((node) => node.remove());
+    const note = Number(key.dataset.note);
+    const cap = captions[note];
+    if (!cap) return;
+    if (cap.letter) {
+      const letter = document.createElement('span');
+      letter.className = cap.fade ? 'key-caption fade' : 'key-caption';
+      letter.textContent = cap.letter;
+      key.append(letter);
+    }
+    if (cap.finger) {
+      const finger = document.createElement('span');
+      finger.className = 'finger-mark';
+      finger.textContent = String(cap.finger);
+      key.append(finger);
+    }
+  });
+}
+
+export function cLeftOfTwoGroup(note) {
+  const pc = ((note % 12) + 12) % 12;
+  if (pc === 1 || pc === 3) return note - (pc === 1 ? 1 : 3);
+  return null;
+}
