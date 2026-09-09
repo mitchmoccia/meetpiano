@@ -407,8 +407,8 @@ export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit, onEx
     ),
     el('section', { className: 'unit-intro' },
       el('p', { className: 'mission-eyebrow' }, 'SIX WORLDS · SAME DEVICE'),
-      el('h1', {}, 'Twenty-four little jobs. Play, listen, try again.'),
-      el('p', {}, 'A yellow job tells you what to do now. Hear the words if you like. A grown-up can sit nearby. The next activity unlocks when this device is ready. Nothing here is a teacher grade.')
+      el('h1', {}, 'First Piano Journey'),
+      el('p', {}, 'Twenty-four little jobs. Play, listen, try again. A yellow job tells you what to do now. Hear the words if you like. A grown-up can sit nearby. The next activity unlocks when this device is ready. Nothing here is a teacher grade.')
     ),
     pauseState
       ? el('section', { className: 'next-session', id: 'resume-session' },

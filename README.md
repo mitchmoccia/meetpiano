@@ -9,8 +9,11 @@ Intended production domain: **meetpiano.app**.
 This is a dependency-free static website. `dist/` contains the authored source, not generated build output, and must remain tracked in Git.
 
 - `dist/index.html`: marketing page, playable piano, learning map, memberships, and FAQs.
+- `dist/llms.txt`: LLM-oriented site overview ([llmstxt.org](https://llmstxt.org/) v2), served as `/llms.txt`.
+- `dist/robots.txt`: crawler allow list (including common AI crawlers) and sitemap pointer.
+- `dist/sitemap.xml`: public indexable URLs only (`/` and `/learn/`).
 - `dist/styles.css`: responsive layout, typography, and theme.
-- `dist/learn/`: First Piano Journey `/learn` surface — First Notes (L01–L04), Rhythm Club (L05–L08), Read and play (L09–L12), Left hand (L13–L16), Together (L17–L20), and Expression (L21–L24). ES modules, no build step.
+- `dist/learn/`: First Piano Journey `/learn` surface — First Notes (L01–L04), Rhythm Club (L05–L08), Read and play (L09–L12), Left hand (L13–L16), Together (L17–L20), and Expression (L21–L24). ES modules, no build step. `index.md` is a short markdown alternate.
 - `dist/js/`: shared lesson, audio, input, and device-local progress modules for `/learn`.
 - `dist/app.js`: Web Audio synthesis, three musical missions, XP, optional Web MIDI input, and interactive learning map.
 - `dist/assets/`: all artwork, self-hosted fonts, font licenses, and favicon.
@@ -61,6 +64,7 @@ node scripts/mp-09-check.mjs
 node scripts/mp-10-check.mjs
 node scripts/mp-11-check.mjs
 node scripts/copyright-check.mjs
+node scripts/aeo-check.mjs
 ```
 
 Hardware MIDI compatibility depends on the browser, operating system, keyboard, and adapter. The current preview does not assess fingering, posture, sustain pedal technique, or microphone input.

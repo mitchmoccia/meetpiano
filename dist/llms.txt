@@ -1,0 +1,23 @@
+# MeetPiano
+
+> MeetPiano is a device-local First Piano Journey for younger beginners with a nearby grown-up helper. It is a free marketing preview plus a browser learn journey. It is not a certified teacher, not a grade or exam program, and it does not claim learning effectiveness. Web MIDI is optional. Physical MIDI hardware is not verified from this site. Progress stays on this device only. There are no accounts and no cloud sync.
+
+MeetPiano is published by Xpancom, LLC at https://meetpiano.app. The home page is a playable marketing preview (touch, computer keys, or optional Web MIDI). First Piano Journey is the `/learn` surface: twenty-four short jobs (L01–L24) across six worlds, curriculum version beginner-v1. A grown-up view lists what this browser has already stored. On-screen keys are an exploration stand-in. MIDI reports pitch, time, and velocity if the keyboard sent them — never technique, hand choice, or coordination.
+
+## Pages
+
+- [MeetPiano home](https://meetpiano.app/): Free marketing preview with a playable mini adventure. No account.
+- [First Piano Journey](https://meetpiano.app/learn/): Device-local beginner journey. Not a teacher. Not a grade.
+- [First Notes](https://meetpiano.app/learn/?unit=first-notes): L01–L04 — meet the keyboard and first notes.
+- [Rhythm Club](https://meetpiano.app/learn/?unit=rhythm-club): L05–L08 — pulse and rests. Scoring uses the audio clock, not the screen glow.
+- [Read and play](https://meetpiano.app/learn/?unit=read-and-play): L09–L12 — staff reading on this device.
+- [Left hand](https://meetpiano.app/learn/?unit=left-hand): L13–L16 — left-room keys. MIDI does not certify which hand.
+- [Together](https://meetpiano.app/learn/?unit=together): L17–L20 — both rooms. On-screen keys are not proof of coordination.
+- [Expression](https://meetpiano.app/learn/?unit=expression): L21–L24 — quiet versus strong only when velocity is present, then a first recital shell.
+- [Grown-up helper view](https://meetpiano.app/learn/?view=grown-up): Nearby helper card. Not a login and not privacy protection.
+
+## Optional
+
+- [Learn overview (markdown)](https://meetpiano.app/learn/index.md): Short LLM-readable overview of First Piano Journey.
+- [Sitemap](https://meetpiano.app/sitemap.xml): Public indexable URLs only.
+- [robots.txt](https://meetpiano.app/robots.txt): Crawler access. AI crawlers are allowed.
