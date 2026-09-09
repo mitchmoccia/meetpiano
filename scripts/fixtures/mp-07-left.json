@@ -1,0 +1,32 @@
+{
+  "bassWalk": {
+    "pitches": [48, 50, 52],
+    "durations": ["quarter", "quarter", "quarter"],
+    "clef": "bass"
+  },
+  "bassNeighbors": {
+    "pitches": [53, 55],
+    "durations": ["quarter", "quarter"],
+    "clef": "bass"
+  },
+  "bassTransfer": {
+    "pitches": [52, 48, 53],
+    "durations": ["quarter", "quarter", "quarter"],
+    "clef": "bass"
+  },
+  "question": {
+    "pitches": [60, 62, 64],
+    "durations": ["quarter", "quarter", "quarter"],
+    "clef": "treble"
+  },
+  "answer": {
+    "pitches": [52, 50, 48],
+    "durations": ["quarter", "quarter", "quarter"],
+    "clef": "bass"
+  },
+  "conversation": {
+    "pitches": [60, 62, 64, 52, 50, 48],
+    "durations": ["quarter", "quarter", "quarter", "quarter", "quarter", "quarter"],
+    "clef": ["treble", "treble", "treble", "bass", "bass", "bass"]
+  }
+}
