@@ -4,7 +4,7 @@ Ordered cards **MP-00 through MP-11**. Status values: `verified` · `working` ·
 
 Acceptance summaries are taken from the runbook [`first-piano-journey.md`](first-piano-journey.md). Teaching detail is in [`../curriculum/beginner-v1.md`](../curriculum/beginner-v1.md).
 
-MP-00 is marked **verified** because the mission and lesson specification docs are complete. MP-01 is **verified** and merged to `main`. MP-02 is **working** (trustworthy keyboard / MIDI input). MP-03 is **working** (First Notes Checkpoint A: L01–L04). Later cards stay **queued**.
+MP-00 is marked **verified** because the mission and lesson specification docs are complete. MP-01 is **verified** and merged to `main`. MP-02 is **software/fixture verified** (Gort accepted; hardware MIDI unverified — not a MIDI-verified release). MP-03 is **working** (First Notes Checkpoint A: L01–L04). Later cards stay **queued**.
 
 ---
 
@@ -57,7 +57,7 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 
 | Field | Value |
 | --- | --- |
-| Status | **working** |
+| Status | **software/fixture verified** (Gort accepted; hardware MIDI unverified) |
 | Depends on | MP-01 |
 | Branch | `piany/mp-02-midi-input` |
 | Base | `main` @ `13fbd6b29f0f78278a72e25ea0fbfb65e609a1aa` |

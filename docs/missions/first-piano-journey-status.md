@@ -18,7 +18,8 @@ Single active-slice board. Update this file at the start and end of each slice.
 
 ## Notes
 
-- Stacked on `piany/mp-02-midi-input` (MP-02 MIDI work not yet merged). If that base disappears, retarget `main`.
+- Stacked on `piany/mp-02-midi-input` (Gort accepted MP-02 as software/fixture verified; hardware MIDI unverified — not a MIDI-verified release). If that base disappears, retarget `main`.
+- Canonical hosting is a single Vercel project `meetpiano` plus `https://meetpiano.app`. The former `meetpiano-app` project was deleted.
 - `/learn` is the First Notes unit hub. L01 remains at `/learn/?lesson=L01`.
 - L02 Find C, L03 Neighbors, and L04 Little Wave are playable on this branch (Checkpoint A). Unlock: L02 after L01 Practiced, L03 after L02 Practiced, L04 after L03 Independent.
 - Progress key: `localStorage` `meetpiano:beginner-v1`. Device-local only. Demo playback cannot earn progress. Help/replay do not erase saved evidence.
