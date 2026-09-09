@@ -23,7 +23,7 @@ export function regionForMidi(midi) {
 
 export function defaultHandFocus(lessonId) {
   if (lessonId === 'L13' || lessonId === 'L14') return 'left';
-  if (lessonId === 'L15' || lessonId === 'L16') return 'both';
+  if (lessonId === 'L15' || lessonId === 'L16' || ['L17', 'L18', 'L19', 'L20'].includes(lessonId)) return 'both';
   return 'right';
 }
 
@@ -33,7 +33,7 @@ export function normalizeHandFocus(value, lessonId) {
 }
 
 export function pianoRangeFor(lessonId) {
-  if (['L13', 'L14', 'L15', 'L16'].includes(lessonId)) {
+  if (['L13', 'L14', 'L15', 'L16', 'L17', 'L18', 'L19', 'L20'].includes(lessonId)) {
     return { from: BOTH_FROM, to: BOTH_TO, wide: true };
   }
   return { from: RIGHT_FROM, to: RIGHT_TO, wide: false };

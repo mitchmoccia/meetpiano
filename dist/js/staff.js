@@ -83,8 +83,8 @@ export function durationMs(kind) {
   return kind === 'half' ? HALF_MS : QUARTER_MS;
 }
 
-export function staffNote(midi, duration = 'quarter', letter = '', clef = TREBLE_CLEF) {
-  return { midi, duration, letter, clef };
+export function staffNote(midi, duration = 'quarter', letter = '', clef = TREBLE_CLEF, column = null) {
+  return { midi, duration, letter, clef, column };
 }
 
 export function pitchesOf(notes) {
@@ -117,7 +117,9 @@ export function renderStaff(root, {
   grand = false
 } = {}) {
   if (!root) return;
-  const width = Math.max(280, NOTE_X0 + notes.length * NOTE_GAP + 24);
+  const columns = notes.map((note, index) => (Number.isInteger(note.column) ? note.column : index));
+  const columnCount = columns.length ? Math.max(...columns) + 1 : notes.length;
+  const width = Math.max(280, NOTE_X0 + columnCount * NOTE_GAP + 24);
   const height = grand ? 230 : 132;
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
@@ -147,7 +149,7 @@ export function renderStaff(root, {
   notes.forEach((note, index) => {
     const noteClef = grand ? (note.clef || clef) : clef;
     const offset = grand && noteClef === BASS_CLEF ? GRAND_BASS_OFFSET : 0;
-    const x = NOTE_X0 + index * NOTE_GAP;
+    const x = NOTE_X0 + (Number.isInteger(note.column) ? note.column : index) * NOTE_GAP;
     const y = staffY(note.midi, noteClef, offset);
     drawLedgers(svg, note.midi, x, noteClef, offset);
     const state = current < 0 ? '' : index < current ? 'done' : index === current ? 'now' : '';

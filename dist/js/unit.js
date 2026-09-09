@@ -8,6 +8,8 @@ export const READ_UNIT_ID = 'read-and-play';
 export const READ_UNIT_TITLE = 'Read and play';
 export const LEFT_UNIT_ID = 'left-hand';
 export const LEFT_UNIT_TITLE = 'Left hand';
+export const TOGETHER_UNIT_ID = 'together';
+export const TOGETHER_UNIT_TITLE = 'Together';
 export const CURRICULUM_VERSION = 'beginner-v1';
 
 const EVIDENCE_RANK = { explored: 1, practiced: 2, independent: 3, retained: 4 };
@@ -152,7 +154,42 @@ export const LEFT_HAND_LESSONS = [
   }
 ];
 
-export const JOURNEY_LESSONS = [...FIRST_NOTES_LESSONS, ...RHYTHM_CLUB_LESSONS, ...READ_AND_PLAY_LESSONS, ...LEFT_HAND_LESSONS];
+export const TOGETHER_LESSONS = [
+  {
+    lessonId: 'L17',
+    title: 'First together',
+    blurb: 'Two keys at once. Same click.',
+    unlocksAfter: 'L16',
+    unlockNeeds: 'independent',
+    unitId: TOGETHER_UNIT_ID
+  },
+  {
+    lessonId: 'L18',
+    title: 'Keep going',
+    blurb: 'Small loops. Slow is allowed.',
+    unlocksAfter: 'L17',
+    unlockNeeds: 'practiced',
+    unitId: TOGETHER_UNIT_ID
+  },
+  {
+    lessonId: 'L19',
+    title: 'Small harmony',
+    blurb: 'C with E, then C with G.',
+    unlocksAfter: 'L18',
+    unlockNeeds: 'practiced',
+    unitId: TOGETHER_UNIT_ID
+  },
+  {
+    lessonId: 'L20',
+    title: 'Complete little piece',
+    blurb: 'Hold, walk, then a home chord.',
+    unlocksAfter: 'L19',
+    unlockNeeds: 'independent',
+    unitId: TOGETHER_UNIT_ID
+  }
+];
+
+export const JOURNEY_LESSONS = [...FIRST_NOTES_LESSONS, ...RHYTHM_CLUB_LESSONS, ...READ_AND_PLAY_LESSONS, ...LEFT_HAND_LESSONS, ...TOGETHER_LESSONS];
 
 export function evidenceRank(state) {
   return EVIDENCE_RANK[state] || 0;
@@ -183,14 +220,27 @@ export function isLeftLesson(lessonId) {
   return LEFT_HAND_LESSONS.some((item) => item.lessonId === lessonId);
 }
 
+export function isTogetherLesson(lessonId) {
+  return TOGETHER_LESSONS.some((item) => item.lessonId === lessonId);
+}
+
 export function usesRhythmTake(lessonId) {
   return isRhythmLesson(lessonId) || lessonId === 'L16';
+}
+
+export function usesTogetherTake(lessonId) {
+  return isTogetherLesson(lessonId);
+}
+
+export function usesClockTake(lessonId) {
+  return usesRhythmTake(lessonId) || usesTogetherTake(lessonId);
 }
 
 export function unitTitleFor(lessonId) {
   if (isRhythmLesson(lessonId)) return RHYTHM_UNIT_TITLE;
   if (isReadLesson(lessonId)) return READ_UNIT_TITLE;
   if (isLeftLesson(lessonId)) return LEFT_UNIT_TITLE;
+  if (isTogetherLesson(lessonId)) return TOGETHER_UNIT_TITLE;
   return UNIT_TITLE;
 }
 
@@ -220,6 +270,7 @@ export function parseUnitId(value) {
   if (id === RHYTHM_UNIT_ID || id === 'rhythm') return RHYTHM_UNIT_ID;
   if (id === READ_UNIT_ID || id === 'read') return READ_UNIT_ID;
   if (id === LEFT_UNIT_ID || id === 'left') return LEFT_UNIT_ID;
+  if (id === TOGETHER_UNIT_ID || id === 'hands-together') return TOGETHER_UNIT_ID;
   return null;
 }
 
@@ -250,7 +301,8 @@ export function unitView(store) {
   const rhythmCards = mapCards(RHYTHM_CLUB_LESSONS, store);
   const readCards = mapCards(READ_AND_PLAY_LESSONS, store);
   const leftCards = mapCards(LEFT_HAND_LESSONS, store);
-  const all = [...firstCards, ...rhythmCards, ...readCards, ...leftCards];
+  const togetherCards = mapCards(TOGETHER_LESSONS, store);
+  const all = [...firstCards, ...rhythmCards, ...readCards, ...leftCards, ...togetherCards];
   const continueCard = pickContinue(all);
   return {
     unitId: UNIT_ID,
@@ -284,6 +336,13 @@ export function unitView(store) {
         kicker: 'WORLD · LEFT HAND',
         unlocked: isLessonUnlocked(store, 'L13'),
         cards: leftCards
+      },
+      {
+        unitId: TOGETHER_UNIT_ID,
+        title: TOGETHER_UNIT_TITLE,
+        kicker: 'WORLD · TOGETHER',
+        unlocked: isLessonUnlocked(store, 'L17'),
+        cards: togetherCards
       }
     ],
     continueLessonId: continueCard?.lessonId || 'L01'

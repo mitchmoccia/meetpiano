@@ -7,7 +7,7 @@ export const PHASES = new Set(['explanation', 'demo', 'guided', 'independent', '
 export const EVIDENCE = new Set(['explored', 'practiced', 'independent', 'retained']);
 export const INPUT_MODES = new Set(['touch', 'computer-keys', 'midi', 'mixed']);
 export const OCTAVE_POLICIES = new Set(['pitch-class', 'exact-pitch']);
-export const PATTERN_IDS = new Set(['home', 'transfer', 'review', 'remediation', 'easier']);
+export const PATTERN_IDS = new Set(['home', 'transfer', 'review', 'remediation', 'easier', 'passage']);
 export const EVIDENCE_RANK = { explored: 1, practiced: 2, independent: 3, retained: 4 };
 
 export function promoteEvidence(current, next) {

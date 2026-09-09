@@ -125,9 +125,9 @@ After MP-00 is merged or Mitch chooses to stack, the next action is **start MP-0
 | MP-05 | Read and play L09–L12 | Working |
 | MP-06 | Device-local progress and evidence states | Working |
 | MP-07 | Left hand L13–L16 | Working |
-| MP-08 | Neighborhood leftovers after Read and play | Queued |
+| MP-08 | Together L17–L20 | Working |
 | MP-09 | Later leftover sequence (house, middle C, long tune, dynamics) | Queued |
-| MP-10 | L17–L24 and later review | Queued |
+| MP-10 | Later leftover review (long/short, smooth, fingering, memory) | Queued |
 | MP-11 | Export/import, disclosure, mission closeout | Queued |
 
 Acceptance summaries for each card are in [`first-piano-journey-slices.md`](first-piano-journey-slices.md).

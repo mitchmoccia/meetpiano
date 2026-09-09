@@ -1,0 +1,27 @@
+{
+  "firstTogether": {
+    "pitches": [48, 60, 48, 64],
+    "durations": ["half", "half", "half", "half"],
+    "clef": ["bass", "treble", "bass", "treble"]
+  },
+  "neighborsTogether": {
+    "pitches": [48, 62, 48, 60],
+    "durations": ["half", "half", "half", "half"],
+    "clef": ["bass", "treble", "bass", "treble"]
+  },
+  "keepGoing": {
+    "pitches": [48, 60, 48, 62, 48, 64, 48, 60],
+    "durations": ["quarter", "quarter", "quarter", "quarter", "quarter", "quarter", "quarter", "quarter"],
+    "clef": ["bass", "treble", "bass", "treble", "bass", "treble", "bass", "treble"]
+  },
+  "smallHarmony": {
+    "pitches": [48, 64, 48, 67],
+    "durations": ["half", "half", "half", "half"],
+    "clef": ["bass", "treble", "bass", "treble"]
+  },
+  "littlePiece": {
+    "pitches": [48, 60, 62, 64, 60, 48, 64, 48, 60],
+    "durations": ["half", "quarter", "quarter", "quarter", "quarter", "half", "half", "half", "half"],
+    "clef": ["bass", "treble", "treble", "treble", "treble", "bass", "treble", "bass", "treble"]
+  }
+}

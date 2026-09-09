@@ -26,7 +26,7 @@ import {
   renderSteps,
   renderUnitHub
 } from '../js/learn-view.js';
-import { isLessonUnlocked, isLeftLesson, isReadLesson, isRhythmLesson, parseLessonId, parseUnitId, unitTitleFor, usesRhythmTake } from '../js/unit.js';
+import { isLessonUnlocked, isLeftLesson, isTogetherLesson, parseLessonId, parseUnitId, unitTitleFor, usesClockTake, usesRhythmTake, usesTogetherTake } from '../js/unit.js';
 import { durationMs, renderStaff } from '../js/staff.js';
 import { exportProgress, importProgress } from '../js/portability.js';
 import { recommendAfterLesson } from '../js/recommend.js';
@@ -94,6 +94,9 @@ if (!lessonId) {
   } else if (requestedUnit === 'left-hand' && !isLessonUnlocked(store, 'L13')) {
     document.querySelector('#storage-notice').hidden = false;
     document.querySelector('#storage-notice').textContent = 'Left hand is locked on this device until Read a little tune is Independent.';
+  } else if (requestedUnit === 'together' && !isLessonUnlocked(store, 'L17')) {
+    document.querySelector('#storage-notice').hidden = false;
+    document.querySelector('#storage-notice').textContent = 'Together is locked on this device until Two parts one pulse is Independent.';
   }
   renderUnitHub(hub, store, {
     onOpen: openLesson,
@@ -263,6 +266,11 @@ function startLesson(id) {
     player.setAudioUnlocked(ok);
     clock.cancelAll();
     const live = player.startTake(kind);
+    if (!live || live.blocked) {
+      lastFeedback = live?.message || player.lessonSpec.copy.feedback.needHands;
+      paint();
+      return;
+    }
     const beat = 60 / live.bpm;
     const countStart = live.origin - (live.countInBeats || 0) * beat;
     for (let i = 0; i < (live.countInBeats || 0); i += 1) {
@@ -401,7 +409,7 @@ function startLesson(id) {
     if (id === 'L03' && view.guidedStep === 'neighbors') {
       return view.attempt.restore.sequence.length ? [64] : [62];
     }
-    if (id === 'L04' || id === 'L08' || id === 'L10' || id === 'L11' || id === 'L12' || id === 'L13' || id === 'L14' || id === 'L15' || id === 'L16') {
+    if (id === 'L04' || id === 'L08' || id === 'L10' || id === 'L11' || id === 'L12' || id === 'L13' || id === 'L14' || id === 'L15' || id === 'L16' || usesTogetherTake(id)) {
       const captions = view.captions || {};
       return Object.keys(captions).map(Number);
     }
@@ -413,7 +421,7 @@ function startLesson(id) {
 
   function paintHandFocus(view) {
     if (!ui.handFocus) return;
-    const show = isLeftLesson(id) && view.phase !== 'explanation' && view.phase !== 'result';
+    const show = (isLeftLesson(id) || isTogetherLesson(id)) && view.phase !== 'explanation' && view.phase !== 'result';
     ui.handFocus.hidden = !show;
     if (ui.regionLabels) ui.regionLabels.hidden = !usesWidePiano(id) || view.phase === 'result';
     if (!show) return;
@@ -435,7 +443,7 @@ function startLesson(id) {
 
   function paintRhythmChrome(view) {
     if (!ui.pulse) return;
-    const rhythm = usesRhythmTake(id);
+    const rhythm = usesClockTake(id);
     const showPulse = rhythm && view.phase !== 'explanation' && view.phase !== 'result';
     ui.pulse.hidden = !showPulse;
     ui.pulse.classList.toggle('live', Boolean(view.takeLive));
@@ -552,14 +560,14 @@ function startLesson(id) {
         button(copy.hearE, () => playSequence([spec.demo.singles.E], 420))
       );
     }
-    if (usesRhythmTake(id)) {
+    if (usesClockTake(id)) {
       ui.actions.append(button(copy.hear, () => {
         player.markHeardDemo?.();
         playRhythmPattern(spec.patterns.guided);
         lastFeedback = spec.copy.feedback.heard;
         paint();
       }));
-      if ((id === 'L08' || id === 'L16') && copy.hearWrong) {
+      if ((id === 'L08' || id === 'L16' || usesTogetherTake(id)) && copy.hearWrong) {
         ui.actions.append(button(copy.hearWrong, () => {
           playRhythmPattern(spec.patterns.guided, { rush: true });
           lastFeedback = 'Same letters, wrong time. That must not pass.';
@@ -811,6 +819,39 @@ function startLesson(id) {
         }));
       }
     }
+    if (usesTogetherTake(id)) {
+      if (view.guidedStep === 'left' || view.guidedStep === 'right' || view.guidedStep === 'loop' || view.guidedStep === 'together') {
+        if ((view.guidedStep === 'together' || view.guidedStep === 'loop') && !view.handsReady) {
+          ui.actions.append(el('p', { className: 'unit-limit' }, spec.copy.feedback.needHands));
+        } else {
+          rhythmTakeButtons('guided');
+        }
+        hintToggle(view);
+      }
+      if (view.guidedStep === 'cousin') {
+        ui.actions.append(button('Hear the cousin once', () => {
+          player.markHeardTransfer();
+          lastFeedback = spec.copy.feedback.cousinListen;
+          playRhythmPattern(spec.patterns.transfer);
+          paint();
+        }));
+        if (view.heardTransfer && view.homeDone && view.handsReady) {
+          ui.actions.append(button(copy.action, () => { go('guided'); lastFeedback = 'Hints stay off for this check.'; paint(); }, 'button-dark'));
+        }
+      }
+      if (view.guidedStep === 'done') {
+        ui.actions.append(button(copy.action, () => { go('guided'); lastFeedback = 'Hints stay off for this check.'; paint(); }, 'button-dark'));
+      }
+      if ((view.guidedStep === 'together' || view.guidedStep === 'done' || view.guidedStep === 'cousin') && copy.handLabel) {
+        ui.extras.append(checkbox(copy.handLabel, view.attempt.adultObserved.hand, (checked) => {
+          player.setHandMark(checked);
+          paint();
+        }));
+      }
+      if (view.togetherStandIn) {
+        ui.extras.append(el('p', { className: 'unit-limit' }, view.togetherStandIn));
+      }
+    }
     if (id === 'L09') {
       if (view.guidedStep === 'name') {
         ui.actions.append(button('Hear F again', () => playSequence([spec.register.F], 500)));
@@ -991,7 +1032,10 @@ function startLesson(id) {
     if (id === 'L15') {
       ui.actions.append(button(copy.hearBoth, () => playStaffNotes(spec.homeNotes)));
     }
-    if (usesRhythmTake(id)) rhythmTakeButtons('independent');
+    if (usesClockTake(id)) rhythmTakeButtons('independent');
+    if (usesTogetherTake(id) && view.togetherStandIn) {
+      ui.extras.append(el('p', { className: 'unit-limit' }, view.togetherStandIn));
+    }
     ui.actions.append(button(copy.finishForNow, () => { player.finishForNow(); lastFeedback = ''; paint(); }));
   }
 
@@ -1024,7 +1068,7 @@ function startLesson(id) {
         paint();
       }));
     }
-    if (usesRhythmTake(id)) rhythmTakeButtons('transfer');
+    if (usesClockTake(id)) rhythmTakeButtons('transfer');
   }
 
   function renderReview(view) {
@@ -1033,7 +1077,7 @@ function startLesson(id) {
       ui.actions.append(button(copy.pause, () => { player.pauseForReview(); lastFeedback = copy.pause; paint(); }));
     } else {
       ui.actions.append(button(copy.back, () => { lastFeedback = copy.play; paint(); }, 'button-dark'));
-      if (usesRhythmTake(id)) rhythmTakeButtons('review');
+      if (usesClockTake(id)) rhythmTakeButtons('review');
     }
   }
 
@@ -1052,7 +1096,7 @@ function startLesson(id) {
         ui.actions.append(el('a', { className: 'button button-dark', href: next }, 'Continue to the next activity'));
       }
     }
-    if ((id === 'L04' || id === 'L12' || usesRhythmTake(id)) && (view.lesson.evidenceState === 'independent' || view.lesson.evidenceState === 'retained') && player.beginReview) {
+    if ((id === 'L04' || id === 'L12' || usesClockTake(id)) && (view.lesson.evidenceState === 'independent' || view.lesson.evidenceState === 'retained') && player.beginReview) {
       ui.actions.append(button(copy.pause, () => { player.beginReview(); lastFeedback = view.lessonSpec.copy.review.pause; paint(); }));
     }
     ui.actions.append(

@@ -38,8 +38,12 @@ Skills are identifiers. A lesson lists which ones it needs and which one it intr
 | `S-BASS-MAP` | Map a known left-hand pattern onto a bass-clef staff | App: exact staff pitch and matching key; letters may be on for guided only |
 | `S-TURNS` | Play a question in one room and an answer in the other, taking turns | App: pitch sequence; hand choice is adult-observed |
 | `S-TWO-PULSE` | Hold a lower C while a higher walk shares one pulse | App: pitch and time vs the stored pattern; coordination is not certified |
+| `S-TOGETHER` | Play two named keys on the same click | App: pitch and time for a simultaneous group; coordination is not certified |
+| `S-KEEP-GOING` | Continue a short together walk without stopping after the first pair | App: pitch and time vs the stored walk; a wrong tap does not skip later pairs |
+| `S-SMALL-HARMONY` | Play a named two-note color (C with E, C with G) | App: pitch and time for the stored pairs; blend is not certified |
+| `S-LITTLE-PIECE` | Play a short original piece with a held bass, a walk, and a landing | App: pitch, time, and named hold length; not a recital |
 
-Rhythm Club (L05–L08) adds `S-PULSE`, `S-LONG-SHORT`, `S-REST`, and `S-RHYTHM-PHRASE`. Read and play (L09–L12) adds `S-FIND-FG`, `S-STEP-SKIP`, `S-STAFF-MAP`, and `S-READ-PHRASE`. Left hand (L13–L16) adds `S-LH-C`, `S-FINGER-LH`, `S-HAND-CHOICE`, `S-BASS-MAP`, `S-TURNS`, and `S-TWO-PULSE`. Later outlines (L17–L24) add named fingers 1–5 as a later review, the C five-note path, a later three-black-key house, dynamics, smooth/separate, held-bass review, question/answer review, and memory. Those skill IDs are introduced in each outline. L17 long/short is a later review of Rhythm Club, not a second first teaching. Steady walking-pulse review is not a second first teaching of `S-PULSE`. Left-hand C and turns are first taught in L13–L16, not later.
+Rhythm Club (L05–L08) adds `S-PULSE`, `S-LONG-SHORT`, `S-REST`, and `S-RHYTHM-PHRASE`. Read and play (L09–L12) adds `S-FIND-FG`, `S-STEP-SKIP`, `S-STAFF-MAP`, and `S-READ-PHRASE`. Left hand (L13–L16) adds `S-LH-C`, `S-FINGER-LH`, `S-HAND-CHOICE`, `S-BASS-MAP`, `S-TURNS`, and `S-TWO-PULSE`. Together (L17–L20) adds `S-TOGETHER`, `S-KEEP-GOING`, `S-SMALL-HARMONY`, and `S-LITTLE-PIECE`. Later leftover outlines add named fingers 1–5 as a later review, the C five-note path, a later three-black-key house, dynamics, smooth/separate, held-bass review, question/answer review, and memory. Those leftover skill IDs wait for a later slice. Long/short first teaching stays in L06. Left-hand C and turns stay in L13–L16. Two-part pulse first teaching stays in L16.
 
 ## Input modes
 
@@ -1136,9 +1140,269 @@ Home pattern after a named pause. Pass → `S-TWO-PULSE` may move to Retained.
 
 ---
 
-## L17–L24 — outlines (later slices)
+## L17–L20 — Together (full contracts)
 
-These remain sequence outlines. IDs are stable. L13–L16 above are the Left hand contracts. Earlier leftover titles (later three-black-key house, meeting at middle C, a longer C-neighborhood tune, quiet and strong) are **not** bound to L13–L16.
+These expand the First Piano Journey sequence after Left hand. Earlier leftover titles on L17–L20 (long and short notes, smooth and separate, same tune new fingers, left hand holds C) are **not** bound to these IDs. Together owns L17–L20. Those leftover outlines wait for a later slice.
+
+Simultaneous note groups share one onset. A held bass can sit under a melody. Extra notes and release events are recorded. A wrong tap is an extra; it does not consume the next expected pair. Per-hand preparation precedes a combined attempt. Slow practice and a small passage loop are allowed. Keyboard range is the two named rooms (lower C through higher G). No forced stretch past a five-finger place.
+
+On-screen and computer keys are an **exploration stand-in**. They are not proof that two hands coordinated at a piano. MIDI reports pitch and time (and hold length when a lesson names it). Hand choice remains adult-observed.
+
+---
+
+## L17 — First together
+
+| Field | Value |
+| --- | --- |
+| Stable ID | `L17` |
+| Title | First together |
+| Curriculum version | `beginner-v1` |
+| Unit | Together |
+| Prerequisites | `S-TWO-PULSE` (Two parts one pulse Independent on this device) |
+| Primary new skill | `S-TOGETHER` (`S-HAND-CHOICE` is adult-observed) |
+| Octave policy | Guided may accept pitch-class. Independent and transfer use **exact pitch** and the shared audio clock. |
+
+### Short explanation
+
+Two keys can sound on the same click. Lower C with higher C. Then lower C with higher E. Prepare the left key, then the right key, then both.
+
+**Home pattern:** beat 0: C3+C4; beat 2: C3+E4.  
+**Transfer pattern:** beat 0: C3+D4; beat 2: C3+C4.
+
+### Visual demo
+
+- Grand staff and both keyboard rooms.
+- Two heads stacked on one click, then the second pair.
+- Caption: on-screen keys explore; they do not prove coordination.
+
+### Replayable audio notes
+
+- Both pairs with the heartbeat.
+- Same letters rushed — must not pass.
+
+### Guided practice (hints optional)
+
+1. Left room only: lower C on each click.
+2. Right room only: higher C, then E.
+3. Both rooms together.
+4. Hear the cousin once without playing it yet.
+5. Grown-up prompt: both hands were ready before the together try. Adult-observed.
+
+### Independent check (no hints)
+
+Home pairs. Tiles off. Extra or wrong taps fail the take without skipping the next pair.
+
+### Transfer pattern
+
+C3+D4, then C3+C4. A copied C-then-E does not count.
+
+### Remediation for a common error
+
+**Error:** Playing the two keys one after the other, not on one click.  
+**Response:** “Plant the lower C. Meet it with the higher key on the same click.”
+
+### Later review
+
+Home pairs after a named pause.
+
+### Equipment, alternatives, cannot observe
+
+- Required: lower C and higher C–E playable. No stretch.
+- Alternatives: grown-up plays one part; on-screen is a stand-in.
+- Cannot observe: which hand, or coordination mastery.
+
+---
+
+## L18 — Keep going
+
+| Field | Value |
+| --- | --- |
+| Stable ID | `L18` |
+| Title | Keep going |
+| Curriculum version | `beginner-v1` |
+| Unit | Together |
+| Prerequisites | `S-TOGETHER` |
+| Primary new skill | `S-KEEP-GOING` |
+| Octave policy | Guided may accept pitch-class. Independent and transfer use **exact pitch** and the shared audio clock. |
+
+### Short explanation
+
+Keep going after the first pair. The left room taps C on every click. The right room walks C–D–E–C. A small loop of the first two clicks is allowed. Slow is allowed.
+
+**Home pattern** (quarters): C3+C4, C3+D4, C3+E4, C3+C4.  
+**Head loop:** the first two clicks only.  
+**Transfer pattern:** C3+E4, C3+D4, C3+C4, C3+C4.
+
+### Visual demo
+
+- Grand staff. Four stacked pairs.
+- Pulse helper. Slower heartbeat available.
+
+### Replayable audio notes
+
+- The four-click walk.
+- Same letters rushed — must not pass.
+
+### Guided practice (hints optional)
+
+1. Left C only.
+2. Higher walk only.
+3. Loop the first two clicks.
+4. The whole walk.
+5. Hear the cousin once.
+
+### Independent check (no hints)
+
+Four together clicks. A wrong tap does not skip later pairs.
+
+### Transfer pattern
+
+Walk down together. A copied climb does not count.
+
+### Remediation for a common error
+
+**Error:** Stopping after the first pair.  
+**Response:** “Loop the first two clicks slowly. Then add E and the last C.”
+
+### Later review
+
+Home walk after a named pause.
+
+### Equipment, alternatives, cannot observe
+
+- Required: lower C and higher C–E playable.
+- Alternatives: slow loop; grown-up plays one part; on-screen stand-in.
+- Cannot observe: evenness or which hand.
+
+---
+
+## L19 — Small harmony
+
+| Field | Value |
+| --- | --- |
+| Stable ID | `L19` |
+| Title | Small harmony |
+| Curriculum version | `beginner-v1` |
+| Unit | Together |
+| Prerequisites | `S-KEEP-GOING` |
+| Primary new skill | `S-SMALL-HARMONY` |
+| Octave policy | Guided may accept pitch-class. Independent and transfer use **exact pitch** and the shared audio clock. |
+
+### Short explanation
+
+Two friends share a click and make a thicker sound. Lower C with higher E. Then lower C with higher G. G is the top of the right-hand five-finger place — no stretch.
+
+**Home pattern:** beat 0: C3+E4 (two beats); beat 2: C3+G4 (two beats).  
+**Transfer pattern:** C3+G4, then C3+E4.
+
+### Visual demo
+
+- Grand staff stacked pairs.
+- Caption: extra notes are extras; the next pair still waits.
+
+### Replayable audio notes
+
+- The two colors.
+- Same letters rushed — must not pass.
+
+### Guided practice (hints optional)
+
+1. Lower C only.
+2. Higher E, then G.
+3. Both colors together.
+4. Hear the cousin once.
+
+### Independent check (no hints)
+
+Home colors. Extra notes fail the take without skipping the next pair.
+
+### Transfer pattern
+
+G first, then E. A copied E-then-G does not count.
+
+### Remediation for a common error
+
+**Error:** Reaching for a far G.  
+**Response:** “G is the top of this five-finger place. No stretch.”
+
+### Later review
+
+Home colors after a named pause.
+
+### Equipment, alternatives, cannot observe
+
+- Required: lower C and higher E–G playable. No stretch.
+- Alternatives: grown-up plays one part; on-screen stand-in.
+- Cannot observe: blend or “pretty.”
+
+---
+
+## L20 — Complete little piece
+
+| Field | Value |
+| --- | --- |
+| Stable ID | `L20` |
+| Title | Complete little piece |
+| Curriculum version | `beginner-v1` |
+| Unit | Together |
+| Prerequisites | `S-SMALL-HARMONY` |
+| Primary new skill | `S-LITTLE-PIECE` |
+| Octave policy | Guided may accept pitch-class. Independent and transfer use **exact pitch**, the shared audio clock, and scored releases on the named hold. |
+
+### Short explanation
+
+A short original piece: hold lower C while the higher walk goes C–D–E–C. Then land on C with E, and home on two C keys. This is not a second first teaching of L16’s pulse. It puts a known hold under a complete little shape.
+
+**Home pattern:** long C3 from beat 0 (four beats) plus C4–D4–E4–C4; then C3+E4 (two beats); then C3+C4 (two beats).  
+**Transfer pattern:** the hold stays; the walk comes down E–D–C–C; then the same landings.
+
+Release events on the named hold are scored. Extra releases of keys that were not open are ignored.
+
+### Visual demo
+
+- Grand staff and both rooms.
+- Pulse helper. Hold, walk, land.
+
+### Replayable audio notes
+
+- The little piece.
+- Same letters rushed — must not pass.
+
+### Guided practice (hints optional)
+
+1. Left hold and landings only.
+2. Higher walk only.
+3. The whole piece. Slow if wanted.
+4. Hear the cousin once.
+
+### Independent check (no hints)
+
+The whole piece. A short hold fails the hold. A wrong tap does not skip later landings.
+
+### Transfer pattern
+
+Walk down, then the same landings. A copied climb does not count.
+
+### Remediation for a common error
+
+**Error:** Dropping the hold to chase the walk.  
+**Response:** “Plant the hold with the first click. The walk waits for each click. Then the two landings.”
+
+### Later review
+
+Home piece after a named pause. Pass → `S-LITTLE-PIECE` may move to Retained.
+
+### Equipment, alternatives, cannot observe
+
+- Required: lower C and higher C–E playable.
+- Alternatives: grown-up holds the bass; on-screen stand-in.
+- Cannot observe: which hand held, balance, or recital readiness.
+
+---
+
+## Later leftovers and L21–L24 — outlines
+
+IDs stay stable. Together owns L17–L20. These leftover titles are **not** bound to L17–L20.
 
 ### Later leftover — Three-black-key landmark (later house)
 
@@ -1156,21 +1420,21 @@ Original 6–8 note tune using C–G, built from steps and one skip. New skill: 
 
 Same short pattern twice: quieter, then stronger. Relative only. New skill: `S-DYNAMIC`.
 
-### L17 — Long notes and short notes
+### Later leftover — Long notes and short notes
 
-Hold a neighbor, then tap shorter neighbors. Count is spoken, not exam-notated. New skill: `S-LONG-SHORT`.
+Hold a neighbor, then tap shorter neighbors. Count is spoken, not exam-notated. First teaching of long/short is **L06**. This leftover is a later review, not a second first teaching. Review skill: `S-LONG-SHORT`.
 
-### L18 — Smooth and separate
+### Later leftover — Smooth and separate
 
 Three neighbors connected (no gaps in sound) versus three clearly separated. MIDI note-off can hint, not certify legato. New skill: `S-SMOOTH-SEPARATE`.
 
-### L19 — Same tune, new fingers
+### Later leftover — Same tune, new fingers
 
 Replay a known C–D–E phrase with a specified fingering. App hears pitches; fingering is adult-observed. New skill: `S-FINGER-REPEAT`.
 
-### L20 — Left hand holds C
+### Later leftover — Left hand holds C
 
-Later review of L16. Left hand holds C while right hand walks neighbors. Balance is adult-observed. Review skill: `S-TWO-PULSE` / `S-LH-HOLD`. Not a second first teaching.
+Later review of L16. Left hand holds C while right hand walks neighbors. Balance is adult-observed. Review skill: `S-TWO-PULSE` / `S-LH-HOLD`. Not a second first teaching. L20’s held bass is a complete little piece, not this leftover review.
 
 ### L21 — Question and answer
 
@@ -1182,11 +1446,11 @@ Replay L04 Little Wave or L15’s tune with no tiles and no audio lead-in after 
 
 ### L23 — Put it together
 
-A short original piece using C–G, one dynamic change, and either turns or a held C. New skill: `S-COMBINE`.
+A short original piece using C–G, one dynamic change, and either turns or a held C. New skill: `S-COMBINE`. L20 already ships one complete little piece; this leftover can add dynamics later.
 
 ### L24 — Share the journey
 
-Learner chooses one piece (L04, L15, or L23) to play for a grown-up. Adult-observed “we listened all the way through.” Review L01–L04 independent prompts. New skill: `S-SHARE`. No jury language.
+Learner chooses one piece (L04, L15, L20, or L23) to play for a grown-up. Adult-observed “we listened all the way through.” Review L01–L04 independent prompts. New skill: `S-SHARE`. No jury language.
 
 ---
 

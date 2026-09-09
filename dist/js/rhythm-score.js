@@ -54,12 +54,23 @@ export function patternSpanSec(pattern) {
   return beatsToSeconds(last, pattern.bpm);
 }
 
+export function eventsForPart(events, part) {
+  if (!part || part === 'both') return events || [];
+  return (events || []).filter((event) => event.part === part || event.kind === 'rest');
+}
+
+export function eventsUntilBeat(events, untilBeat) {
+  if (!Number.isFinite(untilBeat)) return events || [];
+  return (events || []).filter((event) => Number(event.onsetBeats) < untilBeat);
+}
+
 export function createRhythmTake({
   pattern,
   mode = 'performance',
   now,
   octavePolicy = 'pitch-class',
-  scoreReleases = false
+  scoreReleases = false,
+  stickyAlign = false
 }) {
   const events = (pattern.events || []).map((event, index) => ({
     ...event,
@@ -138,14 +149,48 @@ export function createRhythmTake({
     return snapshot();
   }
 
+  function unmatchedNotes() {
+    return notes.filter((_, index) => hits[index] == null);
+  }
+
+  function currentGroup() {
+    const openNotes = unmatchedNotes();
+    if (!openNotes.length) return [];
+    const onset = openNotes[0].onsetBeats;
+    return openNotes.filter((note) => note.onsetBeats === onset);
+  }
+
   function nextOpenNote() {
-    const index = hits.findIndex((hit) => hit == null);
-    return index < 0 ? null : notes[index];
+    return currentGroup()[0] || null;
   }
 
   function mark(note, payload) {
     const index = notes.indexOf(note);
     if (index >= 0) hits[index] = payload;
+  }
+
+  function missLateGroups(heardSec) {
+    const window = windowFor(mode);
+    let group = currentGroup();
+    while (group.length && heardSec > expectedSec(group[0]) + window.lateMs / 1000) {
+      group.forEach((note) => mark(note, { result: 'miss', pitch: null, expected: note.pitch, t: heardSec }));
+      group = currentGroup();
+    }
+    return group;
+  }
+
+  function findOpen(pitch) {
+    for (const [key, held] of open) {
+      if (held.heardPitch === pitch || held.note.pitch === pitch) return [key, held];
+    }
+    if (octavePolicy !== 'exact-pitch') {
+      for (const [key, held] of open) {
+        if (pitchClass(held.heardPitch) === pitchClass(pitch) || pitchClass(held.note.pitch) === pitchClass(pitch)) {
+          return [key, held];
+        }
+      }
+    }
+    return [null, null];
   }
 
   function noteOn(pitch, heardSec = at()) {
@@ -166,50 +211,47 @@ export function createRhythmTake({
       return { ignore: true, reason: 'count-in' };
     }
 
-    const window = windowFor(mode);
-    let candidate = nextOpenNote();
-    while (candidate && heardSec > expectedSec(candidate) + window.lateMs / 1000) {
-      mark(candidate, { result: 'miss', pitch: null, expected: candidate.pitch, t: heardSec });
-      candidate = nextOpenNote();
-    }
-
+    const group = missLateGroups(heardSec);
     const rest = restAt(heardSec);
-    if (!candidate) {
+    if (!group.length) {
       extras.push({ reason: rest ? 'rest' : 'extra', pitch, t: heardSec });
       return { ok: false, result: rest ? 'rest' : 'extra', extra: true };
     }
 
-    const expected = expectedSec(candidate);
+    const expected = expectedSec(group[0]);
     const timing = scoreOnset({ expectedSec: expected, heardSec, mode });
-    const pitchOk = pitchesMatchLoose(pitch, candidate.pitch, octavePolicy);
 
     if (timing.result !== 'hit') {
       if (rest) {
         extras.push({ reason: 'rest', pitch, t: heardSec });
         return { ok: false, result: 'rest', extra: true };
       }
-      extras.push({ reason: timing.result, pitch, t: heardSec, expected: candidate.pitch });
+      extras.push({ reason: timing.result, pitch, t: heardSec, expected: group[0].pitch });
       return { ok: false, result: timing.result, extra: true, deltaMs: timing.deltaMs };
     }
 
-    if (!pitchOk) {
-      mark(candidate, { result: 'wrong-pitch', pitch, expected: candidate.pitch, t: heardSec });
-      return { ok: false, result: 'wrong-pitch', expected: candidate.pitch };
+    const match = group.find((note) => pitchesMatchLoose(pitch, note.pitch, octavePolicy));
+    if (!match) {
+      if (stickyAlign) {
+        extras.push({ reason: 'wrong-pitch', pitch, t: heardSec, expected: group.map((note) => note.pitch) });
+        return { ok: false, result: 'wrong-pitch', extra: true, expected: group[0].pitch, sticky: true };
+      }
+      mark(group[0], { result: 'wrong-pitch', pitch, expected: group[0].pitch, t: heardSec });
+      return { ok: false, result: 'wrong-pitch', expected: group[0].pitch };
     }
 
-    mark(candidate, { result: 'hit', pitch, expected: candidate.pitch, t: heardSec, onsetSec: heardSec });
-    if (scoreReleases && candidate.length) {
-      open.set(pitchClass(pitch), { note: candidate, onsetSec: heardSec });
+    mark(match, { result: 'hit', pitch, expected: match.pitch, t: heardSec, onsetSec: heardSec });
+    if (scoreReleases && match.length) {
+      open.set(String(match.index), { note: match, onsetSec: heardSec, heardPitch: pitch });
     }
-    return { ok: true, result: 'hit', expected: candidate.pitch, deltaMs: timing.deltaMs };
+    return { ok: true, result: 'hit', expected: match.pitch, deltaMs: timing.deltaMs };
   }
 
   function noteOff(pitch, heardSec = at()) {
     if (!scoreReleases || aborted || paused || origin == null) {
       return { ignore: true };
     }
-    const key = pitchClass(pitch);
-    const held = open.get(key);
+    const [key, held] = findOpen(pitch);
     if (!held) return { ignore: true, reason: 'not-open' };
     open.delete(key);
     const scored = scoreRelease({
@@ -229,19 +271,14 @@ export function createRhythmTake({
 
   function flushOpen(atTime = at()) {
     if (!scoreReleases) return;
-    for (const [key, held] of open) {
-      noteOff(notes.find((item) => pitchClass(item.pitch) === key)?.pitch ?? held.note.pitch, atTime);
+    for (const [, held] of open) {
+      noteOff(held.heardPitch ?? held.note.pitch, atTime);
     }
   }
 
   function finalize(atTime = at()) {
     if (!aborted) {
-      const window = windowFor(mode);
-      let candidate = nextOpenNote();
-      while (candidate && atTime > expectedSec(candidate) + window.lateMs / 1000) {
-        mark(candidate, { result: 'miss', pitch: null, expected: candidate.pitch, t: atTime });
-        candidate = nextOpenNote();
-      }
+      missLateGroups(atTime);
       flushOpen(atTime);
     }
     return snapshot();
