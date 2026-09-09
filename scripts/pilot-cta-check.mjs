@@ -100,6 +100,7 @@ assert(fresh.lessonId === 'L01' && fresh.action === 'Start Meet the keyboard', '
 
 const hubJs = read('dist/js/learn-view.js');
 assert(hubJs.includes("'Start Meet the keyboard'"), 'hub primary on a fresh device is Start Meet the keyboard');
+assert(hubJs.includes('Continue ${continueCard.title}'), 'hub primary with progress continues the next unlocked lesson');
 assert(hubJs.includes("hub-grownup"), 'hub shows Grown-up view beside the continue card');
 assert(hubJs.includes('hub-continue'), 'hub continue is a strong button');
 assert(hubJs.includes("href: '/learn/?view=grown-up'"), 'hub secondary is Grown-up view');

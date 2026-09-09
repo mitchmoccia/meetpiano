@@ -387,19 +387,6 @@ export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit, onEx
   const rec = recommendNext(store, store.session);
   const continueCard = [...view.units.flatMap((unit) => unit.cards)]
     .find((card) => card.lessonId === view.continueLessonId);
-  const extraContinue = continueCard && rec?.lessonId !== continueCard.lessonId
-    ? el('p', { className: 'unit-limit' },
-      el('button', {
-        className: 'button button-outline',
-        type: 'button',
-        onClick: () => onContinue(continueCard.lessonId)
-      }, continueCard.inProgress
-        ? `Continue ${continueCard.title}`
-        : evidenceRank(continueCard.evidenceState) >= 3
-          ? `Replay ${continueCard.title}`
-          : `Start ${continueCard.title}`)
-    )
-    : null;
   root.replaceChildren(...[
     el('div', { className: 'game-topline' },
       el('span', { className: 'game-label' }, el('span', { className: 'game-live-dot' }), ' FIRST PIANO JOURNEY'),
@@ -418,8 +405,8 @@ export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit, onEx
         el('a', { className: 'button button-dark', href: resumeHref(pauseState) }, `Resume ${pauseState.lessonId}`)
       )
       : null,
-    nextSessionCard(rec, onContinue),
-    extraContinue,
+    nextSessionCard(rec, continueCard, hasJourneyProgress(store), onContinue),
+    extraRecAction(rec, continueCard, hasJourneyProgress(store), onContinue),
     ...view.units.map((unit) => unitSection(unit, onOpen, focusUnit)),
     portabilityCard(onExport, onImport, onReset),
     el('p', { className: 'unit-limit hub-grownup-foot' },
@@ -429,27 +416,54 @@ export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit, onEx
   ].filter(Boolean));
 }
 
-function nextSessionCard(rec, onContinue) {
-  if (!rec) return null;
-  const primaryLabel = rec.kind === 'forward' && rec.lessonId === 'L01' && !rec.reason.includes('Practiced')
-    ? 'Start Meet the keyboard'
-    : rec.kind === 'continue' || rec.kind === 'forward'
-      ? `Continue ${rec.title}`
-      : rec.action;
+function hasJourneyProgress(store) {
+  return Object.values(store?.lessons || {}).some((lesson) => Boolean(lesson?.evidenceState));
+}
+
+function nextSessionCard(rec, continueCard, hasProgress, onContinue) {
+  if (!rec && !continueCard) return null;
+  const primary = hasProgress && continueCard
+    ? {
+      lessonId: continueCard.lessonId,
+      title: continueCard.title,
+      label: `Continue ${continueCard.title}`,
+      reason: rec?.lessonId === continueCard.lessonId
+        ? rec.reason
+        : `${continueCard.title} is the next unlocked activity on this device.`
+    }
+    : {
+      lessonId: rec?.lessonId || 'L01',
+      title: rec?.title || 'Meet the keyboard',
+      label: 'Start Meet the keyboard',
+      reason: rec?.reason || 'Meet the keyboard is the next unlocked activity on this device.'
+    };
   return el('section', { className: 'next-session', id: 'next-session' },
     el('p', { className: 'mission-eyebrow' }, 'NEXT ON THIS DEVICE'),
-    el('h2', {}, rec.title),
-    el('p', {}, rec.reason),
+    el('h2', {}, primary.title),
+    el('p', {}, primary.reason),
     el('div', { className: 'hub-cta-row' },
-      rec.kind === 'rest'
+      rec?.kind === 'rest' && !hasProgress
         ? null
         : el('button', {
           className: 'button button-dark hub-continue',
           type: 'button',
-          onClick: () => onContinue(rec.lessonId, rec)
-        }, primaryLabel),
+          onClick: () => onContinue(primary.lessonId)
+        }, primary.label),
       el('a', { className: 'button button-outline hub-grownup', href: '/learn/?view=grown-up' }, 'Grown-up view')
     )
+  );
+}
+
+function extraRecAction(rec, continueCard, hasProgress, onContinue) {
+  if (!rec || rec.kind === 'rest') return null;
+  if (!hasProgress) return null;
+  if (rec.lessonId === continueCard?.lessonId) return null;
+  return el('p', { className: 'unit-limit' },
+    el('button', {
+      className: 'button button-outline',
+      type: 'button',
+      onClick: () => onContinue(rec.lessonId, rec)
+    }, rec.action)
   );
 }
 
