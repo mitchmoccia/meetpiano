@@ -23,7 +23,8 @@ import {
   renderSteps,
   renderUnitHub
 } from '../js/learn-view.js';
-import { isLessonUnlocked, isRhythmLesson, parseLessonId, parseUnitId } from '../js/unit.js';
+import { isLessonUnlocked, isReadLesson, isRhythmLesson, parseLessonId, parseUnitId, unitTitleFor } from '../js/unit.js';
+import { durationMs, renderStaff } from '../js/staff.js';
 
 const progress = createProgress();
 const audio = createAudio();
@@ -81,6 +82,9 @@ if (!lessonId) {
   } else if (requestedUnit === 'rhythm-club' && !isLessonUnlocked(store, 'L05')) {
     document.querySelector('#storage-notice').hidden = false;
     document.querySelector('#storage-notice').textContent = 'Rhythm Club is locked on this device until First little tune is Independent.';
+  } else if (requestedUnit === 'read-and-play' && !isLessonUnlocked(store, 'L09')) {
+    document.querySelector('#storage-notice').hidden = false;
+    document.querySelector('#storage-notice').textContent = 'Read and play is locked on this device until Notes with a beat is Independent.';
   }
   renderUnitHub(hub, store, { onOpen: openLesson, onContinue: openLesson, focusUnit: requestedUnit });
 } else {
@@ -136,6 +140,8 @@ function startLesson(id) {
     rest: document.querySelector('#rest-card'),
     restBoxes: document.querySelector('#rest-boxes'),
     tiles: document.querySelector('#phrase-tiles'),
+    staff: document.querySelector('#staff-card'),
+    threeHouse: document.querySelector('#three-house-card'),
     continueNote: document.querySelector('#continue-note'),
     evidence: document.querySelector('#evidence-pill'),
     label: document.querySelector('#lesson-label')
@@ -144,6 +150,7 @@ function startLesson(id) {
   let demoTimers = [];
   let lastFeedback = '';
   let showHouse = false;
+  let showThreeHouse = false;
   let pulseRaf = 0;
 
   function wait(ms) {
@@ -271,6 +278,7 @@ function startLesson(id) {
       ui.feedback.textContent = result.message;
     }
     showHouse = Boolean(result.remediate && id === 'L02');
+    showThreeHouse = Boolean(result.remediate && id === 'L09');
     const view = player.view();
     if (view.phase === 'independent' && view.independentStep === 'done') go('independent');
     if (view.phase === 'transfer' && view.transferStep === 'done' && id !== 'L01') go('transfer');
@@ -280,7 +288,7 @@ function startLesson(id) {
   function paint() {
     const view = player.view();
     const copy = phaseCopy(view);
-    document.title = `${view.lessonSpec.title} · ${isRhythmLesson(id) ? 'Rhythm Club' : 'First Notes'} · MeetPiano`;
+    document.title = `${view.lessonSpec.title} · ${unitTitleFor(id)} · MeetPiano`;
     ui.label.innerHTML = `<span class="game-live-dot"></span> FIRST PIANO JOURNEY · ${id}`;
     renderSteps(ui.steps, view.phaseIndex);
     ui.eyebrow.textContent = copy.eyebrow;
@@ -297,8 +305,10 @@ function startLesson(id) {
     ui.groups.hidden = id !== 'L01' || (view.phase !== 'demo' && !(view.phase === 'guided' && view.guidedStep === 'groups' && view.hintsOn));
     ui.hand.hidden = id !== 'L03' || (view.phase !== 'demo' && !(view.phase === 'guided' && view.guidedStep === 'row' && view.hintsOn));
     ui.house.hidden = id !== 'L02' || !showHouse;
+    if (ui.threeHouse) ui.threeHouse.hidden = id !== 'L09' || !showThreeHouse;
     ui.wave.hidden = id !== 'L04' || (view.phase !== 'demo' && view.phase !== 'guided');
     paintRhythmChrome(view);
+    paintStaff(view);
     renderPhraseTiles(ui.tiles, view.phrase);
     ui.actions.replaceChildren();
     ui.extras.replaceChildren();
@@ -323,11 +333,23 @@ function startLesson(id) {
     if (id === 'L03' && view.guidedStep === 'neighbors') {
       return view.attempt.restore.sequence.length ? [64] : [62];
     }
-    if (id === 'L04' || id === 'L08') {
+    if (id === 'L04' || id === 'L08' || id === 'L10' || id === 'L11' || id === 'L12') {
       const captions = view.captions || {};
       return Object.keys(captions).map(Number);
     }
+    if (id === 'L09' && view.guidedStep === 'find') return [65];
+    if (id === 'L09' && view.guidedStep === 'neighbor') return [67];
     return [];
+  }
+
+  function paintStaff(view) {
+    if (!ui.staff) return;
+    if (!view.staff || view.phase === 'explanation' || view.phase === 'result') {
+      ui.staff.hidden = true;
+      ui.staff.replaceChildren();
+      return;
+    }
+    renderStaff(ui.staff, view.staff);
   }
 
   function paintRhythmChrome(view) {
@@ -388,6 +410,7 @@ function startLesson(id) {
     if (id === 'L01' && view.phase === 'demo') return ['two', 'three'];
     if (id === 'L01' && view.phase === 'guided' && view.hintsOn && view.guidedStep === 'groups') return ['two', 'three'];
     if (id === 'L02' && (view.phase === 'demo' || (view.phase === 'guided' && view.hintsOn))) return ['two'];
+    if (id === 'L09' && (view.phase === 'demo' || (view.phase === 'guided' && view.hintsOn))) return ['three'];
     return [];
   }
 
@@ -462,6 +485,43 @@ function startLesson(id) {
         }));
       }
     }
+    if (id === 'L09') {
+      ui.actions.append(
+        button(copy.hearLandmark, () => playL09Landmark(spec)),
+        button(copy.hearNeighbors, () => playSequence(spec.demo.neighbors, 480)),
+        button(copy.hearG, () => playSequence(spec.demo.gAlone, 520)),
+        button(copy.hearHigherF, () => {
+          lastFeedback = spec.copy.feedback.previewOneRoom;
+          playSequence(spec.demo.higherF, 640);
+          paint();
+        })
+      );
+    }
+    if (id === 'L10') {
+      ui.actions.append(
+        button(copy.hearStep, () => playSequence(spec.demo.step, 480)),
+        button(copy.hearRepeat, () => playSequence(spec.demo.repeat, 480)),
+        button(copy.hearSkip, () => playSequence(spec.demo.skip, 480))
+      );
+    }
+    if (id === 'L11') {
+      ui.actions.append(
+        button(copy.hearWalk, () => playStaffNotes(spec.walkNotes)),
+        button(copy.hearNeighbors, () => playStaffNotes(spec.neighborNotes)),
+        button(copy.hearG, () => playSequence([spec.demo.singles.G], 480))
+      );
+    }
+    if (id === 'L12') {
+      ui.actions.append(
+        button(copy.hearHome, () => playStaffNotes(spec.homeNotes)),
+        button(copy.hearTransfer, () => playStaffNotes(spec.transferNotes)),
+        button(copy.hearLongShort, () => {
+          lastFeedback = spec.copy.feedback.cousinListen;
+          playLongShortContrast();
+          paint();
+        })
+      );
+    }
     ui.actions.append(button(copy.action, () => { go('demo'); lastFeedback = ''; paint(); }, 'button-dark'));
   }
 
@@ -481,6 +541,53 @@ function startLesson(id) {
     setGroupOutlines(pianoRoot, ['two']);
     await playSequence([spec.demo.landmark[0], spec.demo.landmark[1]], 320);
     await playSequence([spec.guidedC], 520);
+  }
+
+  async function playL09Landmark(spec) {
+    setGroupOutlines(pianoRoot, ['three']);
+    await playSequence(spec.demo.clusterThenF, 360);
+  }
+
+  async function playStaffNotes(notes) {
+    stopDemo();
+    player.setDemoPlaying(true);
+    const ok = audio.ensure();
+    player.setAudioUnlocked(ok);
+    if (!ok) {
+      player.setDemoPlaying(false);
+      ui.feedback.textContent = player.lessonSpec.copy.feedback.audioMissing;
+      return;
+    }
+    for (const note of notes) {
+      input.playDemoNote(note.midi);
+      setSweep(pianoRoot, note.midi);
+      await wait(durationMs(note.duration));
+      input.releaseDemoNote(note.midi);
+    }
+    setSweep(pianoRoot, null);
+    player.setDemoPlaying(false);
+  }
+
+  async function playLongShortContrast() {
+    stopDemo();
+    player.setDemoPlaying(true);
+    const ok = audio.ensure();
+    player.setAudioUnlocked(ok);
+    if (!ok) {
+      player.setDemoPlaying(false);
+      return;
+    }
+    input.playDemoNote(67);
+    setSweep(pianoRoot, 67);
+    await wait(durationMs('half'));
+    input.releaseDemoNote(67);
+    await wait(80);
+    input.playDemoNote(67);
+    setSweep(pianoRoot, 67);
+    await wait(durationMs('quarter'));
+    input.releaseDemoNote(67);
+    setSweep(pianoRoot, null);
+    player.setDemoPlaying(false);
   }
 
   function hintToggle(view) {
@@ -591,6 +698,56 @@ function startLesson(id) {
         ui.actions.append(button(copy.action, () => { go('guided'); lastFeedback = 'Hints stay off for this check.'; paint(); }, 'button-dark'));
       }
     }
+    if (id === 'L09') {
+      if (view.guidedStep === 'name') {
+        ui.actions.append(button('Hear F again', () => playSequence([spec.register.F], 500)));
+        ui.actions.append(button('I said F', () => { player.skipNamedGuided(); lastFeedback = spec.copy.feedback.named; paint(); }, 'button-dark'));
+      }
+      if (view.guidedStep === 'fingering' || view.guidedStep === 'done') {
+        ui.extras.append(checkbox(copy.fingeringLabel, view.attempt.adultObserved.fingering, (checked) => {
+          player.setFingering(checked);
+          paint();
+        }));
+        ui.actions.append(button(copy.action, () => { go('guided'); lastFeedback = 'Hints stay off for this check.'; paint(); }, 'button-dark'));
+      }
+      if (view.guidedStep === 'find' || view.guidedStep === 'neighbor') hintToggle(view);
+      return;
+    }
+    if (id === 'L10') {
+      if (view.guidedStep === 'done') {
+        ui.actions.append(button(copy.action, () => { go('guided'); lastFeedback = 'Hints stay off for this check.'; paint(); }, 'button-dark'));
+      }
+      if (view.guidedStep !== 'done') hintToggle(view);
+      return;
+    }
+    if (id === 'L11') {
+      if (view.guidedStep === 'done') {
+        ui.actions.append(button(copy.action, () => { go('guided'); lastFeedback = 'Hints stay off for this check.'; paint(); }, 'button-dark'));
+      }
+      if (view.guidedStep !== 'done') hintToggle(view);
+      return;
+    }
+    if (id === 'L12') {
+      if (view.guidedStep === 'hear') {
+        ui.actions.append(button('Hear Porch Steps', () => {
+          player.startGuidedHear();
+          playStaffNotes(spec.homeNotes);
+          paint();
+        }, 'button-dark'));
+      }
+      if (view.guidedStep === 'cousin') {
+        ui.actions.append(button('Hear the cousin once', () => {
+          player.markHeardTransfer();
+          lastFeedback = spec.copy.feedback.cousinListen;
+          playStaffNotes(spec.transferNotes);
+          paint();
+        }));
+        if (view.heardTransfer) {
+          ui.actions.append(button(copy.action, () => { go('guided'); lastFeedback = 'Hints stay off for this check.'; paint(); }, 'button-dark'));
+        }
+      }
+      if (view.guidedStep === 'head' || view.guidedStep === 'tail' || view.guidedStep === 'all' || view.guidedStep === 'make') hintToggle(view);
+    }
   }
 
   function rhythmTakeButtons(kind) {
@@ -650,6 +807,23 @@ function startLesson(id) {
     if (id === 'L04') {
       ui.actions.append(button(copy.clap, () => playSequence(spec.homeTail, 420)));
     }
+    if (id === 'L09') {
+      ui.actions.append(button(copy.hearDoorstep, () => {
+        showThreeHouse = true;
+        lastFeedback = copy.remediation;
+        playSequence(spec.demo.neighbors, 520);
+        paint();
+      }));
+    }
+    if (id === 'L10') {
+      ui.actions.append(button(copy.hearNeighbors, () => playSequence([60, 62, 60, 64], 420)));
+    }
+    if (id === 'L11') {
+      ui.actions.append(button(copy.hearWalk, () => playStaffNotes(spec.neighborNotes)));
+    }
+    if (id === 'L12') {
+      ui.actions.append(button(copy.clap, () => playSequence(spec.homeHead.slice(0, 2), 420)));
+    }
     if (isRhythmLesson(id)) rhythmTakeButtons('independent');
     ui.actions.append(button(copy.finishForNow, () => { player.finishForNow(); lastFeedback = ''; paint(); }));
   }
@@ -706,12 +880,12 @@ function startLesson(id) {
     if (nextReady) {
       ui.actions.append(el('a', { className: 'button button-dark', href: next }, 'Continue to the next activity'));
     }
-    if ((id === 'L04' || isRhythmLesson(id)) && (view.lesson.evidenceState === 'independent' || view.lesson.evidenceState === 'retained') && player.beginReview) {
+    if ((id === 'L04' || id === 'L12' || isRhythmLesson(id)) && (view.lesson.evidenceState === 'independent' || view.lesson.evidenceState === 'retained') && player.beginReview) {
       ui.actions.append(button(copy.pause, () => { player.beginReview(); lastFeedback = view.lessonSpec.copy.review.pause; paint(); }));
     }
     ui.actions.append(
       button(copy.restart, confirmRestart),
-      el('a', { className: 'button button-outline', href: '/learn/' }, copy.home || (isRhythmLesson(id) ? 'Back to Rhythm Club' : 'Back to First Notes'))
+      el('a', { className: 'button button-outline', href: '/learn/' }, copy.home || `Back to ${unitTitleFor(id)}`)
     );
   }
 

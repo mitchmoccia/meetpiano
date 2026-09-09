@@ -4,6 +4,8 @@ export const UNIT_ID = 'first-notes';
 export const UNIT_TITLE = 'First Notes';
 export const RHYTHM_UNIT_ID = 'rhythm-club';
 export const RHYTHM_UNIT_TITLE = 'Rhythm Club';
+export const READ_UNIT_ID = 'read-and-play';
+export const READ_UNIT_TITLE = 'Read and play';
 export const CURRICULUM_VERSION = 'beginner-v1';
 
 const EVIDENCE_RANK = { explored: 1, practiced: 2, independent: 3, retained: 4 };
@@ -78,7 +80,42 @@ export const RHYTHM_CLUB_LESSONS = [
   }
 ];
 
-export const JOURNEY_LESSONS = [...FIRST_NOTES_LESSONS, ...RHYTHM_CLUB_LESSONS];
+export const READ_AND_PLAY_LESSONS = [
+  {
+    lessonId: 'L09',
+    title: 'Meet F and G',
+    blurb: 'F left of three. G next door.',
+    unlocksAfter: 'L08',
+    unlockNeeds: 'independent',
+    unitId: READ_UNIT_ID
+  },
+  {
+    lessonId: 'L10',
+    title: 'Steps, repeats, and skips',
+    blurb: 'Next door, same place, one rest.',
+    unlocksAfter: 'L09',
+    unlockNeeds: 'practiced',
+    unitId: READ_UNIT_ID
+  },
+  {
+    lessonId: 'L11',
+    title: 'Patterns to the staff',
+    blurb: 'Known walks live on five lines.',
+    unlocksAfter: 'L10',
+    unlockNeeds: 'practiced',
+    unitId: READ_UNIT_ID
+  },
+  {
+    lessonId: 'L12',
+    title: 'Read a little tune',
+    blurb: 'Porch Steps from the picture.',
+    unlocksAfter: 'L11',
+    unlockNeeds: 'independent',
+    unitId: READ_UNIT_ID
+  }
+];
+
+export const JOURNEY_LESSONS = [...FIRST_NOTES_LESSONS, ...RHYTHM_CLUB_LESSONS, ...READ_AND_PLAY_LESSONS];
 
 export function evidenceRank(state) {
   return EVIDENCE_RANK[state] || 0;
@@ -99,6 +136,16 @@ export function catalogCard(lessonId) {
 
 export function isRhythmLesson(lessonId) {
   return RHYTHM_CLUB_LESSONS.some((item) => item.lessonId === lessonId);
+}
+
+export function isReadLesson(lessonId) {
+  return READ_AND_PLAY_LESSONS.some((item) => item.lessonId === lessonId);
+}
+
+export function unitTitleFor(lessonId) {
+  if (isRhythmLesson(lessonId)) return RHYTHM_UNIT_TITLE;
+  if (isReadLesson(lessonId)) return READ_UNIT_TITLE;
+  return UNIT_TITLE;
 }
 
 export function isLessonUnlocked(store, lessonId) {
@@ -125,6 +172,7 @@ export function parseUnitId(value) {
   const id = value.trim().toLowerCase();
   if (id === UNIT_ID || id === 'first-notes') return UNIT_ID;
   if (id === RHYTHM_UNIT_ID || id === 'rhythm') return RHYTHM_UNIT_ID;
+  if (id === READ_UNIT_ID || id === 'read') return READ_UNIT_ID;
   return null;
 }
 
@@ -152,7 +200,8 @@ function pickContinue(cards) {
 export function unitView(store) {
   const firstCards = mapCards(FIRST_NOTES_LESSONS, store);
   const rhythmCards = mapCards(RHYTHM_CLUB_LESSONS, store);
-  const all = [...firstCards, ...rhythmCards];
+  const readCards = mapCards(READ_AND_PLAY_LESSONS, store);
+  const all = [...firstCards, ...rhythmCards, ...readCards];
   const continueCard = pickContinue(all);
   return {
     unitId: UNIT_ID,
@@ -172,6 +221,13 @@ export function unitView(store) {
         kicker: 'WORLD · RHYTHM CLUB',
         unlocked: isLessonUnlocked(store, 'L05'),
         cards: rhythmCards
+      },
+      {
+        unitId: READ_UNIT_ID,
+        title: READ_UNIT_TITLE,
+        kicker: 'WORLD · READ AND PLAY',
+        unlocked: isLessonUnlocked(store, 'L09'),
+        cards: readCards
       }
     ],
     continueLessonId: continueCard?.lessonId || 'L01'

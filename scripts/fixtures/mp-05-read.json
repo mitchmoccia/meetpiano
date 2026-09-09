@@ -1,0 +1,30 @@
+{
+  "staffWalk": {
+    "pitches": [60, 62, 64],
+    "durations": ["quarter", "quarter", "quarter"],
+    "clef": "treble"
+  },
+  "staffNeighbors": {
+    "pitches": [65, 67],
+    "durations": ["quarter", "quarter"],
+    "clef": "treble"
+  },
+  "porchSteps": {
+    "pitches": [60, 64, 65, 67, 65, 64, 60],
+    "durations": ["quarter", "quarter", "quarter", "quarter", "quarter", "quarter", "quarter"],
+    "clef": "treble"
+  },
+  "porchCousin": {
+    "pitches": [67, 64, 60, 64, 65, 67, 67],
+    "durations": ["quarter", "quarter", "quarter", "quarter", "quarter", "quarter", "quarter"],
+    "clef": "treble"
+  },
+  "exactRegister": {
+    "F4": 65,
+    "G4": 67,
+    "F5": 77,
+    "G5": 79,
+    "C4": 60,
+    "E4": 64
+  }
+}

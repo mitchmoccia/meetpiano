@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ffdc63">
   <title>First Piano Journey · MeetPiano</title>
-  <meta name="description" content="First Notes and Rhythm Club: meet the keyboard, find C, play Little Wave, then tap with a heartbeat. Progress stays on this device.">
+  <meta name="description" content="First Notes, Rhythm Club, and Read and play: meet the keyboard, find C, play Little Wave, tap with a heartbeat, then read F, G, and a little tune. Progress stays on this device.">
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/styles.css">
   <link rel="stylesheet" href="/learn/learn.css">
@@ -136,6 +136,22 @@
               </svg>
               <figcaption>A grown-up checks fingers. MIDI cannot.</figcaption>
             </figure>
+            <figure class="staff-card" id="staff-card" hidden></figure>
+            <figure class="house-card" id="three-house-card" hidden>
+              <svg viewBox="0 0 260 120" role="img" aria-labelledby="three-house-title three-house-desc">
+                <title id="three-house-title">Three black keys as a longer house</title>
+                <desc id="three-house-desc">Three black keys make a longer house. F is the doorstep on the left. G is the next white key, not a skip.</desc>
+                <rect x="86" y="28" width="18" height="52" fill="#29251f"/>
+                <rect x="112" y="28" width="18" height="52" fill="#29251f"/>
+                <rect x="138" y="28" width="18" height="52" fill="#29251f"/>
+                <path d="M78 28 L130 8 L182 28" fill="#de4936" stroke="#29251f" stroke-width="2"/>
+                <rect x="48" y="78" width="36" height="18" rx="3" fill="#ffdc63" stroke="#29251f" stroke-width="2"/>
+                <text x="66" y="92" text-anchor="middle" font-size="12" font-weight="800">F</text>
+                <rect x="162" y="78" width="36" height="18" rx="3" fill="#f1aec0" stroke="#29251f" stroke-width="2"/>
+                <text x="180" y="92" text-anchor="middle" font-size="12" font-weight="800">G</text>
+              </svg>
+              <figcaption>F is the doorstep on the left of three. G is the next white key.</figcaption>
+            </figure>
             <figure class="house-card" id="house-card" hidden>
               <svg viewBox="0 0 240 120" role="img" aria-labelledby="house-title house-desc">
                 <title id="house-title">Two black keys as a tiny house</title>
@@ -164,7 +180,7 @@
               <p>A held key counts once until you let go. A silent MIDI note (velocity zero) is treated as letting go. Playing the same key again after a note-off counts as a new try. Leaving this tab silences sound; a key you kept holding does not keep adding progress. After you come back, let go and press again if you want it to sound. Demo notes you only listen to never count. If MIDI is missing or a keyboard is unplugged, the on-screen keys and computer keys still work. Physical MIDI hardware is not claimed as verified from this page.</p>
             </details>
           </div>
-          <span class="preview-label" id="preview-label">First Notes + Rhythm Club · L01–L08. Not a teacher. Not a grade.</span>
+          <span class="preview-label" id="preview-label">First Notes + Rhythm Club + Read and play · L01–L12. Not a teacher. Not a grade.</span>
         </div>
       </div>
       <p class="learn-footnote"><svg class="icon"><use href="#headphones"/></svg> Headphones help. A mute control stays available. MIDI depends on your browser and instrument — this is not a claim of universal support or a hardware check.</p>
@@ -173,7 +189,7 @@
   <footer>
     <div class="wrap footer-main">
       <a href="/" class="brand"><span class="brand-keys" aria-hidden="true"><i></i><i></i><i></i></span>meetpiano<span class="brand-period">.</span></a>
-      <p>First Piano Journey · First Notes + Rhythm Club · beginner-v1 · device-local only</p>
+      <p>First Piano Journey · First Notes + Rhythm Club + Read and play · beginner-v1 · device-local only</p>
       <a href="/">Back to the playground</a>
     </div>
     <div class="wrap footer-bottom">
