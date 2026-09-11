@@ -8,11 +8,12 @@
     { title: 'A melody\nof your own.', eyebrow: 'MISSION 03 · YOUR LITTLE FINALE', description: 'Ready for a little more? Play E, D, C, D, E. Listen first if you like. This time, the key hints take a break.', notes: [64,62,60,62,64], hints: false, success: 'That was your first little melody! +20 XP' }
   ];
   const worlds = [
-    { kicker:'WORLD 01 · THE BEGINNING',title:'A first note worth celebrating.',description:'Discover the keys, hear the difference, and put your first little melody together. Confidence starts here.',skills:['Finding notes','Listening','First melodies'],learnHref:'/learn/?unit=first-notes',learnLabel:'Open First Notes on /learn' },
-    { kicker:'WORLD 02 · FIND YOUR GROOVE',title:'You’re the heartbeat of the band.',description:'Clap it, hear it, play it. Build a steady beat and keep the music moving, even when the backing track takes a little break.',skills:['Steady pulse','Rhythm patterns','Playing in time'],learnHref:'/learn/?unit=rhythm-club',learnLabel:'Open Rhythm Club on /learn' },
-    { kicker:'WORLD 03 · BETTER TOGETHER',title:'Two hands. One very happy brain.',description:'Let your left hand join the adventure. Start with simple bass notes, add a melody, and work toward making music with both hands.',skills:['Hand coordination','Bass notes','Simple chords'] },
-    { kicker:'WORLD 04 · FOLLOW YOUR CURIOSITY',title:'What happens if you play it your way?',description:'Explore quiet and loud, answer a musical question, and invent a little melody. Making music has room for your own ideas.',skills:['Dynamics','Improvising','Musical expression'] },
-    { kicker:'WORLD 05 · YOUR MOMENT',title:'The best audience? Your favorite people.',description:'Put your skills together in a piece you can share. Keep going through the little wobbles, finish your song, and enjoy your moment.',skills:['Independent playing','Musical memory','Performance confidence'] }
+    { kicker:'WORLD 01 · FIRST NOTES',title:'A first note worth celebrating.',description:'Discover the keys, hear the difference, and put your first little melody together. Confidence starts here.',skills:['Finding notes','Listening','First melodies'],learnHref:'/learn/?unit=first-notes',learnLabel:'Open First Notes on /learn' },
+    { kicker:'WORLD 02 · RHYTHM CLUB',title:'You’re the heartbeat of the band.',description:'Clap it, hear it, play it. Build a steady beat and keep the music moving, even when the backing track takes a little break.',skills:['Steady pulse','Rhythm patterns','Playing in time'],learnHref:'/learn/?unit=rhythm-club',learnLabel:'Open Rhythm Club on /learn' },
+    { kicker:'WORLD 03 · READ AND PLAY',title:'Letters come off the keys.',description:'Meet F and G, walk steps and skips, and put a known tune on the staff. Read Porch Steps from the picture — not from a memorized path.',skills:['F and G','Steps and skips','Reading a tune'],learnHref:'/learn/?unit=read-and-play',learnLabel:'Open Read and play on /learn' },
+    { kicker:'WORLD 04 · LEFT HAND',title:'The other hand has a doorstep too.',description:'Find the lower C, read a bass-clef walk, take turns, then hold a low C while the right hand walks on the heartbeat.',skills:['Left-hand C','Bass reading','Two parts, one pulse'],learnHref:'/learn/?unit=left-hand',learnLabel:'Open Left hand on /learn' },
+    { kicker:'WORLD 05 · TOGETHER',title:'Two hands. One very happy brain.',description:'Play two keys on the same click, keep a short walk going, add a small harmony, and finish a little piece.',skills:['Two keys at once','Keep going','A little piece'],learnHref:'/learn/?unit=together',learnLabel:'Open Together on /learn' },
+    { kicker:'WORLD 06 · EXPRESSION',title:'What happens if you play it your way?',description:'Shape the same walk quiet and strong, pick an ending, practice on purpose, and finish a first recital — wobbles allowed.',skills:['Quiet and strong','Make it yours','A first share'],learnHref:'/learn/?unit=expression',learnLabel:'Open Expression on /learn' }
   ];
   const names = ['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'];
   const computerKeys = {a:60,w:61,s:62,e:63,d:64,f:65,t:66,g:67,y:68,h:69,u:70,j:71};
@@ -283,11 +284,17 @@
     $('#world-description').textContent = world.description;
     const learnLink = $('#world-learn-link');
     if (learnLink) {
-      if (world.learnHref) {
+      if (world.future) {
         learnLink.hidden = false;
+        learnLink.classList.add('world-future');
+        learnLink.textContent = world.futureLabel || 'Coming later — not a /learn unit yet';
+      } else if (world.learnHref) {
+        learnLink.hidden = false;
+        learnLink.classList.remove('world-future');
         learnLink.innerHTML = `<a href="${world.learnHref}">${world.learnLabel}</a>`;
       } else {
         learnLink.hidden = true;
+        learnLink.classList.remove('world-future');
         learnLink.replaceChildren();
       }
     }
