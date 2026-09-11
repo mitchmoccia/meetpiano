@@ -1,0 +1,24 @@
+{
+  "chromeHref": "/learn/?view=grown-up",
+  "chromeControlId": "grownup-link",
+  "chromeControlClass": "hub-grownup-chrome",
+  "defaultViewMustNotBeGrownUp": true,
+  "honestyMustInclude": [
+    "device-local observation aid",
+    "not a login",
+    "not a parent account",
+    "not privacy protection"
+  ],
+  "bannedPhrases": [
+    "teacher-approved",
+    "teacher approved",
+    "grade readiness",
+    "educator-approved",
+    "educator approved"
+  ],
+  "homeMustKeepParentPointer": "/learn/?view=grown-up",
+  "homeMustMarkCloudProfilesFuture": [
+    "cloud family profiles and progress views planned",
+    "Cloud family profiles and progress views are still planned"
+  ]
+}

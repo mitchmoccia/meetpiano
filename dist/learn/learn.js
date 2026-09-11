@@ -54,6 +54,7 @@ const shell = document.querySelector('#lesson-shell');
 const helpButton = document.querySelector('#help-button');
 const restartButton = document.querySelector('#restart-button');
 const hubLink = document.querySelector('#hub-link');
+const grownupLink = document.querySelector('#grownup-link');
 const pauseButton = document.querySelector('#pause-button');
 const exitButton = document.querySelector('#exit-button');
 const resumeButton = document.querySelector('#resume-button');
@@ -97,6 +98,7 @@ if (!lessonId) {
   helpButton.hidden = true;
   restartButton.hidden = true;
   hubLink.hidden = !showGrownup;
+  if (grownupLink) grownupLink.hidden = showGrownup;
   if (pauseButton) pauseButton.hidden = true;
   if (exitButton) exitButton.hidden = true;
   if (resumeButton) {
@@ -134,7 +136,7 @@ if (!lessonId) {
     pauseState
   };
   if (showGrownup && grownupShell) {
-    document.title = 'Grown-up view · First Piano Journey · MeetPiano';
+    document.title = 'Grown-up helper · First Piano Journey · MeetPiano';
     renderGrownupView(grownupShell, store, hubOpts);
   } else {
     renderUnitHub(hub, store, hubOpts);
@@ -192,6 +194,7 @@ function resetRecords() {
 }
 
 function startLesson(id) {
+  if (grownupLink) grownupLink.hidden = true;
   if (pianoRoot) renderPiano(pianoRoot, pianoRangeFor(id));
   const clock = createRhythmClock({
     now: () => {
@@ -480,6 +483,7 @@ function startLesson(id) {
     if (resumeButton) resumeButton.hidden = !lessonPaused;
     if (pauseOverlay) pauseOverlay.hidden = !lessonPaused;
     if (hubLink) hubLink.hidden = false;
+    if (grownupLink) grownupLink.hidden = true;
     if (lessonPaused && ui.feedback && !lastFeedback) {
       ui.feedback.textContent = 'Paused. Your try is waiting.';
     }
