@@ -1,0 +1,42 @@
+{
+  "surfaces": ["hub", "grown-up"],
+  "warningId": "device-switch-warning",
+  "pointerId": "device-switch-pointer",
+  "exportControlId": "export-json",
+  "pointerHref": "#export-json",
+  "pointerLabel": "Show the existing export",
+  "portabilityId": "progress-port",
+  "existingExportLabel": "Export JSON",
+  "existingImportLabel": "Import JSON",
+  "existingResetLabel": "Reset this device",
+  "honestyMustInclude": [
+    "this device",
+    "this browser",
+    "new browser",
+    "Export JSON",
+    "Import JSON",
+    "no cloud sync",
+    "no account",
+    "no automatic backup"
+  ],
+  "bannedImplications": [
+    "synced to the cloud",
+    "automatically backed up",
+    "saved to your account",
+    "we keep a copy in the cloud",
+    "progress follows you",
+    "works across all your devices",
+    "auto-backup",
+    "cloud backup"
+  ],
+  "bannedPhrases": [
+    "teacher-approved",
+    "teacher approved",
+    "educator-approved",
+    "grade readiness",
+    "lime",
+    "vermilion"
+  ],
+  "noSecondExportUi": true,
+  "pointerMustNotDownload": true
+}
