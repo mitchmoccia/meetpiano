@@ -46,7 +46,7 @@ Coaching, accounts, billing, and family profiles are future product work. The pa
 
 ## Documentation
 
-First Piano Journey mission and lesson specification: [`docs/missions/first-piano-journey.md`](docs/missions/first-piano-journey.md). MP-11 release packet: [`docs/missions/first-piano-journey-release.md`](docs/missions/first-piano-journey-release.md). Pilot pack (materials only; outreach blocked until Mitch says go): [`docs/pilots/first-piano-journey-v1/`](docs/pilots/first-piano-journey-v1/). Hardware MIDI verification protocol (physical hardware is not verified until a filled PASS log exists): [`docs/evidence/midi/hardware-midi-protocol.md`](docs/evidence/midi/hardware-midi-protocol.md).
+First Piano Journey mission and lesson specification: [`docs/missions/first-piano-journey.md`](docs/missions/first-piano-journey.md). MP-11 release packet: [`docs/missions/first-piano-journey-release.md`](docs/missions/first-piano-journey-release.md). Pilot pack (materials only; outreach blocked until Mitch says go): [`docs/pilots/first-piano-journey-v1/`](docs/pilots/first-piano-journey-v1/). Hardware MIDI verification protocol (physical hardware is not verified until a filled PASS log exists): [`docs/evidence/midi/hardware-midi-protocol.md`](docs/evidence/midi/hardware-midi-protocol.md). Critical-path browser matrix (untested browsers are BLOCKED with a reason): [`docs/evidence/browsers/critical-path-matrix.md`](docs/evidence/browsers/critical-path-matrix.md).
 
 ## Checks
 

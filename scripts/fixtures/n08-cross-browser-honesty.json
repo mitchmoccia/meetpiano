@@ -1,0 +1,62 @@
+{
+  "matrixPath": "docs/evidence/browsers/critical-path-matrix.md",
+  "templatePath": "docs/evidence/browsers/critical-path-row.template.md",
+  "requiredColumns": [
+    "browser+version",
+    "OS/device",
+    "tip SHA",
+    "date",
+    "tester",
+    "critical-path results",
+    "label"
+  ],
+  "requiredCriticalPath": [
+    "open `/learn`",
+    "L01 hear note",
+    "progress save",
+    "grown-up view"
+  ],
+  "requiredLabels": [
+    "physical-device",
+    "listening",
+    "simulated",
+    "BLOCKED"
+  ],
+  "untestedMustBeBlocked": true,
+  "chromeBaselineMustInclude": [
+    "Google Chrome 148.0.7778.96",
+    "Ubuntu 24.04.4 LTS",
+    "3bd163a504666a6e9293ccb134b6e75694f1febc",
+    "simulated"
+  ],
+  "blockedRows": [
+    {
+      "name": "Safari",
+      "reasonNeedle": "Safari is not installed on this Linux Cloud Agent VM"
+    },
+    {
+      "name": "iPadOS",
+      "reasonNeedle": "No iPad or iPadOS runtime is available on this Cloud Agent VM"
+    },
+    {
+      "name": "Firefox",
+      "reasonNeedle": "Firefox is not installed on this Cloud Agent VM"
+    }
+  ],
+  "honestySurfaces": [
+    "dist/index.html",
+    "dist/learn/index.html",
+    "dist/learn/index.md",
+    "dist/llms.txt",
+    "README.md"
+  ],
+  "bannedPhrases": [
+    "works everywhere",
+    "works on every browser",
+    "works in all browsers",
+    "works on all browsers",
+    "universal compatibility",
+    "universal browser support",
+    "compatible with all browsers"
+  ]
+}
