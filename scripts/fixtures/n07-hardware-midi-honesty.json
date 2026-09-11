@@ -1,0 +1,60 @@
+{
+  "protocolPath": "docs/evidence/midi/hardware-midi-protocol.md",
+  "templatePath": "docs/evidence/midi/hardware-midi-log.template.md",
+  "requiredLogFields": [
+    "make/model",
+    "OS",
+    "browser (+version)",
+    "adapter/cable or direct USB",
+    "date",
+    "tester",
+    "pass/fail",
+    "notes"
+  ],
+  "honestySurfaces": [
+    "dist/index.html",
+    "dist/learn/index.html",
+    "dist/learn/index.md",
+    "dist/js/setup-strip.js",
+    "dist/js/grownup.js",
+    "dist/js/learn-view.js",
+    "dist/js/evidence.js",
+    "dist/js/midi.js",
+    "dist/app.js",
+    "dist/llms.txt",
+    "README.md"
+  ],
+  "surfaceMustInclude": {
+    "dist/index.html": [
+      "Physical MIDI hardware is not verified",
+      "Optional Web MIDI",
+      "on-screen keys",
+      "computer keyboard"
+    ],
+    "dist/learn/index.html": [
+      "Physical MIDI hardware is not verified",
+      "Optional Web MIDI",
+      "on-screen keys",
+      "computer keys"
+    ],
+    "dist/learn/index.md": [
+      "Physical MIDI hardware is not verified",
+      "Web MIDI is optional",
+      "On-screen keys"
+    ],
+    "dist/js/setup-strip.js": [
+      "MIDI is optional",
+      "On-screen keys and computer keys still work",
+      "Physical MIDI hardware is not verified"
+    ],
+    "dist/llms.txt": [
+      "Physical MIDI hardware is not verified",
+      "Web MIDI is optional"
+    ]
+  },
+  "bannedPhrases": [
+    "hardware midi verified",
+    "midi-verified",
+    "universal keyboard"
+  ]
+}

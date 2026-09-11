@@ -507,4 +507,38 @@ assert(!closerLower.includes('lime') && !closerOwn.includes('vermilion'), 'close
 assert(!/#00f|#4f46|#6366|linear-gradient/i.test(read('dist/learn/learn.css')), 'learn CSS still has no blue/purple gradient restyle after N06');
 assert(!/account|notification|push alert/i.test(JSON.stringify(CLOSER_COPY)), 'closer does not add accounts or notifications');
 
+const n07 = JSON.parse(read('scripts/fixtures/n07-hardware-midi-honesty.json'));
+assert(existsSync(join(root, n07.protocolPath)), `hardware MIDI protocol is at ${n07.protocolPath}`);
+assert(existsSync(join(root, n07.templatePath)), `hardware MIDI log template is at ${n07.templatePath}`);
+const protocol = read(n07.protocolPath);
+const midiLogTemplate = read(n07.templatePath);
+for (const field of n07.requiredLogFields) {
+  assert(protocol.includes(field), `protocol names field ${field}`);
+  assert(midiLogTemplate.includes(field), `template includes field ${field}`);
+}
+assert(/BLOCKED/.test(protocol) && /No filled PASS log exists/.test(protocol), 'protocol records physical hardware as BLOCKED until a PASS log');
+assert(!/MIDI stack rewrite|rewrite the MIDI stack to satisfy/.test(protocol) || /Do not rewrite the MIDI stack/.test(protocol), 'protocol forbids a MIDI stack rewrite');
+assert(n07.bannedPhrases.includes('hardware midi verified'), 'N07 fixture bans hardware midi verified');
+assert(n07.bannedPhrases.includes('midi-verified'), 'N07 fixture bans midi-verified');
+assert(n07.bannedPhrases.includes('universal keyboard'), 'N07 fixture bans universal keyboard');
+
+const honestyFiles = n07.honestySurfaces.map((rel) => {
+  assert(existsSync(join(root, rel)), `honesty surface ${rel} exists`);
+  return read(rel);
+});
+const honestySurface = honestyFiles.join('\n');
+const honestyLower = honestySurface.toLowerCase();
+for (const phrase of n07.bannedPhrases) {
+  assert(!honestyLower.includes(phrase.toLowerCase()), `home + learn honesty surfaces must not say ${phrase}`);
+}
+for (const [rel, needles] of Object.entries(n07.surfaceMustInclude)) {
+  const text = read(rel);
+  for (const needle of needles) {
+    assert(text.includes(needle), `${rel} keeps honesty line “${needle}”`);
+  }
+}
+assert(SETUP_COPY.midiIdle.includes('Physical MIDI hardware is not verified'), 'setup strip keeps the not-verified baseline');
+assert(GROWNUP_HONESTY.includes('device-local observation aid'), 'grown-up helper stays a device-local aid');
+assert(!/verified badge|hardware certified|midi certified/i.test(honestySurface), 'honesty surfaces do not invent a verified badge');
+
 console.log('pilot pack and CTA checks passed');
