@@ -6,6 +6,17 @@ import { recommendNext } from '../dist/js/recommend.js';
 import { parseGrownupView } from '../dist/js/learn-view.js';
 import { GROWNUP_HONESTY } from '../dist/js/grownup.js';
 import { JOURNEY_LESSONS, parseLessonId, parseUnitId } from '../dist/js/unit.js';
+import {
+  SETUP_CONTINUE_HREF,
+  SETUP_COPY,
+  SETUP_STORAGE_KEY,
+  SETUP_SURFACES,
+  applySetupEvent,
+  describeAudioUnlock,
+  describeSetupMidi,
+  emptySetupState,
+  shouldShowSetupStrip
+} from '../dist/js/setup-strip.js';
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -258,5 +269,85 @@ for (const phrase of n03.homeMustMarkCloudProfilesFuture) {
   assert(home.includes(phrase), `home still marks cloud family profiles as future (${phrase})`);
 }
 assert(!/cloud family profiles (are ready|are live|already exist)/i.test(home), 'home must not imply cloud family profiles already exist');
+
+const n04 = JSON.parse(read('scripts/fixtures/n04-first-session-setup.json'));
+assert(SETUP_STORAGE_KEY === n04.storageKey, 'setup strip uses the fixture localStorage key');
+assert(SETUP_SURFACES.join(',') === n04.surfaces.join(','), 'setup strip shows on hub and L01');
+assert(SETUP_CONTINUE_HREF === n04.l01Href, 'setup continue path is L01');
+assert(SETUP_COPY.continueLabel === n04.l01Action, 'setup continue label is Start Meet the keyboard');
+assert(learnHtml.includes(`id="${n04.mountId}"`), 'learn HTML has the setup strip mount');
+assert(learnJs.includes('paintSetupStrip()'), 'learn paints the first-sit strip');
+assert(learnJs.includes("surface: 'hub'") || learnJs.includes('currentSetupSurface()'), 'setup strip can show on the hub');
+assert(learnJs.includes("id === 'L01'") && learnJs.includes('markSetupHeard'), 'L01 can complete setup with one heard note');
+assert(hubJs.includes('renderSetupStrip') && hubJs.includes(n04.stripId), 'hub view renders the setup strip');
+for (const id of n04.controlIds) {
+  assert(hubJs.includes(`id: '${id}'`), `setup strip exposes ${id}`);
+}
+assert(n04.noWizard === true, 'fixture forbids a multi-step wizard');
+assert(!/step 1 of 3|wizard maze|setup-step/i.test(`${hubJs}\n${learnJs}\n${JSON.stringify(SETUP_COPY)}`), 'setup is one strip, not a wizard');
+
+assert(shouldShowSetupStrip({
+  store: n04.firstRun.store,
+  setup: n04.firstRun.setup,
+  surface: 'hub'
+}) === n04.firstRun.expectShow, 'fresh hub shows the setup strip');
+assert(shouldShowSetupStrip({
+  store: n04.firstRun.store,
+  setup: n04.firstRun.setup,
+  surface: 'L01'
+}) === n04.firstRun.expectShow, 'fresh L01 shows the setup strip');
+assert(shouldShowSetupStrip({
+  store: emptyStore(),
+  setup: emptySetupState(),
+  surface: 'hub'
+}) === true, 'emptyStore first-run shows the setup strip');
+assert(shouldShowSetupStrip({
+  store: emptyStore(),
+  setup: emptySetupState(),
+  surface: 'grown-up'
+}) === false, 'grown-up helper does not take over as a setup maze');
+
+for (const row of n04.returning) {
+  for (const surface of n04.surfaces) {
+    assert(
+      shouldShowSetupStrip({ store: row.store, setup: row.setup, surface }) === row.expectShow,
+      `returning ${row.reason} hides the strip on ${surface}`
+    );
+  }
+}
+
+const heard = applySetupEvent(emptySetupState(), { type: 'hear' });
+assert(heard.heardNote === true && shouldShowSetupStrip({
+  store: emptyStore(),
+  setup: heard,
+  surface: 'hub'
+}) === false, 'one heard note hides the strip');
+const skipped = applySetupEvent(emptySetupState(), { type: 'dismiss' });
+assert(skipped.dismissed === true && shouldShowSetupStrip({
+  store: emptyStore(),
+  setup: skipped,
+  surface: 'L01'
+}) === false, 'dismiss hides the strip');
+
+const blocked = describeAudioUnlock({ canPlay: true, state: n04.audio.blockedState });
+assert(blocked.kind === 'blocked' && blocked.message.includes(n04.audio.blockedMustInclude), 'suspended audio explains unlock');
+const missing = describeAudioUnlock({ canPlay: false, state: n04.audio.missingState });
+assert(missing.kind === 'missing' && missing.message.includes(n04.audio.missingMustInclude), 'missing audio stays honest');
+assert(describeSetupMidi('unsupported').includes(n04.midi.unsupportedMustInclude), 'unsupported MIDI stays optional');
+assert(describeSetupMidi('denied').includes(n04.midi.deniedMustInclude), 'denied MIDI stays optional');
+assert(SETUP_COPY.midiIdle.includes('MIDI is optional'), 'idle MIDI copy stays optional');
+assert(n04.midi.optional === true, 'fixture marks MIDI optional');
+
+const setupSurface = `${JSON.stringify(SETUP_COPY)}\n${hubJs}\n${learnJs}\n${read('dist/js/setup-strip.js')}`;
+const setupLower = setupSurface.toLowerCase();
+for (const phrase of n04.honestyMustInclude) {
+  assert(setupSurface.includes(phrase), `setup honesty states ${phrase}`);
+}
+for (const phrase of n04.bannedPhrases) {
+  assert(!setupLower.includes(phrase.toLowerCase()), `setup surfaces must not say ${phrase}`);
+}
+assert(!setupLower.includes('lime') && !setupSurface.includes('vermilion'), 'setup copy does not introduce banned palette names');
+assert(!/#00f|#4f46|#6366|linear-gradient/i.test(read('dist/learn/learn.css')), 'learn CSS still has no blue/purple gradient restyle');
+assert(!/hardware[- ]midi[- ]verified|verified midi hardware/i.test(setupLower), 'setup does not claim hardware MIDI verified');
 
 console.log('pilot pack and CTA checks passed');

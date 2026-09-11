@@ -5,6 +5,7 @@ import { createProgress } from '../js/progress.js';
 import { createRhythmClock } from '../js/rhythm-clock.js';
 import { patternSpanSec } from '../js/rhythm-score.js';
 import {
+  COMPUTER_KEYS,
   clearPressed,
   computerKeysFor,
   renderPiano,
@@ -28,8 +29,19 @@ import {
   renderPhraseTiles,
   renderSteps,
   renderResultCard,
+  renderSetupStrip,
   renderUnitHub
 } from '../js/learn-view.js';
+import { createMidiSession } from '../js/midi.js';
+import {
+  SETUP_TRY_NOTE,
+  applySetupEvent,
+  describeAudioUnlock,
+  readSetupState,
+  resetSetupState,
+  shouldShowSetupStrip,
+  writeSetupState
+} from '../js/setup-strip.js';
 import { isExpressionLesson, isLessonUnlocked, isLeftLesson, isTogetherLesson, parseLessonId, parseUnitId, unitTitleFor, usesClockTake, usesExpressionTake, usesRhythmTake, usesTogetherTake } from '../js/unit.js';
 import { durationMs, renderStaff } from '../js/staff.js';
 import { exportProgress, importProgress, resetProgress } from '../js/portability.js';
@@ -62,6 +74,96 @@ const grownupShell = document.querySelector('#grownup-shell');
 const pauseOverlay = document.querySelector('#pause-overlay');
 const showGrownup = parseGrownupView(params.get('view'));
 const pauseState = readPause();
+const setupMount = document.querySelector('#setup-strip-mount');
+let setupState = readSetupState();
+let setupAudioKind = 'needs-gesture';
+let setupMidiKind = 'idle';
+const setupMidi = createMidiSession({
+  onStatus(view) {
+    setupMidiKind = view.kind;
+    paintSetupStrip();
+  }
+});
+setupMidiKind = setupMidi.snapshot().kind;
+
+function currentSetupSurface() {
+  if (showGrownup) return 'grown-up';
+  return lessonId || 'hub';
+}
+
+function paintSetupStrip() {
+  renderSetupStrip(setupMount, {
+    store,
+    setup: setupState,
+    surface: currentSetupSurface(),
+    audioKind: setupAudioKind,
+    midiKind: setupMidiKind,
+    onUnlock: unlockSetupSound,
+    onTryKey: trySetupKey,
+    onMidi: requestSetupMidi,
+    onDismiss: dismissSetupStrip
+  });
+}
+
+async function unlockSetupSound() {
+  const audioView = describeAudioUnlock({
+    canPlay: audio.canPlay(),
+    state: audio.contextState()
+  });
+  if (audioView.kind === 'missing') {
+    setupAudioKind = 'missing';
+    setupState = writeSetupState(applySetupEvent(setupState, { type: 'unlock', ok: false }));
+    paintSetupStrip();
+    return false;
+  }
+  const running = await audio.resume();
+  setupAudioKind = running ? 'ready' : (audio.isSuspended() ? 'blocked' : describeAudioUnlock({
+    canPlay: audio.canPlay(),
+    state: audio.contextState()
+  }).kind);
+  setupState = writeSetupState(applySetupEvent(setupState, { type: 'unlock', ok: running }));
+  paintSetupStrip();
+  return running;
+}
+
+async function trySetupKey() {
+  const ok = await unlockSetupSound();
+  if (!ok) return;
+  audio.play(SETUP_TRY_NOTE);
+  markSetupHeard();
+}
+
+function markSetupHeard() {
+  if (!shouldShowSetupStrip({ store, setup: setupState, surface: currentSetupSurface() })) return;
+  setupAudioKind = 'ready';
+  setupState = writeSetupState(applySetupEvent(setupState, { type: 'hear' }));
+  paintSetupStrip();
+}
+
+function dismissSetupStrip() {
+  setupState = writeSetupState(applySetupEvent(setupState, { type: 'dismiss' }));
+  paintSetupStrip();
+}
+
+async function requestSetupMidi() {
+  const view = await setupMidi.request();
+  setupMidiKind = view.kind;
+  paintSetupStrip();
+}
+
+function onHubSetupKey(event) {
+  if (!shouldShowSetupStrip({ store, setup: setupState, surface: 'hub' })) return;
+  if (event.ctrlKey || event.metaKey || event.altKey || event.repeat) return;
+  if (/INPUT|TEXTAREA|SELECT/.test(event.target.tagName) || event.target.isContentEditable) return;
+  const key = event.key.toLowerCase();
+  if (!(key in COMPUTER_KEYS)) return;
+  event.preventDefault();
+  unlockSetupSound().then((ok) => {
+    if (!ok) return;
+    audio.play(COMPUTER_KEYS[key]);
+    markSetupHeard();
+  });
+}
 
 if (pianoRoot) renderPiano(pianoRoot);
 
@@ -141,7 +243,12 @@ if (!lessonId) {
   } else {
     renderUnitHub(hub, store, hubOpts);
   }
+  paintSetupStrip();
+  if (shouldShowSetupStrip({ store, setup: setupState, surface: 'hub' })) {
+    window.addEventListener('keydown', onHubSetupKey);
+  }
 } else {
+  paintSetupStrip();
   startLesson(lessonId);
 }
 
@@ -185,6 +292,8 @@ function resetRecords() {
   if (!ok) return;
   progress.write(resetProgress());
   clearPause();
+  resetSetupState();
+  setupState = readSetupState();
   const notice = document.querySelector('#storage-notice');
   if (notice) {
     notice.hidden = false;
@@ -397,6 +506,7 @@ function startLesson(id) {
       lastFeedback = result.message;
       ui.feedback.textContent = result.message;
     }
+    if (id === 'L01' && result.reason !== 'demo-playback') markSetupHeard();
     showHouse = Boolean(result.remediate && id === 'L02');
     showThreeHouse = Boolean(result.remediate && id === 'L09');
     const view = player.view();
