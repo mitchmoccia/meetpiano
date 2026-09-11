@@ -1,0 +1,29 @@
+{
+  "faqReadyMustInclude": [
+    "/learn",
+    "L01",
+    "L24",
+    "mini adventure"
+  ],
+  "faqReadyMustNotImplyUnreleasedJourney": [
+    "The full learning app, continuing curriculum, coaching, and family memberships are in development"
+  ],
+  "parentMustCiteGrownUpView": "/learn/?view=grown-up",
+  "membershipsMustMarkFuture": ["In the making", "Adventure", "Family"],
+  "membershipNoteMustNotSay": [
+    "The full learning app is in development"
+  ],
+  "bannedClaims": [
+    "teacher approved",
+    "teacher-approved",
+    "educator-approved",
+    "grade readiness",
+    "grade 1",
+    "midi-verified",
+    "hardware midi verified",
+    "learning effectiveness",
+    "works in all browsers",
+    "safari and firefox",
+    "cross-browser"
+  ]
+}

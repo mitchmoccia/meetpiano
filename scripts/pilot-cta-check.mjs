@@ -95,6 +95,48 @@ for (const phrase of bannedHome) {
   assert(!homeLower.includes(phrase), `home must not say ${phrase}`);
 }
 
+const honesty = JSON.parse(read('scripts/fixtures/n01-home-honesty.json'));
+const faqReady = home.match(/<details><summary>Is MeetPiano ready to use\?[\s\S]*?<\/summary><p>([\s\S]*?)<\/p><\/details>/);
+assert(faqReady, 'FAQ “Is MeetPiano ready to use?” is present');
+const faqReadyText = faqReady[1];
+for (const needle of honesty.faqReadyMustInclude) {
+  assert(faqReadyText.includes(needle), `ready FAQ states ${needle}`);
+}
+assert(/playable|ready to play|ready now/i.test(faqReadyText), 'ready FAQ says Journey is playable, not only the mini-adventure');
+for (const phrase of honesty.faqReadyMustNotImplyUnreleasedJourney) {
+  assert(!faqReadyText.includes(phrase), 'ready FAQ must not treat L01–L24 as unreleased');
+}
+
+const faqParent = home.match(/<details><summary>Does a parent need to know how to play\?[\s\S]*?<\/summary><p>([\s\S]*?)<\/p><\/details>/);
+assert(faqParent, 'FAQ “Does a parent need to know how to play?” is present');
+assert(
+  home.includes(honesty.parentMustCiteGrownUpView) && faqParent[1].includes('grown-up'),
+  'parent FAQ cites the existing grown-up view'
+);
+assert(home.includes('href="/learn/?view=grown-up"'), 'home links /learn/?view=grown-up');
+
+const membership = home.slice(home.indexOf('id="membership"'), home.indexOf('id="questions"'));
+assert(membership.includes('<h3>Adventure</h3>'), 'Adventure membership card stays');
+assert(membership.includes('<h3>Family</h3>'), 'Family membership card stays');
+assert((membership.match(/In the making/g) || []).length >= 2, 'Adventure and Family stay marked In the making');
+assert(!/featured[\s\S]*<h3>Adventure<\/h3>[\s\S]*A continuing, personal learning path/.test(membership), 'Adventure card does not treat L01–L24 as the unreleased membership path');
+for (const phrase of honesty.membershipNoteMustNotSay) {
+  assert(!home.includes(phrase), `memberships must not say ${phrase}`);
+}
+assert(home.includes('class="membership-note"') && /L01|L24|First Piano Journey/.test(home.match(/class="membership-note">([\s\S]*?)<\/p>/)[1]), 'membership note says Journey L01–L24 is already playable');
+
+const parentBlock = home.slice(home.indexOf('id="grown-ups"'), home.indexOf('id="membership"'));
+assert(parentBlock.includes(honesty.parentMustCiteGrownUpView), 'parent section cites /learn/?view=grown-up if cloud progress views stay planned');
+assert(/progress views planned|family profiles planned/i.test(parentBlock), 'parent section still marks cloud family/progress as planned');
+
+assert(home.includes('Play the mini adventure'), 'mini-adventure remains a secondary path');
+assert(home.indexOf('Start First Piano Journey') < home.indexOf('Play the mini adventure'), 'Journey remains the primary hero CTA');
+
+for (const phrase of honesty.bannedClaims) {
+  assert(!homeLower.includes(phrase.toLowerCase()), `home must not claim ${phrase}`);
+}
+assert(!homeLower.includes('lime') && !home.includes('vermilion'), 'home copy does not introduce banned palette names');
+
 const fresh = recommendNext(emptyStore(), { isNew: true, sessionId: 'fresh' });
 assert(fresh.lessonId === 'L01' && fresh.action === 'Start Meet the keyboard', 'fresh hub recommends Start Meet the keyboard');
 
