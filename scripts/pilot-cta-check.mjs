@@ -50,7 +50,8 @@ const packFiles = [
   'session-script.md',
   'observation-checklist.md',
   'grown-up-prompt.md',
-  'recruiting-notes.md'
+  'recruiting-notes.md',
+  'readiness-checklist.md'
 ];
 for (const file of packFiles) {
   const rel = `${packDir}/${file}`;
@@ -633,5 +634,72 @@ assert(packetCurrent.includes(n09.mainTipSha), 'release packet current-live sect
 assert(packetCurrent.includes(n09.liveLessonRange), 'release packet current-live section states L01–L24');
 assert(!packetCurrent.includes('Lessons | L01–L12 |'), 'release packet current-live section does not list L01–L12 as the live lesson column');
 assert(packet.includes('former tip `3da09b9`') || packet.includes('Former tip (not current)'), 'release packet marks 3da09b9 as former, not current');
+
+const n10 = JSON.parse(read('scripts/fixtures/n10-pilot-readiness.json'));
+assert(/^[0-9a-f]{40}$/.test(n10.n10StartTipSha), 'N10 fixture records a full 40-character start tip SHA');
+assert(n10.n10StartTipSha === '09df2ba0b8fdd9631a22142d606be3857d7ea3c2', 'N10 start tip is the N09 merge');
+assert(n10.n09RecordedTipSha === n09.mainTipSha, 'N10 keeps the N09 recorded tip for history');
+assert(n10.liveLessonRange === 'L01–L24', 'N10 live range stays L01–L24');
+assert(n10.doNotSendNeedle === 'DO NOT SEND until Mitch authorizes outreach', 'N10 fixture keeps the send hard gate');
+assert(existsSync(join(root, n10.readinessChecklistPath)), 'N10 readiness checklist exists');
+
+const n10PackDir = n10.packDir;
+for (const file of n10.packFiles) {
+  assert(existsSync(join(root, `${n10PackDir}/${file}`)), `N10 pack includes ${file}`);
+}
+
+const n10Readiness = read(n10.readinessChecklistPath);
+assert(n10Readiness.includes(n10.n10StartTipSha), 'readiness checklist records the N10 start tip');
+assert(n10Readiness.includes(n10.liveLessonRange), 'readiness checklist states L01–L24');
+assert(n10Readiness.includes(n10.doNotSendNeedle), 'readiness checklist repeats DO NOT SEND');
+
+for (const rel of n10.hardGateSurfaces) {
+  const text = read(rel);
+  for (const needle of n10.hardGateNeedles) {
+    assert(text.includes(needle), `${rel} keeps hard gate “${needle}”`);
+  }
+}
+assert(packReadme.includes('Mitch must approve'), 'pilot README still requires Mitch approval');
+assert(recruiting.includes(n10.doNotSendNeedle), 'recruiting notes still block send');
+assert(packet.includes('Do not contact'), 'release packet still blocks outreach');
+
+for (const rel of n10.outreachEscalateSurfaces) {
+  const text = read(rel);
+  for (const name of n10.outreachEscalateTo) {
+    assert(text.includes(name), `${rel} escalates held outreach to ${name} in notes only`);
+  }
+  assert(/notes only/i.test(text), `${rel} keeps outreach in notes only`);
+}
+
+for (const row of n10.alignment) {
+  const packNeedle = row.packNeedle || row.needle;
+  const liveNeedle = row.liveNeedle || row.needle;
+  assert(packNeedle && liveNeedle, `N10 alignment ${row.id} has pack and live needles`);
+  for (const file of row.packSurfaces) {
+    const text = read(`${n10PackDir}/${file}`);
+    assert(text.includes(packNeedle), `pack ${file} names ${row.id} (${packNeedle})`);
+  }
+  for (const rel of row.liveSurfaces) {
+    const text = read(rel);
+    assert(text.includes(liveNeedle), `live ${rel} still has ${row.id} (${liveNeedle})`);
+  }
+}
+
+for (const rel of n10.blockedBrowserSurfaces) {
+  const text = read(rel);
+  for (const needle of n10.blockedBrowserNeedles) {
+    assert(text.includes(needle), `${rel} records ${needle} for the N08 BLOCKED set`);
+  }
+}
+
+const n10BanSurface = n10.banScanSurfaces.map((rel) => read(rel)).join('\n').toLowerCase();
+for (const phrase of n10.bannedUnqualifiedClaims) {
+  assert(!n10BanSurface.includes(phrase.toLowerCase()), `pilot pack must not claim ${phrase}`);
+}
+assert(!/efficac/i.test(n10Readiness) || /not.*efficac|no efficacy/i.test(n10Readiness), 'readiness checklist rejects efficacy');
+assert(packet.includes(n10.readinessChecklistPath.replace('docs/', '../')) || packet.includes('readiness-checklist.md'), 'release packet points at the N10 readiness checklist');
+assert(statusBoard.includes(n10.n10StartTipSha), 'status board records the N10 start tip');
+assert(statusBoard.includes('N10'), 'status board names the N10 slice');
+assert(/DO NOT SEND/.test(statusBoard), 'status board keeps DO NOT SEND');
 
 console.log('pilot pack and CTA checks passed');

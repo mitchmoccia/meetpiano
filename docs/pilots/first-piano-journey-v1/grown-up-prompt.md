@@ -6,7 +6,7 @@ A short page for the adult in the room. This is **not** a report card.
 
 A first look at little jobs on this computer. Progress stays **on this browser**. There is no account and no grade.
 
-You do not need to play piano. Stay nearby for setup. Cheer the tries. You may stop any time.
+You do not need to play piano. Stay nearby for setup. A short first-sit setup strip may appear on `/learn` or L01 — wake the sound, try a key, skip MIDI if you do not have a keyboard. Cheer the tries. **Enough for today** ends the sit kindly. You may stop any time.
 
 ## What to watch
 

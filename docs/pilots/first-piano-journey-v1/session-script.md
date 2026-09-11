@@ -4,7 +4,7 @@
 
 **Time:** about 30–40 minutes. Stop sooner if the child is tired or frustrated.
 
-**Path:** setup → First Notes L01 → toward L04 only if it still feels kind → grown-up view → export optional.
+**Path:** optional home **Start First Piano Journey** → `/learn` first-sit setup strip → First Notes L01 → toward L04 only if it still feels kind → grown-up view → export optional → Enough for today.
 
 Say the lines in **bold** out loud. Plain lines are facilitator notes, not a speech.
 
@@ -14,8 +14,8 @@ Do not grade. Do not say “you should be further.” Do not rush later worlds.
 
 ## 0. Before they arrive (facilitator only)
 
-- Chrome on a computer, if you have a choice.
-- Open `https://meetpiano.app/learn` (or the preview Mitch named). Do not start L01 for them unless they ask.
+- Chrome on a computer, if you have a choice. Written Chrome evidence is **simulated**. Safari, iPad, and Firefox are **BLOCKED**.
+- They may tap home **Journey** or **Start First Piano Journey** (both open `/learn`), or you may open `https://meetpiano.app/learn` (or the preview Mitch named). Do not start L01 for them unless they ask.
 - Headphones ready but optional.
 - A paper keyboard or real piano is nice if they have one. Not required.
 - Give the grown-up [`grown-up-prompt.md`](grown-up-prompt.md). You keep [`observation-checklist.md`](observation-checklist.md).
@@ -37,11 +37,12 @@ If they ask “will this make me better?”: **“We are not testing that today.
 
 **“A grown-up should stay nearby for setup. Progress saves on this browser only. There is no account. If we switch computers later, this progress will not be there unless a grown-up copies the file.”**
 
-1. Grown-up opens Chrome (say why: **“Chrome is the browser we have actually checked. Other browsers might work; we have not written that down yet.”**).
-2. Go to `/learn`.
-3. Read the yellow line together: saved on this device; not an account; touch is never MIDI verified.
-4. Optional MIDI: **“Only if you already have a compatible keyboard. If we skip it, that is fine. On-screen keys are a stand-in.”** Record make / OS / browser if they connect one. Do not fail the sitting if MIDI is absent.
-5. Open grown-up view once: `/learn/?view=grown-up`. **“This lists what this browser has already stored. On a fresh visit it should look empty. It is not a login.”** Then return to the journey map.
+1. Grown-up opens Chrome (say why: **“Chrome on a computer is the sitting we have written down. That check was simulated. Safari, iPad, and Firefox are BLOCKED — we have not sat them.”**).
+2. Go to `/learn` (home **Start First Piano Journey** is fine).
+3. If the first-sit setup strip is showing: **“Wake the sound, try a key if you want, and skip MIDI if you do not have a keyboard. One heard note is enough.”**
+4. Read the yellow line together: saved on this device; not an account; touch is never MIDI verified.
+5. Optional MIDI: **“Only if you already have a compatible keyboard. If we skip it, that is fine. On-screen keys are a stand-in. Physical MIDI hardware is not verified.”** Record make / OS / browser if they connect one. Do not fail the sitting if MIDI is absent.
+6. Open grown-up view once: `/learn/?view=grown-up`. **“This lists what this browser has already stored. On a fresh visit it should look empty. It is not a login.”** Then return to the journey map.
 
 ---
 
@@ -87,11 +88,15 @@ Open `/learn/?view=grown-up`. Look at:
 
 **“You do not have to copy anything. If you want a backup on a file you keep, we can export JSON. It stays on computers you control. We will not upload it.”**
 
+Point at the live warning if it is on screen: a **new browser** or another device will not have these records unless a grown-up uses the existing Export JSON, then Import JSON.
+
 Skip if they are done. Do not pressure.
 
 ---
 
 ## 6. Close (about 2 minutes)
+
+If they want a kind stop during the sit, **Enough for today** is the live closer. It is not Pause.
 
 **“That is the sitting. Thank you. We will not send this to a class or put your names on a website.”**
 

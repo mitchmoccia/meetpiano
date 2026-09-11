@@ -1,0 +1,159 @@
+{
+  "verifiedDate": "2026-09-11",
+  "n10StartTipSha": "09df2ba0b8fdd9631a22142d606be3857d7ea3c2",
+  "n10StartTipSubject": "Merge pull request #25 from mitchmoccia/cursor/n09-docs-tip-refresh-3939",
+  "n09RecordedTipSha": "6ea24b9d36cfb71a07d5fb62b87451ded4456d62",
+  "liveLessonRange": "L01–L24",
+  "readinessChecklistPath": "docs/pilots/first-piano-journey-v1/readiness-checklist.md",
+  "packDir": "docs/pilots/first-piano-journey-v1",
+  "packFiles": [
+    "README.md",
+    "session-script.md",
+    "observation-checklist.md",
+    "grown-up-prompt.md",
+    "recruiting-notes.md",
+    "readiness-checklist.md"
+  ],
+  "doNotSendNeedle": "DO NOT SEND until Mitch authorizes outreach",
+  "hardGateNeedles": [
+    "DO NOT SEND until Mitch authorizes outreach",
+    "Do not contact families"
+  ],
+  "hardGateSurfaces": [
+    "docs/pilots/first-piano-journey-v1/README.md",
+    "docs/pilots/first-piano-journey-v1/recruiting-notes.md",
+    "docs/pilots/first-piano-journey-v1/readiness-checklist.md"
+  ],
+  "outreachEscalateTo": ["Gort", "Mitch"],
+  "outreachEscalateSurfaces": [
+    "docs/pilots/first-piano-journey-v1/recruiting-notes.md",
+    "docs/pilots/first-piano-journey-v1/readiness-checklist.md"
+  ],
+  "alignment": [
+    {
+      "id": "learn-path",
+      "needle": "/learn",
+      "packSurfaces": [
+        "README.md",
+        "session-script.md",
+        "observation-checklist.md",
+        "grown-up-prompt.md",
+        "readiness-checklist.md"
+      ],
+      "liveSurfaces": ["dist/index.html", "dist/learn/index.html"]
+    },
+    {
+      "id": "l01",
+      "needle": "L01",
+      "packSurfaces": [
+        "README.md",
+        "session-script.md",
+        "observation-checklist.md",
+        "readiness-checklist.md"
+      ],
+      "liveSurfaces": ["dist/index.html", "dist/learn/index.html"]
+    },
+    {
+      "id": "grown-up-view",
+      "needle": "?view=grown-up",
+      "packSurfaces": [
+        "session-script.md",
+        "grown-up-prompt.md",
+        "readiness-checklist.md"
+      ],
+      "liveSurfaces": ["dist/index.html", "dist/learn/index.html"]
+    },
+    {
+      "id": "journey-cta",
+      "needle": "Start First Piano Journey",
+      "packSurfaces": [
+        "README.md",
+        "session-script.md",
+        "readiness-checklist.md"
+      ],
+      "liveSurfaces": ["dist/index.html"]
+    },
+    {
+      "id": "n04-setup-strip",
+      "packNeedle": "setup strip",
+      "liveNeedle": "setup-strip",
+      "packSurfaces": [
+        "README.md",
+        "session-script.md",
+        "observation-checklist.md",
+        "readiness-checklist.md"
+      ],
+      "liveSurfaces": ["dist/learn/index.html", "dist/js/learn-view.js"]
+    },
+    {
+      "id": "n05-export-warning",
+      "needle": "new browser",
+      "packSurfaces": [
+        "README.md",
+        "session-script.md",
+        "observation-checklist.md",
+        "readiness-checklist.md"
+      ],
+      "liveSurfaces": ["dist/js/device-switch.js"]
+    },
+    {
+      "id": "n06-enough-for-today",
+      "needle": "Enough for today",
+      "packSurfaces": [
+        "README.md",
+        "session-script.md",
+        "observation-checklist.md",
+        "grown-up-prompt.md",
+        "readiness-checklist.md"
+      ],
+      "liveSurfaces": ["dist/learn/index.html", "dist/js/session-closer.js"]
+    },
+    {
+      "id": "n08-chrome-simulated",
+      "needle": "simulated",
+      "packSurfaces": [
+        "README.md",
+        "session-script.md",
+        "readiness-checklist.md"
+      ],
+      "liveSurfaces": ["docs/evidence/browsers/critical-path-matrix.md"]
+    },
+    {
+      "id": "n07-midi-unverified",
+      "packNeedle": "Physical MIDI hardware is not verified",
+      "liveNeedle": "Physical MIDI hardware is not verified",
+      "packSurfaces": ["README.md", "readiness-checklist.md"],
+      "liveSurfaces": ["dist/learn/index.html", "dist/js/setup-strip.js"]
+    },
+    {
+      "id": "n09-lesson-range",
+      "needle": "L01–L24",
+      "packSurfaces": ["README.md", "readiness-checklist.md"],
+      "liveSurfaces": ["dist/index.html", "README.md"]
+    }
+  ],
+  "blockedBrowserNeedles": ["Safari", "iPad", "Firefox", "BLOCKED"],
+  "blockedBrowserSurfaces": [
+    "docs/pilots/first-piano-journey-v1/README.md",
+    "docs/pilots/first-piano-journey-v1/session-script.md",
+    "docs/pilots/first-piano-journey-v1/readiness-checklist.md",
+    "docs/evidence/browsers/critical-path-matrix.md"
+  ],
+  "bannedUnqualifiedClaims": [
+    "works everywhere",
+    "works on every browser",
+    "works in all browsers",
+    "works on all browsers",
+    "hardware-verified",
+    "hardware midi verified",
+    "universal compatibility"
+  ],
+  "banScanSurfaces": [
+    "docs/pilots/first-piano-journey-v1/README.md",
+    "docs/pilots/first-piano-journey-v1/session-script.md",
+    "docs/pilots/first-piano-journey-v1/observation-checklist.md",
+    "docs/pilots/first-piano-journey-v1/grown-up-prompt.md",
+    "docs/pilots/first-piano-journey-v1/recruiting-notes.md",
+    "docs/pilots/first-piano-journey-v1/readiness-checklist.md"
+  ]
+}
