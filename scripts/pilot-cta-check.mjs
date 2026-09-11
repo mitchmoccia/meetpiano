@@ -541,4 +541,47 @@ assert(SETUP_COPY.midiIdle.includes('Physical MIDI hardware is not verified'), '
 assert(GROWNUP_HONESTY.includes('device-local observation aid'), 'grown-up helper stays a device-local aid');
 assert(!/verified badge|hardware certified|midi certified/i.test(honestySurface), 'honesty surfaces do not invent a verified badge');
 
+const n08 = JSON.parse(read('scripts/fixtures/n08-cross-browser-honesty.json'));
+assert(existsSync(join(root, n08.matrixPath)), `critical-path matrix is at ${n08.matrixPath}`);
+assert(existsSync(join(root, n08.templatePath)), `critical-path row template is at ${n08.templatePath}`);
+const n08Matrix = read(n08.matrixPath);
+const rowTemplate = read(n08.templatePath);
+for (const column of n08.requiredColumns) {
+  assert(n08Matrix.includes(column), `matrix names column ${column}`);
+  assert(rowTemplate.includes(column), `row template includes column ${column}`);
+}
+for (const step of n08.requiredCriticalPath) {
+  assert(n08Matrix.includes(step), `matrix names critical-path step ${step}`);
+  assert(rowTemplate.includes(step.replace('open `/learn`', 'open `/learn`')), `row template names critical-path step ${step}`);
+}
+for (const label of n08.requiredLabels) {
+  assert(n08Matrix.includes(label), `matrix defines label ${label}`);
+  assert(rowTemplate.includes(label), `row template defines label ${label}`);
+}
+assert(n08.untestedMustBeBlocked === true, 'fixture requires untested browsers to be BLOCKED');
+assert(/Untested browsers are BLOCKED/i.test(n08Matrix), 'matrix forbids silent green for untested browsers');
+assert(/not silent green/i.test(n08Matrix), 'matrix says untested rows are not silent green');
+for (const needle of n08.chromeBaselineMustInclude) {
+  assert(n08Matrix.includes(needle), `Chrome desktop baseline records ${needle}`);
+}
+assert(/Google Chrome 148[\s\S]*simulated/i.test(n08Matrix), 'Chrome desktop baseline is labeled simulated, not a silent all-browser pass');
+for (const row of n08.blockedRows) {
+  assert(n08Matrix.includes(row.name), `matrix includes a ${row.name} row`);
+  assert(n08Matrix.includes(row.reasonNeedle), `${row.name} row is BLOCKED with reason`);
+  assert(n08Matrix.includes(`BLOCKED — ${row.reasonNeedle}`) || n08Matrix.includes(`BLOCKED\` — ${row.reasonNeedle}`), `${row.name} is labeled BLOCKED, not silent green`);
+}
+assert(n08.bannedPhrases.includes('works everywhere'), 'N08 fixture bans works everywhere');
+assert(n08.bannedPhrases.includes('universal compatibility'), 'N08 fixture bans universal compatibility');
+assert(n08.bannedPhrases.includes('works in all browsers'), 'N08 fixture bans works in all browsers');
+
+const n08Surfaces = n08.honestySurfaces.map((rel) => {
+  assert(existsSync(join(root, rel)), `N08 honesty surface ${rel} exists`);
+  return read(rel);
+});
+const n08Surface = n08Surfaces.join('\n').toLowerCase();
+for (const phrase of n08.bannedPhrases) {
+  assert(!n08Surface.includes(phrase.toLowerCase()), `product honesty surfaces must not say ${phrase}`);
+}
+assert(!/\bworks everywhere\b/i.test(n08Matrix.split('What this matrix is not')[0]), 'matrix body before the ban list does not claim works everywhere');
+
 console.log('pilot pack and CTA checks passed');

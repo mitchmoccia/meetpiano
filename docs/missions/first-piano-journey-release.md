@@ -96,7 +96,7 @@ Claim only what was actually exercised. Empty cells are **unverified**.
 | Chrome emulated 390×844 + reduced motion | [mp-10](../evidence/first-piano-journey/mp-10.md) | Checked (emulated, not a physical phone) |
 | Web MIDI API present in Chrome | [mp-02](../evidence/first-piano-journey/mp-02.md) | API present; permission denied / unused |
 | **Hardware MIDI keyboard** | None | **Unverified** |
-| Safari / Firefox / iOS / iPadOS / Android | None in this mission | **Unverified** |
+| Safari / Firefox / iOS / iPadOS / Android | [N08 critical-path matrix](../evidence/browsers/critical-path-matrix.md) | **BLOCKED** in N08 (not silent green). Still untested here. |
 | Real tablet or phone touch | None (viewport only) | **Unverified** |
 | Spoken words on a real voice engine | MP-10 fixtures + Chrome speak button | Failure path checked; voice quality **unverified** |
 | Screen reader / full WCAG audit | None | **Unverified** |

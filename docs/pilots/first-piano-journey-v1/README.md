@@ -57,7 +57,7 @@ Adult notes about posture or fingers are **the adult’s eyes**, not app evidenc
 
 Written product checks so far used **Chrome on a Linux desktop (and an emulated phone viewport)**.
 
-Treat as **unverified** unless a later note says otherwise:
+Treat as **unverified** unless a later note says otherwise. N08 records those sitings as **BLOCKED** (not silent green) in [`../../evidence/browsers/critical-path-matrix.md`](../../evidence/browsers/critical-path-matrix.md):
 
 - Safari, Firefox, iOS, iPadOS, Android
 - A real tablet or phone in someone’s hands
