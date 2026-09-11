@@ -4,20 +4,21 @@ Materials for a **small usability sitting**. This pack does **not** authorize ou
 
 **Do not contact families. Do not send the invite. Mitch must approve outreach before anyone is asked.**
 
-Related: [`session-script.md`](session-script.md) · [`observation-checklist.md`](observation-checklist.md) · [`grown-up-prompt.md`](grown-up-prompt.md) · [`recruiting-notes.md`](recruiting-notes.md) · [`../../missions/first-piano-journey-release.md`](../../missions/first-piano-journey-release.md) · current live status [`../../missions/first-piano-journey-status.md`](../../missions/first-piano-journey-status.md)
+Related: [`session-script.md`](session-script.md) · [`observation-checklist.md`](observation-checklist.md) · [`grown-up-prompt.md`](grown-up-prompt.md) · [`recruiting-notes.md`](recruiting-notes.md) · [`readiness-checklist.md`](readiness-checklist.md) · [`../../missions/first-piano-journey-release.md`](../../missions/first-piano-journey-release.md) · current live status [`../../missions/first-piano-journey-status.md`](../../missions/first-piano-journey-status.md)
 
-Current live (N09, 2026-09-11): First Piano Journey **L01–L24** is on `main` @ `6ea24b9d36cfb71a07d5fb62b87451ded4456d62`. Hardware MIDI is unverified. Learning validation is pending. This pack still does not authorize outreach.
+Current live (N09, 2026-09-11): First Piano Journey **L01–L24** is on `main` @ `6ea24b9d36cfb71a07d5fb62b87451ded4456d62`. N10 re-verified tip at start: `09df2ba0b8fdd9631a22142d606be3857d7ea3c2` (N09 merge). Hardware MIDI is unverified. **Physical MIDI hardware is not verified.** Learning validation is pending. This pack still does not authorize outreach.
 
 ## Purpose
 
-Watch a child (about seven) and a nearby grown-up try **First Piano Journey** on `/learn` — First Notes, starting at Meet the keyboard (L01) and moving toward First little tune (L04) only if the sitting stays kind.
+Watch a child (about seven) and a nearby grown-up try **First Piano Journey** on `/learn` — First Notes, starting at Meet the keyboard (L01) and moving toward First little tune (L04) only if the sitting stays kind. Home **Journey** and **Start First Piano Journey** both open `/learn`.
 
 We want to see:
 
-- Where setup is confusing
+- Where setup is confusing (including the first-sit setup strip on the hub and L01)
 - Where they stall
 - What they need help with
-- Whether Pause, Hear the words, and the grown-up view are useful
+- Whether Pause, Hear the words, Enough for today, and the grown-up view are useful
+- Whether they notice that a new browser loses records unless they use the existing export
 - Whether they would want to come back on the **same device**
 
 We are **not** measuring whether anyone “got better at piano,” learned faster, or reached a grade.
@@ -30,7 +31,7 @@ We are **not** measuring whether anyone “got better at piano,” learned faste
 | Age | About seven, plus one grown-up in the room |
 | Path | First Notes L01 → toward L04. Do not rush Rhythm Club or later worlds |
 | Time | One sitting, about 30–40 minutes |
-| Browser | **Chrome on a computer** — that is the only setup we have written evidence for |
+| Browser | **Chrome on a computer** — written Chrome evidence is **simulated**. Safari, iPad, and Firefox are **BLOCKED** |
 | Product | `https://meetpiano.app/learn` on current live `main` @ `6ea24b9d36cfb71a07d5fb62b87451ded4456d62` (L01–L24), or a preview URL Mitch names |
 
 Do not add extra families “just in case.” Do not invite a class. Do not run this as a study with scores.
@@ -57,17 +58,31 @@ Adult notes about posture or fingers are **the adult’s eyes**, not app evidenc
 
 ## Chrome evidence limit
 
-Written product checks so far used **Chrome on a Linux desktop (and an emulated phone viewport)**.
+Written product checks so far used **Chrome on a Linux desktop (and an emulated phone viewport)**. That Chrome sitting is labeled **simulated** (N08). It is not a physical-device pass and not an all-browser pass.
 
 Treat as **unverified** unless a later note says otherwise. N08 records those sitings as **BLOCKED** (not silent green) in [`../../evidence/browsers/critical-path-matrix.md`](../../evidence/browsers/critical-path-matrix.md):
 
-- Safari, Firefox, iOS, iPadOS, Android
+- Safari, Firefox, iOS, iPad / iPadOS, Android
 - A real tablet or phone in someone’s hands
-- A physical MIDI keyboard
+- A physical MIDI keyboard (**Physical MIDI hardware is not verified**)
 - Screen-reader or full accessibility audit
 - Spoken-word quality on a home voice engine
 
 If a family only has another browser, the facilitator may still sit with them — but record the browser honestly and do not treat that sitting as “Chrome evidence.”
+
+## Pack ↔ live (N10)
+
+The sitting uses the live product as it is today. Do not invent extra screens. See [`readiness-checklist.md`](readiness-checklist.md).
+
+| Live surface | Pack uses |
+| --- | --- |
+| `/learn` and L01 | Sitting path starts here |
+| Home **Journey** / **Start First Piano Journey** | Optional entry; both open `/learn` |
+| First-sit setup strip (N04) | Hub and L01 may show Wake the sound / Try a key / MIDI optional |
+| Grown-up `?view=grown-up` | Helper card; not a login |
+| Device-switch warning (N05) | A new browser loses records unless existing Export JSON → Import JSON |
+| Enough for today (N06) | Kind closer; not Pause |
+| N07 / N08 / N09 | MIDI unverified; Chrome **simulated**; Safari / iPad / Firefox **BLOCKED**; **L01–L24** at tip |
 
 ## Device-local honesty
 
@@ -75,8 +90,9 @@ Say this out loud (the script has the words):
 
 - Progress stays **on this browser / this device**. There is no account.
 - Reloading the marketing mini-adventure resets session XP. That is not journey progress.
-- Export (optional) is a file the grown-up keeps. Nothing is uploaded to MeetPiano.
-- Touch on the on-screen keys is **never** MIDI verified.
+- Export (optional) is a file the grown-up keeps. Nothing is uploaded to MeetPiano. A new browser will not have these records unless they use that existing export.
+- Touch on the on-screen keys is **never** MIDI verified. **Physical MIDI hardware is not verified.**
+- Enough for today ends the sit kindly. It is not Pause.
 - The app cannot see sitting, fingers, or which hand.
 
 ## Approval before outreach

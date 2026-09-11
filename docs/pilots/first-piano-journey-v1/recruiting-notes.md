@@ -8,6 +8,8 @@ This file is a **draft**. It is not an email campaign. It is not permission to t
 
 When Mitch says go, send only to people Mitch names, one note at a time. Cap: **3–5 families**.
 
+If outreach is not approved, escalate to **Gort** / **Mitch** in notes only. Do not send invites. Do not recruit. Do not contact families.
+
 ---
 
 ## Who to ask (suggested, not invited)

@@ -2,7 +2,7 @@
 
 Materials for Mitch and Gort. This packet does **not** merge, promote production, change DNS, or change the Vercel project. It does **not** contact educators or learners.
 
-Related: [`first-piano-journey.md`](first-piano-journey.md) · [`first-piano-journey-slices.md`](first-piano-journey-slices.md) · [`first-piano-journey-status.md`](first-piano-journey-status.md) · [`../evidence/first-piano-journey/mp-11.md`](../evidence/first-piano-journey/mp-11.md) · N09 fixture [`../../scripts/fixtures/n09-docs-tip-refresh.json`](../../scripts/fixtures/n09-docs-tip-refresh.json)
+Related: [`first-piano-journey.md`](first-piano-journey.md) · [`first-piano-journey-slices.md`](first-piano-journey-slices.md) · [`first-piano-journey-status.md`](first-piano-journey-status.md) · [`../evidence/first-piano-journey/mp-11.md`](../evidence/first-piano-journey/mp-11.md) · N09 fixture [`../../scripts/fixtures/n09-docs-tip-refresh.json`](../../scripts/fixtures/n09-docs-tip-refresh.json) · N10 readiness fixture [`../../scripts/fixtures/n10-pilot-readiness.json`](../../scripts/fixtures/n10-pilot-readiness.json)
 
 ## Current live (N09, 2026-09-11)
 
@@ -133,7 +133,8 @@ The thin sitting outline that used to live here is replaced by the v1 pack:
 | File | Use |
 | --- | --- |
 | [`README.md`](../pilots/first-piano-journey-v1/README.md) | Purpose, 3–5 family cap, usability-not-efficacy success, Chrome evidence limit, device-local honesty |
-| [`session-script.md`](../pilots/first-piano-journey-v1/session-script.md) | What the facilitator says (setup, L01→toward L04, grown-up view, export optional) |
+| [`readiness-checklist.md`](../pilots/first-piano-journey-v1/readiness-checklist.md) | Pack ↔ live agreement (N10). Materials only. **DO NOT SEND.** |
+| [`session-script.md`](../pilots/first-piano-journey-v1/session-script.md) | What the facilitator says (setup strip, L01→toward L04, grown-up view, export warning, Enough for today) |
 | [`observation-checklist.md`](../pilots/first-piano-journey-v1/observation-checklist.md) | Setup friction, stalls, assistance, tools, input mode; adult posture/fingers kept separate |
 | [`grown-up-prompt.md`](../pilots/first-piano-journey-v1/grown-up-prompt.md) | Short grown-up sheet — no grading language |
 | [`recruiting-notes.md`](../pilots/first-piano-journey-v1/recruiting-notes.md) | Draft invite marked **DO NOT SEND until Mitch authorizes outreach** |

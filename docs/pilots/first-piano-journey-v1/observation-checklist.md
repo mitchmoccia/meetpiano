@@ -5,8 +5,8 @@ Facilitator (or a second adult) fills this **during or right after** the sitting
 Do **not** score the child. Do **not** turn notes into an efficacy claim.
 
 Sitting date: _______________  
-Browser / device: _______________ (Chrome on a computer is the evidence we have; write others honestly)  
-URL used: _______________  
+Browser / device: _______________ (Chrome on a computer is the written evidence; that sitting was **simulated**. Safari / iPad / Firefox are **BLOCKED** — write others honestly)  
+URL used: _______________ (`/learn`, or home **Start First Piano Journey** → `/learn`)  
 Who was in the room: child (about age ___) + grown-up + facilitator  
 
 ---
@@ -16,9 +16,11 @@ Who was in the room: child (about age ___) + grown-up + facilitator
 | Prompt | Notes |
 | --- | --- |
 | How long until `/learn` was on screen? | |
+| Did they use home **Journey** / **Start First Piano Journey**, or open `/learn` directly? | |
 | Did anyone struggle with the URL, Chrome, sound, or headphones? | |
+| First-sit setup strip (Wake the sound / Try a key / MIDI optional)? | Shown / used / skipped / already hidden |
 | Did they read the yellow disclosure (saved on this device / not an account / touch never MIDI verified)? | Yes / skimmed / skipped |
-| MIDI tried? | No / yes — make, OS, browser: _______________ |
+| MIDI tried? | No / yes — make, OS, browser: _______________ (still unverified as a product claim) |
 | Fresh grown-up view looked empty (nothing invented)? | Yes / no / did not open |
 
 ---
@@ -30,6 +32,7 @@ Mark the first place that needed a pause or a hint. Add later stalls if needed.
 | Spot | Stalled? | What happened |
 | --- | --- | --- |
 | Journey map / Start Meet the keyboard | | |
+| First-sit setup strip | | |
 | L01 high / low | | |
 | L01 clumps of two and three | | |
 | L01 grown-up posture check | | |
@@ -38,7 +41,8 @@ Mark the first place that needed a pause or a hint. Add later stalls if needed.
 | L03 Neighbors (if reached) | | |
 | L04 Little Wave (if reached) | | |
 | Grown-up view | | |
-| Export (if tried) | | |
+| Export / new browser warning (if tried) | | |
+| Enough for today | | |
 | Other: | | |
 
 Farthest lesson opened: L01 / L02 / L03 / L04 / other _______  
@@ -67,6 +71,7 @@ Who helped, and how much? (Facilitator should stay quiet until a stall.)
 | Yellow job on screen | | | |
 | Hear the words | | | Speech missing / failed / ok — still not a quality rating |
 | Pause | | | Try still waiting after Resume? |
+| Enough for today | | | Distinct from Pause? Named next unlocked / Continue? |
 | Grown-up view | | | Did it invent a later lesson? |
 
 ---
