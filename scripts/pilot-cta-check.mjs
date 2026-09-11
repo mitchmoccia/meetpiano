@@ -5,7 +5,7 @@ import { emptyStore } from '../dist/js/progress.js';
 import { recommendNext } from '../dist/js/recommend.js';
 import { parseGrownupView } from '../dist/js/learn-view.js';
 import { GROWNUP_HONESTY } from '../dist/js/grownup.js';
-import { JOURNEY_LESSONS, parseLessonId, parseUnitId } from '../dist/js/unit.js';
+import { JOURNEY_LESSONS, isLessonUnlocked, meetsUnlock, parseLessonId, parseUnitId } from '../dist/js/unit.js';
 import {
   SETUP_CONTINUE_HREF,
   SETUP_COPY,
@@ -25,6 +25,17 @@ import {
   EXISTING_EXPORT_ID,
   focusExistingExport
 } from '../dist/js/device-switch.js';
+import {
+  CLOSER_CONTROL_ID,
+  CLOSER_COPY,
+  CLOSER_CUE_ID,
+  CLOSER_HUB_ID,
+  CLOSER_OVERLAY_ID,
+  CLOSER_RESUME_ID,
+  CLOSER_STAY_ID,
+  closerResumeTarget
+} from '../dist/js/session-closer.js';
+import { clearPause, readPause, resumeHref, writePause } from '../dist/js/session-pause.js';
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -406,5 +417,94 @@ const fakeRoot = {
 assert(focusExistingExport(fakeRoot) === true, 'pointer helper finds the existing export');
 assert(exportControl.scrolled && exportControl.focused, 'pointer scrolls to and focuses the existing export');
 assert(focusExistingExport({ querySelector: () => null }) === false, 'pointer does not invent an export control');
+
+const n06 = JSON.parse(read('scripts/fixtures/n06-enough-for-today.json'));
+const closerJs = read('dist/js/session-closer.js');
+const pauseJs = read(n06.pauseModule);
+assert(CLOSER_CONTROL_ID === n06.controlId, 'closer control id matches the fixture');
+assert(CLOSER_OVERLAY_ID === n06.overlayId, 'closer overlay id matches the fixture');
+assert(CLOSER_RESUME_ID === n06.resumeId, 'closer resume id matches the fixture');
+assert(CLOSER_STAY_ID === n06.stayId, 'closer stay id matches the fixture');
+assert(CLOSER_HUB_ID === n06.hubId, 'closer hub id matches the fixture');
+assert(CLOSER_CUE_ID === n06.cueId, 'closer cue id matches the fixture');
+assert(CLOSER_COPY.controlLabel === n06.controlLabel, 'control label is Enough for today');
+assert(learnHtml.includes(`id="${n06.controlId}"`), 'learn HTML has the closer control');
+assert(learnHtml.includes(`id="${n06.overlayId}"`), 'learn HTML has the closer overlay');
+assert(learnHtml.includes('id="pause-overlay"') && learnHtml.includes('id="pause-button"'), 'Pause chrome stays');
+assert(learnHtml.indexOf(`id="${n06.overlayId}"`) !== learnHtml.indexOf('id="pause-overlay"'), 'closer overlay is distinct from Pause');
+assert(hubJs.includes('renderSessionCloser') && hubJs.includes('hub-enough'), 'hub can open the closer');
+assert(hubJs.includes('hub-continue'), 'Continue-hub stays');
+assert(learnJs.includes('onEnough: openCloser'), 'hub wires Enough for today');
+assert(learnJs.includes("import { clearPause, readPause, resumeHref, writePause } from '../js/session-pause.js'"), 'learn.js still uses session-pause');
+assert(!closerJs.includes('writePause') && !closerJs.includes('clearPause') && !closerJs.includes('PAUSE_KEY'), 'closer does not write or clear Pause');
+assert(!closerJs.includes(n06.pauseResumeQuery), 'closer resume is not the Pause resume query');
+assert(pauseJs.includes(`export const PAUSE_KEY = '${n06.pauseKey}'`), 'Pause storage key is unchanged');
+assert(pauseJs.includes('export function writePause') && pauseJs.includes('export function resumeHref'), 'Pause helpers stay exported');
+
+const pauseMemory = {
+  data: {},
+  getItem(key) { return Object.prototype.hasOwnProperty.call(this.data, key) ? this.data[key] : null; },
+  setItem(key, value) { this.data[key] = String(value); },
+  removeItem(key) { delete this.data[key]; }
+};
+const savedPause = writePause({ lessonId: 'L02', phase: 'guided', takeWasLive: false }, pauseMemory);
+assert(savedPause.lessonId === 'L02', 'Pause still writes a waiting try');
+assert(resumeHref(savedPause).includes(n06.pauseResumeQuery), 'Pause resume still uses resume=1');
+assert(readPause(pauseMemory).lessonId === 'L02', 'Pause still reads the waiting try');
+closerResumeTarget({ lessons: { L01: { evidenceState: 'practiced' } } });
+assert(readPause(pauseMemory).lessonId === 'L02', 'computing a closer resume does not clear Pause');
+assert(clearPause(pauseMemory) === true && readPause(pauseMemory) === null, 'Pause clear still works after closer');
+
+for (const row of n06.resumeTargets) {
+  const target = closerResumeTarget(row.store);
+  assert(target.lessonId === row.expectLessonId, `${row.reason} resume is ${row.expectLessonId}`);
+  assert(target.action === row.expectAction, `${row.reason} action is ${row.expectAction}`);
+  if (row.expectHref) assert(target.href === row.expectHref, `${row.reason} href is ${row.expectHref}`);
+  assert(!target.href.includes(row.mustNotIncludeHref), `${row.reason} href is not a Pause resume`);
+  assert(target.unlocked === true, `${row.reason} only names an unlocked lesson`);
+  assert(isLessonUnlocked(row.store, target.lessonId) === true, `${row.reason} target is unlocked`);
+  if (row.unlockedAlso) {
+    assert(isLessonUnlocked(row.store, row.unlockedAlso) === true, `${row.reason} still unlocks ${row.unlockedAlso}`);
+    assert(target.lessonId !== row.unlockedAlso, `${row.reason} follows existing Continue, not a skip ahead`);
+  }
+  if (row.lockedLessonId) {
+    assert(isLessonUnlocked(row.store, row.lockedLessonId) === false, `${row.reason} does not unlock ${row.lockedLessonId}`);
+    assert(target.lessonId !== row.lockedLessonId, `${row.reason} resume is not the locked lesson`);
+  }
+}
+
+for (const gate of n06.independentGates) {
+  const card = JOURNEY_LESSONS.find((item) => item.lessonId === gate.lessonId);
+  assert(card.unlocksAfter === gate.unlocksAfter, `${gate.lessonId} still unlocks after ${gate.unlocksAfter}`);
+  assert(card.unlockNeeds === gate.unlockNeeds, `${gate.lessonId} still needs Independent`);
+  assert(meetsUnlock('practiced', gate.unlockNeeds) === false, `${gate.lessonId} still rejects Practiced`);
+  assert(meetsUnlock('independent', gate.unlockNeeds) === true, `${gate.lessonId} still accepts Independent`);
+  const lockedStore = {
+    lessons: { [gate.unlocksAfter]: { evidenceState: 'practiced' } }
+  };
+  const openStore = {
+    lessons: { [gate.unlocksAfter]: { evidenceState: 'independent' } }
+  };
+  assert(isLessonUnlocked(lockedStore, gate.lessonId) === false, `${gate.lessonId} stays locked after Practiced`);
+  assert(isLessonUnlocked(openStore, gate.lessonId) === true, `${gate.lessonId} unlocks after Independent`);
+}
+
+const closerOwn = `${JSON.stringify(CLOSER_COPY)}\n${closerJs}`;
+const closerLower = closerOwn.toLowerCase();
+for (const phrase of n06.honestyMustInclude) {
+  assert(closerOwn.includes(phrase), `closer honesty states ${phrase}`);
+}
+for (const phrase of n06.bannedStreakPhrases) {
+  assert(!closerLower.includes(phrase.toLowerCase()), `closer must not pressure with ${phrase}`);
+}
+for (const phrase of n06.bannedMasteryPhrases) {
+  assert(!closerLower.includes(phrase.toLowerCase()), `closer must not invent ${phrase}`);
+}
+for (const phrase of n06.bannedGuiltPhrases) {
+  assert(!closerLower.includes(phrase.toLowerCase()), `closer must not guilt with ${phrase}`);
+}
+assert(!closerLower.includes('lime') && !closerOwn.includes('vermilion'), 'closer copy does not introduce banned palette names');
+assert(!/#00f|#4f46|#6366|linear-gradient/i.test(read('dist/learn/learn.css')), 'learn CSS still has no blue/purple gradient restyle after N06');
+assert(!/account|notification|push alert/i.test(JSON.stringify(CLOSER_COPY)), 'closer does not add accounts or notifications');
 
 console.log('pilot pack and CTA checks passed');
