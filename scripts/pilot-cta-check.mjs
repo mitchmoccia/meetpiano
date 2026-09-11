@@ -584,4 +584,54 @@ for (const phrase of n08.bannedPhrases) {
 }
 assert(!/\bworks everywhere\b/i.test(n08Matrix.split('What this matrix is not')[0]), 'matrix body before the ban list does not claim works everywhere');
 
+const n09 = JSON.parse(read('scripts/fixtures/n09-docs-tip-refresh.json'));
+assert(/^[0-9a-f]{40}$/.test(n09.mainTipSha), 'N09 fixture records a full 40-character tip SHA');
+assert(n09.mainTipSha === '6ea24b9d36cfb71a07d5fb62b87451ded4456d62', 'N09 fixture tip SHA matches the re-verified N08 main tip');
+assert(n09.liveLessonRange === 'L01–L24', 'N09 fixture live range is L01–L24');
+assert(n09.hardwareMidiStatus === 'unverified', 'N09 fixture keeps hardware MIDI unverified');
+assert(n09.learningValidationStatus === 'pending', 'N09 fixture keeps learning validation pending');
+assert(n09.chromeLabel === 'simulated', 'N09 fixture keeps Chrome labeled simulated');
+assert(n09.blockedBrowsers.join(',') === 'Safari,iPadOS,Firefox', 'N09 fixture keeps Safari / iPadOS / Firefox BLOCKED');
+assert(n09.formerTipShaShort === '3da09b9', 'N09 fixture names the banned former short tip');
+assert(n09.formerTipShaFull === '3da09b909fc54aaf54f0be8b00b374c3adf5cf5f', 'N09 fixture names the banned former full tip');
+
+const n09Surfaces = n09.currentLiveSurfaces.map((rel) => {
+  assert(existsSync(join(root, rel)), `N09 current-live surface ${rel} exists`);
+  return { rel, text: read(rel) };
+});
+for (const rel of n09.surfacesMustIncludeTipSha) {
+  const row = n09Surfaces.find((item) => item.rel === rel);
+  assert(row, `N09 tip-SHA surface ${rel} is listed`);
+  assert(row.text.includes(n09.mainTipSha), `${rel} records current tip ${n09.mainTipSha}`);
+}
+for (const rel of n09.surfacesMustIncludeLiveRange) {
+  const row = n09Surfaces.find((item) => item.rel === rel);
+  assert(row, `N09 live-range surface ${rel} is listed`);
+  assert(row.text.includes(n09.liveLessonRange), `${rel} states live range ${n09.liveLessonRange}`);
+}
+
+const statusBoard = read('docs/missions/first-piano-journey-status.md');
+for (const phrase of n09.statusMustNotInclude) {
+  assert(!statusBoard.includes(phrase), `status board must not treat ${phrase} as current`);
+}
+assert(statusBoard.includes(n09.liveLessonRange), 'status board states L01–L24 is live');
+assert(/Learning validation pending/i.test(statusBoard), 'status board keeps learning validation pending');
+assert(/Hardware MIDI unverified/i.test(statusBoard), 'status board keeps hardware MIDI unverified');
+
+const n09Joined = n09Surfaces.map((item) => item.text).join('\n');
+for (const phrase of n09.bannedCurrentLivePhrases) {
+  assert(!n09Joined.includes(phrase), `current-live surfaces must not still claim “${phrase}”`);
+}
+for (const phrase of n09.honestyMustInclude) {
+  assert(n09Joined.includes(phrase), `current-live surfaces still state ${phrase}`);
+}
+assert(n09Joined.includes('Current live (N09'), 'current-live surfaces name the N09 refresh');
+assert(!/Live brand today is L01–L12|live brand still merged `main` only \(L01–L12\)/.test(n09Joined), 'current-live surfaces do not keep L01–L12 as the live range');
+
+const packetCurrent = packet.split('## Status labels')[0];
+assert(packetCurrent.includes(n09.mainTipSha), 'release packet current-live section records the tip SHA');
+assert(packetCurrent.includes(n09.liveLessonRange), 'release packet current-live section states L01–L24');
+assert(!packetCurrent.includes('Lessons | L01–L12 |'), 'release packet current-live section does not list L01–L12 as the live lesson column');
+assert(packet.includes('former tip `3da09b9`') || packet.includes('Former tip (not current)'), 'release packet marks 3da09b9 as former, not current');
+
 console.log('pilot pack and CTA checks passed');

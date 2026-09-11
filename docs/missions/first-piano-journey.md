@@ -1,6 +1,6 @@
 # First Piano Journey — mission runbook
 
-Canonical mission specification for MeetPiano slice work **MP-00 through MP-11**. This file is the runbook. Slice cards live in [`first-piano-journey-slices.md`](first-piano-journey-slices.md). Live status lives in [`first-piano-journey-status.md`](first-piano-journey-status.md). The teaching contract lives in [`../curriculum/beginner-v1.md`](../curriculum/beginner-v1.md).
+Canonical mission specification for MeetPiano slice work **MP-00 through MP-11**. This file is the runbook. Slice cards live in [`first-piano-journey-slices.md`](first-piano-journey-slices.md). Live status lives in [`first-piano-journey-status.md`](first-piano-journey-status.md). The teaching contract lives in [`../curriculum/beginner-v1.md`](../curriculum/beginner-v1.md). Current live (N09, 2026-09-11): First Piano Journey **L01–L24** on `main` @ `6ea24b9d36cfb71a07d5fb62b87451ded4456d62`.
 
 MP-00 establishes this mission and the first lesson specification only. It does **not** rewrite the app framework, add a design system, or change `dist/` product behavior.
 
@@ -8,7 +8,7 @@ MP-00 establishes this mission and the first lesson specification only. It does 
 
 Help a young beginner and a nearby grown-up take a first, honest piano journey: sit at a keyboard, hear high and low, find C from the two-black-key landmark, play C–D–E as neighbors, and finish a short original three-note tune they can play again later.
 
-The product name for this path is **First Piano Journey**. Curriculum version: **beginner-v1**. The learner-facing surface for later slices is **`/learn`**. That path does not exist on production today (HTTP 404 as of the inspection below). MP-01 is scoped to ship a playable `/learn` result immediately from this spec.
+The product name for this path is **First Piano Journey**. Curriculum version: **beginner-v1**. The learner-facing surface for later slices is **`/learn`**. MP-00 recorded that path as HTTP 404 on 2026-09-08. Current live (N09, 2026-09-11): `/learn` serves **L01–L24** at `main` @ `6ea24b9d36cfb71a07d5fb62b87451ded4456d62`. MP-01 was the slice that first shipped a playable `/learn` result from this spec.
 
 This phase does not claim that the app replaces a teacher, that MIDI proves technique, or that any sequence is educator-approved. Those claims are out of scope and must not be fabricated.
 
@@ -60,7 +60,7 @@ Recorded 2026-09-08. Only list what was actually checked.
 | Vercel project `meetpiano` | Works | `framework: null`, empty install/build, `outputDirectory: dist` in repo `vercel.json`; production alias `meetpiano.vercel.app` returns HTTP 200 |
 | Custom domain `https://meetpiano.app` | Works | HTTP 200 from Vercel on 2026-09-08 (~18:23 America/New_York). Brand domain is already live. |
 | `www.meetpiano.app` | Does not resolve | DNS lookup failed on 2026-09-08. Not a blocker for this mission. |
-| `/learn` on production | Works | `https://meetpiano.app/learn` returns HTTP 200 and serves First Notes + Rhythm Club + Read and play (L01–L12) on live `main` @ `3da09b9` (verified 2026-09-09). Left hand through Expression are on the stacked PRs only. |
+| `/learn` on production | Works | `https://meetpiano.app/learn` returns HTTP 200 and serves First Notes through Expression (**L01–L24**) on live `main` @ `6ea24b9d36cfb71a07d5fb62b87451ded4456d62` (re-verified 2026-09-11). Hardware MIDI unverified. Learning validation pending. |
 | GitHub-linked Vercel project `meetpiano-app` | Deleted | Removed. Canonical hosting is the single Vercel project `meetpiano` plus `https://meetpiano.app`. |
 | Hourly resume routines | Not configured | No scheduled resume, heartbeat, or slice-runner automation is set up yet. |
 
@@ -69,7 +69,7 @@ Recorded 2026-09-08. Only list what was actually checked.
 Inspected **2026-09-08 ~18:23 America/New_York**.
 
 - Repo: https://github.com/mitchmoccia/meetpiano
-- Live `main` SHA (MP-00 inspect): `2385bd72a176c140aaf4a50849d197adea69579b`. Current live `main` (2026-09-09): `3da09b909fc54aaf54f0be8b00b374c3adf5cf5f` (PR #9 / MP-06). Production deploy `dpl_CMUa49cvzShs9x59RDrpQVJ6iMJ3`.
+- Live `main` SHA (MP-00 inspect): `2385bd72a176c140aaf4a50849d197adea69579b`. Former live `main` (2026-09-09 / MP-11 inspect): `3da09b909fc54aaf54f0be8b00b374c3adf5cf5f` (PR #9 / MP-06, then L01–L12) — **not current**. Current live `main` (N09, 2026-09-11): `6ea24b9d36cfb71a07d5fb62b87451ded4456d62` (PR #24 / N08). L01–L24.
 - Message: `Import complete MeetPiano site, artwork, piano demo, and Vercel configuration`
 - Extra branch `cursor/setup-cloud-agent-env-d108` is **+1 commit** (`b141d3489fb29845937a63d5361b21e9ca3125aa`) adding only `.cursor/environment.json`. Do not merge or delete it. Leave it alone.
 - Hosting: single Vercel project `meetpiano` in `mitchmoccias-projects` plus `https://meetpiano.app`. The former GitHub-linked project `meetpiano-app` was deleted. `vercel.json` uses `outputDirectory: dist` and empty build/install commands.

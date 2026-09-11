@@ -1,0 +1,60 @@
+{
+  "verifiedDate": "2026-09-11",
+  "mainTipSha": "6ea24b9d36cfb71a07d5fb62b87451ded4456d62",
+  "mainTipSubject": "Merge pull request #24 from mitchmoccia/cursor/n08-cross-browser-matrix-69dd",
+  "liveLessonRange": "L01–L24",
+  "liveWorlds": [
+    "First Notes",
+    "Rhythm Club",
+    "Read and play",
+    "Left hand",
+    "Together",
+    "Expression"
+  ],
+  "hardwareMidiStatus": "unverified",
+  "learningValidationStatus": "pending",
+  "chromeLabel": "simulated",
+  "blockedBrowsers": ["Safari", "iPadOS", "Firefox"],
+  "formerTipShaShort": "3da09b9",
+  "formerTipShaFull": "3da09b909fc54aaf54f0be8b00b374c3adf5cf5f",
+  "currentLiveSurfaces": [
+    "docs/missions/first-piano-journey-status.md",
+    "docs/missions/first-piano-journey-release.md",
+    "docs/missions/first-piano-journey.md",
+    "docs/missions/first-piano-journey-slices.md",
+    "README.md",
+    "docs/pilots/first-piano-journey-v1/README.md"
+  ],
+  "surfacesMustIncludeTipSha": [
+    "docs/missions/first-piano-journey-status.md",
+    "docs/missions/first-piano-journey-release.md",
+    "docs/missions/first-piano-journey.md",
+    "docs/missions/first-piano-journey-slices.md",
+    "README.md",
+    "docs/pilots/first-piano-journey-v1/README.md"
+  ],
+  "surfacesMustIncludeLiveRange": [
+    "docs/missions/first-piano-journey-status.md",
+    "docs/missions/first-piano-journey-release.md",
+    "README.md",
+    "docs/pilots/first-piano-journey-v1/README.md"
+  ],
+  "statusMustNotInclude": [
+    "3da09b9",
+    "L01–L12 + MP-06"
+  ],
+  "bannedCurrentLivePhrases": [
+    "Live brand today is L01–L12",
+    "live brand still merged `main` only (L01–L12)",
+    "Left hand, Together, Expression, and MP-10 UX are **not** on the live brand",
+    "Brand `https://meetpiano.app/learn` remains the live L01–L12 site",
+    "Live `/learn` is First Notes + Rhythm Club + Read and play (**L01–L12**)"
+  ],
+  "honestyMustInclude": [
+    "Learning validation pending",
+    "Hardware MIDI",
+    "unverified",
+    "simulated",
+    "BLOCKED"
+  ]
+}

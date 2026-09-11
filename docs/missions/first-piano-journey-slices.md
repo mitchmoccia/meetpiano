@@ -4,7 +4,7 @@ Ordered cards **MP-00 through MP-11**. Status values: `verified` · `working` ·
 
 Acceptance summaries are taken from the runbook [`first-piano-journey.md`](first-piano-journey.md). Teaching detail is in [`../curriculum/beginner-v1.md`](../curriculum/beginner-v1.md).
 
-MP-00 is marked **verified** because the mission and lesson specification docs are complete. MP-01 is **verified** and merged to `main`. MP-02 is **software/fixture verified** (Gort accepted; hardware MIDI unverified — not a MIDI-verified release). MP-03 First Notes, MP-04 Rhythm Club, MP-05 Read and play, and MP-06 device-local progress are **working** and merged to `main`. MP-07 Left hand (L13–L16) is **working** on `piany/mp-07-left-hand`. MP-08 Together (L17–L20) is **working** on `piany/mp-08-together`. MP-09 Expression (L21–L24) is **working** on `piany/mp-09-expression-recital` (Checkpoint B). MP-10 kid-and-grown-up UX is **working** on `piany/mp-10-kid-grownup-ux`. MP-11 is the release verification packet on `piany/mp-11-release-packet` — **engineering preview ready on the stack**, **learning validation pending**, live brand still merged `main` only (L01–L12). Later leftover outlines stay **queued**. The original isolated MP-04/MP-05 cards (L03/L04) landed with Checkpoint A. Historical MP-05 (L04 First little tune) is recorded below as MP-05b. Historical MP-11 (export/import UI) landed with MP-06.
+MP-00 is marked **verified** because the mission and lesson specification docs are complete. MP-01 is **verified** and merged to `main`. MP-02 is **software/fixture verified** (Gort accepted; hardware MIDI unverified — not a MIDI-verified release). MP-03 through MP-11 and N01–N08 are on `main`. **Current live (N09, 2026-09-11):** First Piano Journey **L01–L24** at `6ea24b9d36cfb71a07d5fb62b87451ded4456d62`. **Learning validation pending.** Hardware MIDI unverified (N07). Chrome desktop sitings are **simulated**; Safari / iPadOS / Firefox are **BLOCKED** (N08). Later leftover outlines stay **queued**. The original isolated MP-04/MP-05 cards (L03/L04) landed with Checkpoint A. Historical MP-05 (L04 First little tune) is recorded below as MP-05b. Historical MP-11 (export/import UI) landed with MP-06. Individual cards below keep their original branch fields; they are not a pending stack.
 
 ---
 
@@ -326,12 +326,13 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 
 | Field | Value |
 | --- | --- |
-| Status | **working** (packet ready; merge/deploy gated) |
+| Status | **working** (packet on `main`; current-live tables refreshed in N09) |
 | Depends on | MP-10 |
-| Branch | `piany/mp-11-release-packet` |
+| Branch | `piany/mp-11-release-packet` (historical) |
 | Base | `piany/mp-10-kid-grownup-ux` @ `2fdcfad0e8bdc62bb6511f0790855c532a0cc198` |
 | Packet | [`first-piano-journey-release.md`](first-piano-journey-release.md) |
-| PR | https://github.com/mitchmoccia/meetpiano/pull/14 (draft into `piany/mp-10-kid-grownup-ux`) |
+| PR | https://github.com/mitchmoccia/meetpiano/pull/14 (merged via the later stack) |
+| Current live (N09) | L01–L24 at `6ea24b9d36cfb71a07d5fb62b87451ded4456d62`. Learning validation pending. Hardware MIDI unverified. |
 
 **Learner outcome.** No new lesson. A grown-up reviewing the stack can read what was actually checked, what is live versus stacked, how to merge, and what public copy must not say.
 
@@ -342,7 +343,7 @@ MP-00 is marked **verified** because the mission and lesson specification docs a
 - Pilot packet outline for educator/learner review (scripts and materials only — do not contact anyone).
 - Small documented fixes only. Home nav says Learn because `/learn` has six worlds on this stack.
 - Evidence file includes a recovery plan and public-copy constraints.
-- Labels stay accurate: engineering preview ready on the stack; learning validation pending; live brand is merged `main` only (L01–L12 + MP-06 progress + copyright).
+- Labels stay accurate: engineering preview ready on merged `main`; learning validation pending; live brand is merged `main` only (L01–L24 at `6ea24b9d36cfb71a07d5fb62b87451ded4456d62`).
 - Merge order recommendation is #10 → #13, then this packet. Post-merge checklist covers `meetpiano.app/learn` with all six worlds.
 - Export/import and disclosure already shipped in MP-06. This slice does not re-implement them.
 - Excludes guaranteed outcomes, full beginner proficiency, educator-approval badges, and a live release from tests alone.
