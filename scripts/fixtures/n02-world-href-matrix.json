@@ -1,0 +1,57 @@
+{
+  "liveUnitIds": [
+    "first-notes",
+    "rhythm-club",
+    "read-and-play",
+    "left-hand",
+    "together",
+    "expression"
+  ],
+  "unitTitles": {
+    "first-notes": "First Notes",
+    "rhythm-club": "Rhythm Club",
+    "read-and-play": "Read and play",
+    "left-hand": "Left hand",
+    "together": "Together",
+    "expression": "Expression"
+  },
+  "futureLabelMustInclude": "Coming later",
+  "worlds": [
+    {
+      "stop": "01",
+      "label": "First Notes",
+      "learnHref": "/learn/?unit=first-notes",
+      "future": false
+    },
+    {
+      "stop": "02",
+      "label": "Rhythm Club",
+      "learnHref": "/learn/?unit=rhythm-club",
+      "future": false
+    },
+    {
+      "stop": "03",
+      "label": "Read and play",
+      "learnHref": "/learn/?unit=read-and-play",
+      "future": false
+    },
+    {
+      "stop": "04",
+      "label": "Left hand",
+      "learnHref": "/learn/?unit=left-hand",
+      "future": false
+    },
+    {
+      "stop": "05",
+      "label": "Together",
+      "learnHref": "/learn/?unit=together",
+      "future": false
+    },
+    {
+      "stop": "06",
+      "label": "Expression",
+      "learnHref": "/learn/?unit=expression",
+      "future": false
+    }
+  ]
+}

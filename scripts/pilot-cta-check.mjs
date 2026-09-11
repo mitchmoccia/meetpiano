@@ -3,6 +3,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { emptyStore } from '../dist/js/progress.js';
 import { recommendNext } from '../dist/js/recommend.js';
+import { JOURNEY_LESSONS, parseLessonId, parseUnitId } from '../dist/js/unit.js';
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -83,11 +84,80 @@ assert(home.includes('/learn/?unit=expression'), 'home still deep-links Expressi
 assert(home.includes('data-copyright-year') && home.includes('Xpancom, LLC'), 'home copyright stays');
 
 const worldBlock = appJs.slice(appJs.indexOf('const worlds'), appJs.indexOf('const names'));
-assert(worldBlock.includes("learnHref:'/learn/?unit=first-notes'"), 'world 01 links the live First Notes unit');
-assert(worldBlock.includes("learnHref:'/learn/?unit=rhythm-club'"), 'world 02 links the live Rhythm Club unit');
-assert(!/WORLD 03[\s\S]*learnHref/.test(worldBlock), 'marketing world 03 has no playable /learn claim');
-assert(!/WORLD 04[\s\S]*learnHref/.test(worldBlock), 'marketing world 04 has no playable /learn claim');
-assert(!/WORLD 05[\s\S]*learnHref/.test(worldBlock), 'marketing world 05 has no playable /learn claim');
+const matrix = JSON.parse(read('scripts/fixtures/n02-world-href-matrix.json'));
+const liveUnitIds = matrix.liveUnitIds;
+const unitTitles = matrix.unitTitles;
+assert(liveUnitIds.join(',') === 'first-notes,rhythm-club,read-and-play,left-hand,together,expression', 'fixture lists the six live unit ids');
+assert(liveUnitIds.every((id) => parseUnitId(id) === id), 'fixture unit ids parse as catalog units');
+
+const appWorlds = [...worldBlock.matchAll(/\{([^}]+)\}/g)].map((match) => {
+  const body = match[1];
+  const get = (key) => {
+    const found = body.match(new RegExp(`${key}:'([^']*)'`));
+    return found ? found[1] : null;
+  };
+  return {
+    kicker: get('kicker'),
+    learnHref: get('learnHref'),
+    learnLabel: get('learnLabel'),
+    futureLabel: get('futureLabel'),
+    future: /\bfuture:\s*true\b/.test(body)
+  };
+});
+const htmlStops = [...home.matchAll(/<button class="journey-stop[^"]*"[^>]*data-world="(\d+)"[\s\S]*?<strong>([^<]+)<\/strong>(?:<span>([^<]*)<\/span>)?/g)];
+assert(htmlStops.length === matrix.worlds.length, `home map has ${matrix.worlds.length} world stops`);
+assert(appWorlds.length === matrix.worlds.length, `app.js worlds match the ${matrix.worlds.length}-stop fixture`);
+
+const linkedUnits = new Set();
+const invented = [];
+matrix.worlds.forEach((expected, index) => {
+  const appWorld = appWorlds[index];
+  const stop = htmlStops[index];
+  assert(stop, `home has journey stop ${expected.stop}`);
+  assert(stop[1] === String(index), `stop ${expected.stop} data-world is ${index}`);
+  assert(stop[2] === expected.label, `stop ${expected.stop} label is ${expected.label}`);
+  assert(appWorld, `app.js has world ${expected.stop}`);
+
+  if (expected.future) {
+    assert(!expected.learnHref && !appWorld.learnHref, `future world ${expected.stop} has no /learn href`);
+    assert(appWorld.future === true, `world ${expected.stop} is marked future in app.js`);
+    const futureCopy = `${appWorld.futureLabel || ''} ${matrix.futureLabelMustInclude}`;
+    assert(futureCopy.includes(matrix.futureLabelMustInclude), `future world ${expected.stop} uses the Coming later label`);
+    return;
+  }
+
+  assert(expected.learnHref && appWorld.learnHref === expected.learnHref, `world ${expected.stop} href matches the fixture`);
+  assert(!appWorld.future, `live world ${expected.stop} is not marked future`);
+  const unitMatch = expected.learnHref.match(/[?&]unit=([^&]+)/);
+  const lessonMatch = expected.learnHref.match(/[?&]lesson=(L\d+)/i);
+  if (unitMatch) {
+    const unitId = parseUnitId(unitMatch[1]);
+    assert(unitId && liveUnitIds.includes(unitId), `world ${expected.stop} links a live unit id`);
+    assert(expected.label === unitTitles[unitId], `world ${expected.stop} label matches ${unitTitles[unitId]}`);
+    assert(appWorld.learnLabel.includes(unitTitles[unitId]), `world ${expected.stop} learnLabel names ${unitTitles[unitId]}`);
+    linkedUnits.add(unitId);
+  } else if (lessonMatch) {
+    const lessonId = parseLessonId(lessonMatch[1]);
+    assert(lessonId && JOURNEY_LESSONS.some((item) => item.lessonId === lessonId), `world ${expected.stop} links a real lesson`);
+    const lesson = JOURNEY_LESSONS.find((item) => item.lessonId === lessonId);
+    linkedUnits.add(lesson.unitId);
+  } else {
+    invented.push(expected.learnHref);
+  }
+});
+assert(invented.length === 0, `no invented world slugs: ${invented.join(', ')}`);
+const leftoverLive = liveUnitIds.filter((id) => !linkedUnits.has(id));
+for (const id of liveUnitIds) {
+  const titled = matrix.worlds.filter((world) => world.label === unitTitles[id]);
+  for (const world of titled) {
+    assert(!world.future, `${unitTitles[id]} is a live unit and must not be a future panel`);
+    assert((world.learnHref || '').includes(`unit=${id}`), `${unitTitles[id]} panel href matches that unit`);
+  }
+}
+assert(leftoverLive.every((id) => !matrix.worlds.some((world) => world.label === unitTitles[id])), 'omitted live units do not keep a same-named dead panel');
+assert(!home.includes('Two-Hand Land'), 'retired Two-Hand Land marketing name is gone');
+assert(!home.includes('Make It Yours'), 'retired Make It Yours marketing name is gone');
+assert(!home.includes('The Big Stage'), 'retired The Big Stage marketing name is gone');
 
 const bannedHome = ['limited time', 'only today', 'buy now', 'teacher approved', 'grade 1', 'midi-verified'];
 const homeLower = home.toLowerCase();
