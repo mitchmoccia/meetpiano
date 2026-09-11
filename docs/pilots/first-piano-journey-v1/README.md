@@ -4,7 +4,9 @@ Materials for a **small usability sitting**. This pack does **not** authorize ou
 
 **Do not contact families. Do not send the invite. Mitch must approve outreach before anyone is asked.**
 
-Related: [`session-script.md`](session-script.md) · [`observation-checklist.md`](observation-checklist.md) · [`grown-up-prompt.md`](grown-up-prompt.md) · [`recruiting-notes.md`](recruiting-notes.md) · [`../../missions/first-piano-journey-release.md`](../../missions/first-piano-journey-release.md)
+Related: [`session-script.md`](session-script.md) · [`observation-checklist.md`](observation-checklist.md) · [`grown-up-prompt.md`](grown-up-prompt.md) · [`recruiting-notes.md`](recruiting-notes.md) · [`../../missions/first-piano-journey-release.md`](../../missions/first-piano-journey-release.md) · current live status [`../../missions/first-piano-journey-status.md`](../../missions/first-piano-journey-status.md)
+
+Current live (N09, 2026-09-11): First Piano Journey **L01–L24** is on `main` @ `6ea24b9d36cfb71a07d5fb62b87451ded4456d62`. Hardware MIDI is unverified. Learning validation is pending. This pack still does not authorize outreach.
 
 ## Purpose
 
@@ -29,7 +31,7 @@ We are **not** measuring whether anyone “got better at piano,” learned faste
 | Path | First Notes L01 → toward L04. Do not rush Rhythm Club or later worlds |
 | Time | One sitting, about 30–40 minutes |
 | Browser | **Chrome on a computer** — that is the only setup we have written evidence for |
-| Product | `https://meetpiano.app/learn` after Mitch has merged this work to `main`, or a preview URL Mitch names |
+| Product | `https://meetpiano.app/learn` on current live `main` @ `6ea24b9d36cfb71a07d5fb62b87451ded4456d62` (L01–L24), or a preview URL Mitch names |
 
 Do not add extra families “just in case.” Do not invite a class. Do not run this as a study with scores.
 
