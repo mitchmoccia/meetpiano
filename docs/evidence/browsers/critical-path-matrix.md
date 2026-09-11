@@ -59,6 +59,8 @@ Blank row for a later sitting: [`critical-path-row.template.md`](critical-path-r
 | (c) progress save | PASS | `meetpiano:beginner-v1` written on hub open (`touchSession`). L01 open created attempt `731ef47d-49a9-4cb6-9e71-06f6a4971822` on session `530b1bc4-e592-4426-bf80-9ff499530988`. Reload still had the same session and L01 attempt. |
 | (d) grown-up view | PASS | `/learn/?view=grown-up` title `Grown-up helper · First Piano Journey · MeetPiano`. Honesty includes device-local observation aid, not a login, and not privacy protection. |
 
+Headed Chrome 148 on the same VM walked the same four steps (hub → Wake the sound → Try a key → L01 → grown-up helper). The first-sit strip hid after Try a key. No speakers: still not a `listening` row. Grown-up view lists lessons with a stored evidence state; a fresh L01 attempt with `evidenceState: null` is not invented as an observed activity.
+
 Not claimed on this row: physical MIDI, Safari, iPadOS, Firefox, a real tablet, or spoken-word quality.
 
 ## BLOCKED rows (detail)
