@@ -3,7 +3,7 @@ import { JOURNEY_LESSONS, catalogCard, evidenceRank } from './unit.js';
 import { recommendNext } from './recommend.js';
 import { sourceHonesty } from './evidence.js';
 
-export const GROWNUP_HONESTY = 'This grown-up view lists what this browser already stored. It is a helper card for a person sitting nearby. It is not a login, not a parent account, and not privacy protection.';
+export const GROWNUP_HONESTY = 'This grown-up helper is a device-local observation aid. It lists what this browser already stored for a person sitting nearby. It is not a login, not a parent account, not a cloud parent account, and not privacy protection.';
 
 const OFFLINE = {
   L01: 'On a real piano or a paper keyboard, point to a clump of two black keys, then a clump of three. No app needed.',

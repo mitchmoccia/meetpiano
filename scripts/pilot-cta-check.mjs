@@ -3,6 +3,8 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { emptyStore } from '../dist/js/progress.js';
 import { recommendNext } from '../dist/js/recommend.js';
+import { parseGrownupView } from '../dist/js/learn-view.js';
+import { GROWNUP_HONESTY } from '../dist/js/grownup.js';
 import { JOURNEY_LESSONS, parseLessonId, parseUnitId } from '../dist/js/unit.js';
 
 function assert(condition, message) {
@@ -221,5 +223,40 @@ const learnHtml = read('dist/learn/index.html');
 assert(learnHtml.includes('device-disclosure'), 'learn keeps the yellow disclosure');
 assert(learnHtml.includes('id="kid-target"'), 'learn keeps yellow jobs');
 assert(learnHtml.includes('Xpancom, LLC'), 'learn copyright stays');
+
+const n03 = JSON.parse(read('scripts/fixtures/n03-grownup-discoverability.json'));
+const header = learnHtml.slice(learnHtml.indexOf('<header'), learnHtml.indexOf('</header>'));
+const footer = learnHtml.includes('<footer')
+  ? learnHtml.slice(learnHtml.indexOf('<footer'))
+  : '';
+assert(header.includes(`id="${n03.chromeControlId}"`), 'hub chrome has the grown-up helper control');
+assert(header.includes(n03.chromeControlClass), 'grown-up helper control is marked as hub chrome');
+assert(header.includes(`href="${n03.chromeHref}"`), 'hub chrome links /learn/?view=grown-up');
+const chromeBlock = header.slice(header.indexOf('learn-nav-actions'));
+assert(chromeBlock.includes(`id="${n03.chromeControlId}"`) && chromeBlock.includes(n03.chromeHref), 'grown-up helper sits in header actions, not only the foot');
+assert(!footer.includes(`id="${n03.chromeControlId}"`), 'the chrome control is not only a buried foot link');
+assert(n03.defaultViewMustNotBeGrownUp === true, 'fixture says default /learn is not grown-up');
+assert(parseGrownupView(null) === false, 'missing view stays on the kid hub');
+assert(parseGrownupView('') === false, 'empty view stays on the kid hub');
+assert(parseGrownupView('grown-up') === true, 'view=grown-up opens the helper');
+assert(!learnHtml.includes('view=grown-up" aria-current'), 'default learn HTML does not mark grown-up as the current view');
+const learnJs = read('dist/learn/learn.js');
+assert(learnJs.includes("parseGrownupView(params.get('view'))"), 'grown-up helper opens only from the view query');
+assert(!/const showGrownup = true/.test(learnJs), 'learn.js does not hard-open the grown-up helper');
+for (const phrase of n03.honestyMustInclude) {
+  assert(GROWNUP_HONESTY.includes(phrase), `grown-up honesty states ${phrase}`);
+}
+const grownupSurface = `${learnHtml}\n${hubJs}\n${GROWNUP_HONESTY}\n${read('dist/js/grownup.js')}`;
+const grownupLower = grownupSurface.toLowerCase();
+for (const phrase of n03.bannedPhrases) {
+  assert(!grownupLower.includes(phrase.toLowerCase()), `learn/grown-up surfaces must not say ${phrase}`);
+}
+assert(!grownupLower.includes('lime') && !grownupSurface.includes('vermilion'), 'learn copy does not introduce banned palette names');
+assert(!/#00f|#4f46|#6366|linear-gradient/i.test(read('dist/learn/learn.css')), 'learn CSS has no blue/purple gradient restyle');
+assert(home.includes(n03.homeMustKeepParentPointer), 'home keeps the N01 grown-up pointer');
+for (const phrase of n03.homeMustMarkCloudProfilesFuture) {
+  assert(home.includes(phrase), `home still marks cloud family profiles as future (${phrase})`);
+}
+assert(!/cloud family profiles (are ready|are live|already exist)/i.test(home), 'home must not imply cloud family profiles already exist');
 
 console.log('pilot pack and CTA checks passed');

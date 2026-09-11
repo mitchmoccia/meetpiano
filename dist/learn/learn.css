@@ -250,6 +250,20 @@
 }
 
 .learn-nav-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.learn-page #grownup-link {
+  white-space: nowrap;
+}
+@media (max-width: 600px) {
+  .learn-page .site-header {
+    height: auto;
+    min-height: 76px;
+  }
+  .learn-page .nav-wrap {
+    min-height: 76px;
+    height: auto;
+    padding-block: 10px;
+  }
+}
 .learn-instrument .white-key { position: relative; }
 .white-key .key-caption {
   font-size: 16px;

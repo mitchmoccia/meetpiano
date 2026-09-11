@@ -59,14 +59,14 @@ export function renderGrownupView(root, store, { onExport, onImport, onReset, pa
     : [el('p', {}, 'This device has not stored a lesson try yet. Nothing here is invented.')];
   root.replaceChildren(...[
     el('div', { className: 'game-topline' },
-      el('span', { className: 'game-label' }, el('span', { className: 'game-live-dot' }), ' GROWN-UP VIEW'),
-      el('span', { className: 'game-xp' }, 'Helper card · not a login')
+      el('span', { className: 'game-label' }, el('span', { className: 'game-live-dot' }), ' GROWN-UP HELPER'),
+      el('span', { className: 'game-xp' }, 'Observation aid · not a login')
     ),
     el('section', { className: 'grownup-intro' },
       el('p', { className: 'mission-eyebrow' }, 'NEARBY HELPER · THIS DEVICE'),
       el('h1', {}, 'What this browser has already seen'),
       el('p', { className: 'grownup-honesty' }, report.honesty),
-      el('p', {}, `${report.observedCount} ${report.observedCount === 1 ? 'activity' : 'activities'} have a stored record. ${report.practicedCount} reached Practiced or higher. This is not authenticated privacy protection.`)
+      el('p', {}, `${report.observedCount} ${report.observedCount === 1 ? 'activity' : 'activities'} have a stored record. ${report.practicedCount} reached Practiced or higher. This is a device-local observation aid, not authenticated privacy protection.`)
     ),
     pauseState
       ? el('p', { className: 'unit-limit' },
@@ -410,7 +410,7 @@ export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit, onEx
     ...view.units.map((unit) => unitSection(unit, onOpen, focusUnit)),
     portabilityCard(onExport, onImport, onReset),
     el('p', { className: 'unit-limit hub-grownup-foot' },
-      el('a', { className: 'button button-outline', href: '/learn/?view=grown-up' }, 'Grown-up view')
+      el('a', { className: 'button button-outline', href: '/learn/?view=grown-up' }, 'Grown-up helper')
     ),
     el('p', { className: 'unit-limit' }, 'Playable lessons are L01–L24 when earlier activities on this device are ready. On-screen keys are an exploration stand-in, not proof of hand coordination or quiet-versus-strong. MIDI reports pitch, time, and velocity if the keyboard sent it — never technique. A grown-up marks listening for a recital. Export stays on the browsers you control. There is no account.')
   ].filter(Boolean));
@@ -449,7 +449,7 @@ function nextSessionCard(rec, continueCard, hasProgress, onContinue) {
           type: 'button',
           onClick: () => onContinue(primary.lessonId)
         }, primary.label),
-      el('a', { className: 'button button-outline hub-grownup', href: '/learn/?view=grown-up' }, 'Grown-up view')
+      el('a', { className: 'button button-outline hub-grownup', href: '/learn/?view=grown-up' }, 'Grown-up helper')
     )
   );
 }
