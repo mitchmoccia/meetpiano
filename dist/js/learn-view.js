@@ -12,6 +12,14 @@ import {
   setupStatusCopy,
   shouldShowSetupStrip
 } from './setup-strip.js';
+import {
+  DEVICE_SWITCH_COPY,
+  DEVICE_SWITCH_POINTER_ID,
+  DEVICE_SWITCH_WARNING_ID,
+  EXISTING_EXPORT_HREF,
+  EXISTING_EXPORT_ID,
+  focusExistingExport
+} from './device-switch.js';
 
 const STEP_LABELS = ['Explain', 'See', 'Try', 'Check', 'Done'];
 
@@ -548,14 +556,37 @@ function extraRecAction(rec, continueCard, hasProgress, onContinue) {
   );
 }
 
+function deviceSwitchWarning(onExport) {
+  return el('p', {
+    className: 'device-switch-warning',
+    id: DEVICE_SWITCH_WARNING_ID
+  },
+    DEVICE_SWITCH_COPY.warning,
+    onExport
+      ? el('a', {
+        className: 'device-switch-pointer',
+        id: DEVICE_SWITCH_POINTER_ID,
+        href: EXISTING_EXPORT_HREF,
+        onClick: () => focusExistingExport()
+      }, DEVICE_SWITCH_COPY.pointerLabel)
+      : null
+  );
+}
+
 function portabilityCard(onExport, onImport, onReset) {
   if (!onExport && !onImport && !onReset) return null;
   return el('section', { className: 'progress-port', id: 'progress-port' },
     el('p', { className: 'mission-eyebrow' }, 'THIS DEVICE ONLY'),
     el('h2', {}, 'Copy or clear records on browsers you control'),
+    deviceSwitchWarning(onExport),
     el('p', {}, 'Export is a JSON file of lesson and attempt records. Import checks versions and skips duplicate attempt IDs. It cannot invent Independent or Retained. Reset clears this browser only. Nothing is uploaded to an account. This is not privacy protection.'),
     el('div', { className: 'phase-actions' },
-      onExport ? el('button', { className: 'button button-outline', type: 'button', onClick: onExport }, 'Export JSON') : null,
+      onExport ? el('button', {
+        className: 'button button-outline',
+        type: 'button',
+        id: EXISTING_EXPORT_ID,
+        onClick: onExport
+      }, 'Export JSON') : null,
       onImport ? el('label', { className: 'button button-outline import-label' },
         'Import JSON',
         el('input', {

@@ -17,6 +17,14 @@ import {
   emptySetupState,
   shouldShowSetupStrip
 } from '../dist/js/setup-strip.js';
+import {
+  DEVICE_SWITCH_COPY,
+  DEVICE_SWITCH_POINTER_ID,
+  DEVICE_SWITCH_WARNING_ID,
+  EXISTING_EXPORT_HREF,
+  EXISTING_EXPORT_ID,
+  focusExistingExport
+} from '../dist/js/device-switch.js';
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -349,5 +357,54 @@ for (const phrase of n04.bannedPhrases) {
 assert(!setupLower.includes('lime') && !setupSurface.includes('vermilion'), 'setup copy does not introduce banned palette names');
 assert(!/#00f|#4f46|#6366|linear-gradient/i.test(read('dist/learn/learn.css')), 'learn CSS still has no blue/purple gradient restyle');
 assert(!/hardware[- ]midi[- ]verified|verified midi hardware/i.test(setupLower), 'setup does not claim hardware MIDI verified');
+
+const n05 = JSON.parse(read('scripts/fixtures/n05-device-switch-export.json'));
+const deviceSwitchJs = read('dist/js/device-switch.js');
+const portabilityJs = read('dist/js/portability.js');
+assert(n05.noSecondExportUi === true, 'fixture forbids a second export UI');
+assert(n05.pointerMustNotDownload === true, 'fixture says the pointer must not download');
+assert(DEVICE_SWITCH_WARNING_ID === n05.warningId, 'warning id matches the fixture');
+assert(DEVICE_SWITCH_POINTER_ID === n05.pointerId, 'pointer id matches the fixture');
+assert(EXISTING_EXPORT_ID === n05.exportControlId, 'pointer targets the existing export control');
+assert(EXISTING_EXPORT_HREF === n05.pointerHref, 'pointer href is the existing export hash');
+assert(DEVICE_SWITCH_COPY.pointerLabel === n05.pointerLabel, 'pointer label does not become a second Export JSON');
+assert(DEVICE_SWITCH_COPY.pointerLabel !== n05.existingExportLabel, 'pointer is not a parallel Export JSON button');
+assert(hubJs.includes('deviceSwitchWarning') && hubJs.includes('portabilityCard'), 'warning is rendered with the existing progress/export card');
+assert(hubJs.includes("id: EXISTING_EXPORT_ID") || hubJs.includes(`id: '${n05.exportControlId}'`), 'existing Export JSON keeps a focus target');
+assert(hubJs.includes('focusExistingExport'), 'pointer focuses the existing export');
+assert(!deviceSwitchJs.includes('exportProgress'), 'device-switch is not a new export module');
+assert(!deviceSwitchJs.includes('createObjectURL') && !deviceSwitchJs.includes('download'), 'device-switch does not download');
+assert((hubJs.match(/'Export JSON'/g) || []).length === 1, 'hub/grown-up share one Export JSON label');
+assert((hubJs.match(/onClick: onExport/g) || []).length === 1, 'one existing export click handler');
+assert((learnJs.match(/function exportRecords/g) || []).length === 1, 'learn.js keeps one export download path');
+assert((learnJs.match(/onExport: exportRecords/g) || []).length === 1, 'hub and grown-up reuse the same export callback');
+assert(hubJs.includes(`'${n05.existingImportLabel}'`), 'import label stays Import JSON');
+assert(hubJs.includes(`'${n05.existingResetLabel}'`), 'reset label stays Reset this device');
+assert(portabilityJs.includes("kind: EXPORT_KIND"), 'MP-06 export module stays the only exporter');
+for (const phrase of n05.honestyMustInclude) {
+  assert(DEVICE_SWITCH_COPY.warning.includes(phrase), `device-switch warning states ${phrase}`);
+}
+const switchSurface = `${JSON.stringify(DEVICE_SWITCH_COPY)}\n${hubJs}\n${deviceSwitchJs}\n${read('README.md')}`;
+const switchLower = switchSurface.toLowerCase();
+for (const phrase of n05.bannedImplications) {
+  assert(!switchLower.includes(phrase.toLowerCase()), `device-switch must not imply ${phrase}`);
+}
+for (const phrase of n05.bannedPhrases) {
+  assert(!switchLower.includes(phrase.toLowerCase()), `device-switch surfaces must not say ${phrase}`);
+}
+assert(!/#00f|#4f46|#6366|linear-gradient/i.test(read('dist/learn/learn.css')), 'learn CSS still has no blue/purple gradient restyle after N05');
+
+const exportControl = {
+  scrolled: false,
+  focused: false,
+  scrollIntoView() { this.scrolled = true; },
+  focus() { this.focused = true; }
+};
+const fakeRoot = {
+  querySelector(sel) { return sel === `#${n05.exportControlId}` ? exportControl : null; }
+};
+assert(focusExistingExport(fakeRoot) === true, 'pointer helper finds the existing export');
+assert(exportControl.scrolled && exportControl.focused, 'pointer scrolls to and focuses the existing export');
+assert(focusExistingExport({ querySelector: () => null }) === false, 'pointer does not invent an export control');
 
 console.log('pilot pack and CTA checks passed');
