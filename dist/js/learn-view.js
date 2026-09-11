@@ -20,6 +20,14 @@ import {
   EXISTING_EXPORT_ID,
   focusExistingExport
 } from './device-switch.js';
+import {
+  CLOSER_COPY,
+  CLOSER_CUE_ID,
+  CLOSER_HUB_ID,
+  CLOSER_RESUME_ID,
+  CLOSER_STAY_ID,
+  closerResumeTarget
+} from './session-closer.js';
 
 const STEP_LABELS = ['Explain', 'See', 'Try', 'Check', 'Done'];
 
@@ -471,7 +479,56 @@ export function renderSetupStrip(root, {
   return true;
 }
 
-export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit, onExport, onImport, onReset, pauseState } = {}) {
+export function renderSessionCloser(root, store, { onStay, onResume, onHub, session } = {}) {
+  if (!root) return null;
+  const target = closerResumeTarget(store, session);
+  root.hidden = false;
+  root.replaceChildren(
+    el('div', {
+      className: 'session-closer-card',
+      role: 'dialog',
+      'aria-labelledby': 'session-closer-title',
+      'aria-modal': 'true'
+    },
+      el('p', { className: 'mission-eyebrow' }, CLOSER_COPY.eyebrow),
+      el('h2', { id: 'session-closer-title' }, CLOSER_COPY.title),
+      el('p', {}, CLOSER_COPY.lead),
+      el('p', { id: CLOSER_CUE_ID }, `${CLOSER_COPY.resumeLead} ${target.action}.`),
+      el('p', { className: 'unit-limit session-closer-pause-note' }, CLOSER_COPY.pauseDistinct),
+      el('div', { className: 'phase-actions' },
+        el('a', {
+          className: 'button button-dark',
+          id: CLOSER_RESUME_ID,
+          href: target.href,
+          onClick: (event) => {
+            if (!onResume) return;
+            event.preventDefault();
+            onResume(target);
+          }
+        }, target.action),
+        el('button', {
+          className: 'button button-outline',
+          type: 'button',
+          id: CLOSER_STAY_ID,
+          onClick: () => onStay?.()
+        }, CLOSER_COPY.stayLabel),
+        el('a', {
+          className: 'button button-outline',
+          id: CLOSER_HUB_ID,
+          href: '/learn/',
+          onClick: (event) => {
+            if (!onHub) return;
+            event.preventDefault();
+            onHub();
+          }
+        }, CLOSER_COPY.hubLabel)
+      )
+    )
+  );
+  return target;
+}
+
+export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit, onExport, onImport, onReset, pauseState, onEnough } = {}) {
   const view = unitView(store);
   const rec = recommendNext(store, store.session);
   const continueCard = [...view.units.flatMap((unit) => unit.cards)]
@@ -494,7 +551,7 @@ export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit, onEx
         el('a', { className: 'button button-dark', href: resumeHref(pauseState) }, `Resume ${pauseState.lessonId}`)
       )
       : null,
-    nextSessionCard(rec, continueCard, hasJourneyProgress(store), onContinue),
+    nextSessionCard(rec, continueCard, hasJourneyProgress(store), onContinue, onEnough),
     extraRecAction(rec, continueCard, hasJourneyProgress(store), onContinue),
     ...view.units.map((unit) => unitSection(unit, onOpen, focusUnit)),
     portabilityCard(onExport, onImport, onReset),
@@ -509,7 +566,7 @@ function hasJourneyProgress(store) {
   return Object.values(store?.lessons || {}).some((lesson) => Boolean(lesson?.evidenceState));
 }
 
-function nextSessionCard(rec, continueCard, hasProgress, onContinue) {
+function nextSessionCard(rec, continueCard, hasProgress, onContinue, onEnough) {
   if (!rec && !continueCard) return null;
   const primary = hasProgress && continueCard
     ? {
@@ -538,7 +595,14 @@ function nextSessionCard(rec, continueCard, hasProgress, onContinue) {
           type: 'button',
           onClick: () => onContinue(primary.lessonId)
         }, primary.label),
-      el('a', { className: 'button button-outline hub-grownup', href: '/learn/?view=grown-up' }, 'Grown-up helper')
+      el('a', { className: 'button button-outline hub-grownup', href: '/learn/?view=grown-up' }, 'Grown-up helper'),
+      onEnough
+        ? el('button', {
+          className: 'button button-outline hub-enough',
+          type: 'button',
+          onClick: onEnough
+        }, CLOSER_COPY.controlLabel)
+        : null
     )
   );
 }

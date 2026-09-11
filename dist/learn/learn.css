@@ -567,7 +567,7 @@
   .unit-world { padding-inline: 17px; }
   .learn-nav-actions .button-small { padding: 10px 12px; font-size: 13px; min-height: 44px; }
   .kid-target { position: sticky; top: 8px; z-index: 3; }
-  .pause-card { margin: 16px; padding: 22px 18px; }
+  .pause-card, .session-closer-card { margin: 16px; padding: 22px 18px; }
   .grownup-intro, .grownup-practice, .grownup-skills { padding-inline: 17px; }
   .learn-page .site-header nav a:nth-child(n+3) { display: none; }
 }
@@ -595,6 +595,35 @@
   font-size: clamp(26px, 4vw, 34px);
   letter-spacing: -0.6px;
   margin: 8px 0 12px;
+}
+.session-closer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 41;
+  display: grid;
+  place-items: center;
+  background: rgba(41, 37, 31, 0.45);
+  padding: 20px;
+}
+.session-closer-overlay[hidden] { display: none !important; }
+.session-closer-card {
+  width: min(520px, 100%);
+  padding: 28px 24px;
+  border: 2px solid var(--ink);
+  border-radius: 20px;
+  background: var(--yellow);
+  box-shadow: 0 8px 0 var(--ink);
+}
+.session-closer-card h2 {
+  font-family: var(--display);
+  font-size: clamp(26px, 4vw, 34px);
+  letter-spacing: -0.6px;
+  margin: 8px 0 12px;
+}
+.session-closer-card > p { max-width: 52ch; color: var(--muted); }
+.session-closer-pause-note {
+  padding: 0;
+  margin: 0 0 12px;
 }
 .grownup-intro, .grownup-practice, .grownup-skills {
   padding: 20px 27px 8px;

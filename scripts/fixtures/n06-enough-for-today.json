@@ -1,0 +1,129 @@
+{
+  "controlId": "enough-today",
+  "overlayId": "session-closer-overlay",
+  "resumeId": "enough-today-resume",
+  "stayId": "enough-today-stay",
+  "hubId": "enough-today-hub",
+  "cueId": "enough-today-cue",
+  "surfaces": ["hub", "lesson"],
+  "controlLabel": "Enough for today",
+  "pauseModule": "dist/js/session-pause.js",
+  "pauseKey": "meetpiano:beginner-v1:pause",
+  "pauseResumeQuery": "resume=1",
+  "honestyMustInclude": [
+    "Enough for today",
+    "That was a good sit",
+    "Stopping is okay",
+    "this device",
+    "This is not Pause",
+    "next unlocked",
+    "Continue"
+  ],
+  "bannedStreakPhrases": [
+    "streak",
+    "keep your streak",
+    "don't break your streak",
+    "do not break your streak",
+    "come back tomorrow",
+    "don't lose",
+    "do not lose",
+    "+xp",
+    " points",
+    "daily goal"
+  ],
+  "bannedMasteryPhrases": [
+    "mastery",
+    "you earned independent",
+    "marked retained",
+    "teacher-approved",
+    "teacher approved",
+    "grade readiness",
+    "educator-approved"
+  ],
+  "bannedGuiltPhrases": [
+    "you should finish",
+    "don't give up",
+    "do not give up",
+    "keep going so you do not fall behind",
+    "one more to stay on track"
+  ],
+  "resumeTargets": [
+    {
+      "reason": "fresh-device",
+      "store": { "lessons": {} },
+      "expectLessonId": "L01",
+      "expectAction": "Start Meet the keyboard",
+      "expectHref": "/learn/?lesson=L01",
+      "mustNotIncludeHref": "resume=1"
+    },
+    {
+      "reason": "continue-in-progress",
+      "store": {
+        "lessons": {
+          "L01": {
+            "evidenceState": "explored",
+            "currentAttemptId": "try-l01"
+          }
+        }
+      },
+      "expectLessonId": "L01",
+      "expectAction": "Continue Meet the keyboard",
+      "expectHref": "/learn/?lesson=L01",
+      "mustNotIncludeHref": "resume=1"
+    },
+    {
+      "reason": "continue-stays-on-practiced",
+      "store": {
+        "lessons": {
+          "L01": { "evidenceState": "practiced" }
+        }
+      },
+      "expectLessonId": "L01",
+      "expectAction": "Continue Meet the keyboard",
+      "expectHref": "/learn/?lesson=L01",
+      "unlockedAlso": "L02",
+      "mustNotIncludeHref": "resume=1"
+    },
+    {
+      "reason": "independent-gate-holds",
+      "store": {
+        "lessons": {
+          "L01": { "evidenceState": "independent" },
+          "L02": { "evidenceState": "independent" },
+          "L03": { "evidenceState": "practiced" }
+        }
+      },
+      "expectLessonId": "L03",
+      "expectAction": "Continue Neighbors C–D–E",
+      "lockedLessonId": "L04",
+      "mustNotIncludeHref": "resume=1"
+    },
+    {
+      "reason": "continue-after-independent-unlock",
+      "store": {
+        "lessons": {
+          "L01": { "evidenceState": "independent" },
+          "L02": { "evidenceState": "independent" },
+          "L03": { "evidenceState": "independent" }
+        }
+      },
+      "expectLessonId": "L04",
+      "expectAction": "Continue First little tune",
+      "expectHref": "/learn/?lesson=L04",
+      "mustNotIncludeHref": "resume=1"
+    }
+  ],
+  "independentGates": [
+    { "lessonId": "L04", "unlocksAfter": "L03", "unlockNeeds": "independent" },
+    { "lessonId": "L05", "unlocksAfter": "L04", "unlockNeeds": "independent" },
+    { "lessonId": "L08", "unlocksAfter": "L07", "unlockNeeds": "independent" },
+    { "lessonId": "L09", "unlocksAfter": "L08", "unlockNeeds": "independent" },
+    { "lessonId": "L12", "unlocksAfter": "L11", "unlockNeeds": "independent" },
+    { "lessonId": "L13", "unlocksAfter": "L12", "unlockNeeds": "independent" },
+    { "lessonId": "L16", "unlocksAfter": "L15", "unlockNeeds": "independent" },
+    { "lessonId": "L17", "unlocksAfter": "L16", "unlockNeeds": "independent" },
+    { "lessonId": "L20", "unlocksAfter": "L19", "unlockNeeds": "independent" },
+    { "lessonId": "L21", "unlocksAfter": "L20", "unlockNeeds": "independent" },
+    { "lessonId": "L24", "unlocksAfter": "L23", "unlockNeeds": "independent" }
+  ]
+}

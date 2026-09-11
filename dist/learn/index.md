@@ -15,6 +15,6 @@ A first-sit strip on the hub and L01 can wake sound, try one key, and optionally
 - Together (L17–L20)
 - Expression (L21–L24)
 
-Curriculum version: beginner-v1. A grown-up helper at `/learn/?view=grown-up` is a device-local observation aid. It lists what this browser has already stored. It is not a login, not a cloud parent account, and not privacy protection.
+Curriculum version: beginner-v1. A grown-up helper at `/learn/?view=grown-up` is a device-local observation aid. It lists what this browser has already stored. It is not a login, not a cloud parent account, and not privacy protection. Enough for today on the hub or a lesson ends a sit kindly and names the next unlocked or Continue job. It is not Pause, not a streak, and it does not invent Independent or Retained.
 
 See https://meetpiano.app/llms.txt for the site overview.

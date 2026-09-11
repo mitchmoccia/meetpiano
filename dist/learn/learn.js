@@ -29,6 +29,7 @@ import {
   renderPhraseTiles,
   renderSteps,
   renderResultCard,
+  renderSessionCloser,
   renderSetupStrip,
   renderUnitHub
 } from '../js/learn-view.js';
@@ -49,6 +50,7 @@ import { recommendAfterLesson } from '../js/recommend.js';
 import { createNarrator, NARRATION_FAIL_COPY, NARRATION_UNAVAILABLE_COPY } from '../js/narrate.js';
 import { kidSpoken } from '../js/kid-copy.js';
 import { clearPause, readPause, resumeHref, writePause } from '../js/session-pause.js';
+import { CLOSER_CONTROL_ID, CLOSER_OVERLAY_ID } from '../js/session-closer.js';
 
 const progress = createProgress();
 progress.touchSession();
@@ -72,6 +74,8 @@ const exitButton = document.querySelector('#exit-button');
 const resumeButton = document.querySelector('#resume-button');
 const grownupShell = document.querySelector('#grownup-shell');
 const pauseOverlay = document.querySelector('#pause-overlay');
+const closerButton = document.querySelector(`#${CLOSER_CONTROL_ID}`);
+const closerOverlay = document.querySelector(`#${CLOSER_OVERLAY_ID}`);
 const showGrownup = parseGrownupView(params.get('view'));
 const pauseState = readPause();
 const setupMount = document.querySelector('#setup-strip-mount');
@@ -151,6 +155,28 @@ async function requestSetupMidi() {
   paintSetupStrip();
 }
 
+function closeCloser() {
+  if (!closerOverlay) return;
+  closerOverlay.hidden = true;
+  closerOverlay.replaceChildren();
+}
+
+function openCloser() {
+  if (!closerOverlay) return;
+  renderSessionCloser(closerOverlay, progress.read().store, {
+    session: progress.read().store.session,
+    onStay: closeCloser,
+    onResume: (target) => {
+      closeCloser();
+      window.location.href = target.href;
+    },
+    onHub: () => {
+      closeCloser();
+      window.location.href = '/learn/';
+    }
+  });
+}
+
 function onHubSetupKey(event) {
   if (!shouldShowSetupStrip({ store, setup: setupState, surface: 'hub' })) return;
   if (event.ctrlKey || event.metaKey || event.altKey || event.repeat) return;
@@ -209,6 +235,7 @@ if (!lessonId) {
       resumeButton.addEventListener('click', () => { window.location.href = resumeHref(pauseState); });
     }
   }
+  if (closerButton) closerButton.hidden = showGrownup;
   if (requested && !unlocked) {
     document.querySelector('#storage-notice').hidden = false;
     document.querySelector('#storage-notice').textContent = `${requested} is locked on this device until the earlier activity is ready.`;
@@ -235,7 +262,8 @@ if (!lessonId) {
     onExport: exportRecords,
     onImport: importRecords,
     onReset: resetRecords,
-    pauseState
+    pauseState,
+    onEnough: openCloser
   };
   if (showGrownup && grownupShell) {
     document.title = 'Grown-up helper · First Piano Journey · MeetPiano';
@@ -247,8 +275,16 @@ if (!lessonId) {
   if (shouldShowSetupStrip({ store, setup: setupState, surface: 'hub' })) {
     window.addEventListener('keydown', onHubSetupKey);
   }
+  if (closerButton) closerButton.addEventListener('click', openCloser);
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape' || closerOverlay?.hidden) return;
+    if (event.target && ['INPUT', 'TEXTAREA'].includes(event.target.tagName)) return;
+    event.preventDefault();
+    closeCloser();
+  });
 } else {
   paintSetupStrip();
+  if (closerButton) closerButton.hidden = false;
   startLesson(lessonId);
 }
 
@@ -1624,6 +1660,10 @@ function startLesson(id) {
     if (event.key !== 'Escape') return;
     if (event.target && ['INPUT', 'TEXTAREA'].includes(event.target.tagName)) return;
     event.preventDefault();
+    if (closerOverlay && !closerOverlay.hidden) {
+      closeCloser();
+      return;
+    }
     if (lessonPaused) resumeLesson();
     else pauseLesson();
   });
@@ -1650,6 +1690,14 @@ function startLesson(id) {
       } else {
         paint();
       }
+    });
+  }
+
+  if (closerButton) {
+    closerButton.addEventListener('click', () => {
+      stopDemo();
+      narrator.cancel();
+      openCloser();
     });
   }
 
