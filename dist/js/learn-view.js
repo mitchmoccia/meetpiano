@@ -5,6 +5,13 @@ import { sourceHonesty } from './evidence.js';
 import { kidLine, kidTitle } from './kid-copy.js';
 import { grownupReport } from './grownup.js';
 import { resumeHref } from './session-pause.js';
+import {
+  SETUP_CONTINUE_HREF,
+  SETUP_COPY,
+  describeSetupMidi,
+  setupStatusCopy,
+  shouldShowSetupStrip
+} from './setup-strip.js';
 
 const STEP_LABELS = ['Explain', 'See', 'Try', 'Check', 'Done'];
 
@@ -380,6 +387,80 @@ export function renderPhraseTiles(root, phrase) {
     const state = phrase.current < 0 ? '' : index < phrase.current ? 'done' : index === phrase.current ? 'current' : '';
     return el('span', { className: `sequence-note ${state}` }, letter);
   }));
+}
+
+export function renderSetupStrip(root, {
+  store,
+  setup,
+  surface,
+  audioKind,
+  midiKind,
+  onUnlock,
+  onTryKey,
+  onMidi,
+  onDismiss
+} = {}) {
+  if (!root) return false;
+  const visible = shouldShowSetupStrip({ store, setup, surface });
+  root.hidden = !visible;
+  if (!visible) {
+    root.replaceChildren();
+    return false;
+  }
+  const status = setupStatusCopy(setup, { audioKind, midiKind });
+  const midiHint = describeSetupMidi(midiKind);
+  root.replaceChildren(
+    el('section', {
+      className: 'setup-strip',
+      id: 'setup-strip',
+      'aria-label': 'First-sit setup'
+    },
+      el('p', { className: 'mission-eyebrow' }, SETUP_COPY.eyebrow),
+      el('h2', {}, SETUP_COPY.title),
+      el('p', {}, SETUP_COPY.lead),
+      el('div', { className: 'setup-strip-actions' },
+        el('button', {
+          className: 'button button-dark',
+          type: 'button',
+          id: 'setup-unlock',
+          onClick: () => onUnlock?.()
+        }, SETUP_COPY.unlockLabel),
+        el('button', {
+          className: 'button button-outline',
+          type: 'button',
+          id: 'setup-try-key',
+          onClick: () => onTryKey?.()
+        }, SETUP_COPY.tryKeyLabel),
+        el('button', {
+          className: 'button button-outline',
+          type: 'button',
+          id: 'setup-midi',
+          disabled: midiKind === 'unsupported' || midiKind === 'requesting',
+          onClick: () => onMidi?.()
+        }, SETUP_COPY.midiLabel)
+      ),
+      el('p', {
+        className: 'setup-strip-status',
+        id: 'setup-status',
+        role: 'status'
+      }, status),
+      el('p', { className: 'setup-strip-midi', id: 'setup-midi-status' }, midiHint),
+      el('div', { className: 'setup-strip-path' },
+        el('a', {
+          className: 'button button-dark setup-continue',
+          id: 'setup-continue',
+          href: SETUP_CONTINUE_HREF
+        }, SETUP_COPY.continueLabel),
+        el('button', {
+          className: 'button button-outline setup-dismiss',
+          type: 'button',
+          id: 'setup-dismiss',
+          onClick: () => onDismiss?.()
+        }, SETUP_COPY.dismissLabel)
+      )
+    )
+  );
+  return true;
 }
 
 export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit, onExport, onImport, onReset, pauseState } = {}) {

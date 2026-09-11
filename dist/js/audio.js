@@ -32,6 +32,23 @@ export function createAudio() {
     return true;
   }
 
+  function canPlay() {
+    return Boolean(window.AudioContext || window.webkitAudioContext);
+  }
+
+  function contextState() {
+    if (!canPlay()) return 'unavailable';
+    return audioContext ? audioContext.state : 'new';
+  }
+
+  function resume() {
+    if (!ensure()) return Promise.resolve(false);
+    if (audioContext.state !== 'suspended') return Promise.resolve(audioContext.state === 'running');
+    return audioContext.resume()
+      .then(() => audioContext.state === 'running')
+      .catch(() => false);
+  }
+
   function currentTime() {
     if (!audioContext) return null;
     return audioContext.currentTime;
@@ -124,6 +141,9 @@ export function createAudio() {
     setMuted,
     isMuted: () => muted,
     isUnlocked: () => unlocked,
-    canPlay: () => Boolean(window.AudioContext || window.webkitAudioContext)
+    isSuspended: () => Boolean(audioContext && audioContext.state === 'suspended'),
+    canPlay,
+    contextState,
+    resume
   };
 }

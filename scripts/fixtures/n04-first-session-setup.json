@@ -1,0 +1,70 @@
+{
+  "storageKey": "meetpiano:first-session-setup",
+  "surfaces": ["hub", "L01"],
+  "l01Href": "/learn/?lesson=L01",
+  "l01Action": "Start Meet the keyboard",
+  "mastery": "one-heard-note",
+  "mountId": "setup-strip-mount",
+  "stripId": "setup-strip",
+  "controlIds": ["setup-unlock", "setup-try-key", "setup-midi", "setup-continue", "setup-dismiss"],
+  "firstRun": {
+    "store": { "lessons": {} },
+    "setup": { "dismissed": false, "heardNote": false, "soundUnlocked": false },
+    "expectShow": true
+  },
+  "returning": [
+    {
+      "reason": "dismissed",
+      "store": { "lessons": {} },
+      "setup": { "dismissed": true, "heardNote": false, "soundUnlocked": false },
+      "expectShow": false
+    },
+    {
+      "reason": "heard-note",
+      "store": { "lessons": {} },
+      "setup": { "dismissed": false, "heardNote": true, "soundUnlocked": true },
+      "expectShow": false
+    },
+    {
+      "reason": "journey-progress",
+      "store": { "lessons": { "L01": { "evidenceState": "explored" } } },
+      "setup": { "dismissed": false, "heardNote": false, "soundUnlocked": false },
+      "expectShow": false
+    }
+  ],
+  "honestyMustInclude": [
+    "Wake the sound",
+    "Try a key",
+    "MIDI is optional",
+    "On-screen keys and computer keys still work",
+    "Physical MIDI hardware is not verified",
+    "Sound is blocked or autoplay is suspended",
+    "This browser does not offer Web MIDI",
+    "MIDI permission was not granted",
+    "Start Meet the keyboard"
+  ],
+  "audio": {
+    "blockedState": "suspended",
+    "missingState": "unavailable",
+    "blockedMustInclude": "Sound is blocked or autoplay is suspended",
+    "missingMustInclude": "This browser cannot play Web Audio"
+  },
+  "midi": {
+    "optional": true,
+    "kinds": ["idle", "unsupported", "denied"],
+    "unsupportedMustInclude": "This browser does not offer Web MIDI",
+    "deniedMustInclude": "MIDI permission was not granted"
+  },
+  "bannedPhrases": [
+    "hardware midi verified",
+    "midi-verified",
+    "teacher-approved",
+    "teacher approved",
+    "educator-approved",
+    "grade readiness",
+    "step 1 of 3",
+    "step 2 of 3",
+    "wizard"
+  ],
+  "noWizard": true
+}
