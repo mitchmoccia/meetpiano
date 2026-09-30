@@ -300,4 +300,56 @@
     }
     $('#skill-tags').replaceChildren(...world.skills.map(skill => { const tag = document.createElement('span'); tag.textContent = skill; return tag; }));
   }));
+
+  const introVideo = $('#intro-film-video');
+  const introToggle = $('#intro-film-toggle');
+  const introSound = $('#intro-film-sound');
+  if (introVideo && introToggle && introSound) {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const toggleLabel = introToggle.querySelector('span');
+    const toggleIcon = introToggle.querySelector('use');
+    const soundLabel = introSound.querySelector('span');
+    const syncIntroToggle = () => {
+      const playing = !introVideo.paused;
+      introToggle.setAttribute('aria-label', playing ? 'Pause MeetPiano intro' : 'Play MeetPiano intro');
+      if (toggleLabel) toggleLabel.textContent = playing ? 'Pause' : 'Play';
+      if (toggleIcon) toggleIcon.setAttribute('href', playing ? '#pause' : '#play');
+    };
+    const syncIntroSound = () => {
+      const muted = introVideo.muted;
+      introSound.setAttribute('aria-pressed', String(!muted));
+      introSound.setAttribute('aria-label', muted ? 'Unmute MeetPiano intro' : 'Mute MeetPiano intro');
+      if (soundLabel) soundLabel.textContent = muted ? 'Sound off' : 'Sound on';
+    };
+    introToggle.addEventListener('click', () => {
+      if (introVideo.paused) introVideo.play().catch(() => {});
+      else introVideo.pause();
+    });
+    introSound.addEventListener('click', () => {
+      introVideo.muted = !introVideo.muted;
+      syncIntroSound();
+    });
+    introVideo.addEventListener('play', syncIntroToggle);
+    introVideo.addEventListener('pause', syncIntroToggle);
+    const introObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (reduceMotion.matches) {
+          introVideo.pause();
+          return;
+        }
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.45) introVideo.play().catch(() => {});
+        else introVideo.pause();
+      });
+    }, { threshold: [0, 0.45, 1] });
+    const watchIntro = () => {
+      if (reduceMotion.matches) {
+        introObserver.disconnect();
+        introVideo.pause();
+      } else introObserver.observe(introVideo);
+    };
+    reduceMotion.addEventListener('change', watchIntro);
+    watchIntro();
+    syncIntroToggle();
+    syncIntroSound();
+  }
 })();
