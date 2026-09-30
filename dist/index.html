@@ -55,6 +55,7 @@
   <svg xmlns="http://www.w3.org/2000/svg" class="icon-defs" aria-hidden="true"><defs>
     <symbol id="arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
     <symbol id="play" viewBox="0 0 24 24"><path d="m9 5 11 7-11 7z"/></symbol>
+    <symbol id="pause" viewBox="0 0 24 24"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></symbol>
     <symbol id="check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
     <symbol id="music" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13M9 9l12-2"/><ellipse cx="6" cy="18" rx="3" ry="3"/><ellipse cx="18" cy="16" rx="3" ry="3"/></symbol>
     <symbol id="heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></symbol>
@@ -136,9 +137,50 @@
       </div>
     </section>
 
+    <section class="intro-film section-pad" id="intro-film" aria-labelledby="intro-film-title">
+      <div class="wrap">
+        <div class="section-intro split-intro">
+          <div>
+            <span class="eyebrow"><span class="section-no">02</span> MEETPIANO</span>
+            <h2 id="intro-film-title">MeetPiano</h2>
+          </div>
+          <p>meetpiano.app</p>
+        </div>
+        <div class="intro-film-frame">
+          <video
+            id="intro-film-video"
+            class="intro-film-video"
+            poster="/assets/video/meetpiano-intro-poster.webp"
+            width="1920"
+            height="1080"
+            playsinline
+            muted
+            loop
+            preload="metadata"
+            aria-label="MeetPiano intro"
+          >
+            <source src="/assets/video/meetpiano-intro-30s-av1.webm" type="video/webm; codecs=av01.0.08M.08,opus">
+            <source src="/assets/video/meetpiano-intro-30s.webm" type="video/webm; codecs=vp9,opus">
+            <source src="/assets/video/meetpiano-intro-30s.mp4" type="video/mp4">
+          </video>
+          <div class="intro-film-controls">
+            <button type="button" class="button button-outline" id="intro-film-toggle" aria-label="Play MeetPiano intro">
+              <svg class="icon play-icon" aria-hidden="true"><use href="#play"/></svg>
+              <span>Play</span>
+            </button>
+            <button type="button" class="button button-outline" id="intro-film-sound" aria-pressed="false" aria-label="Unmute MeetPiano intro">
+              <svg class="icon" aria-hidden="true"><use href="#volume"/></svg>
+              <span>Sound off</span>
+            </button>
+          </div>
+        </div>
+        <p class="intro-film-cta"><a href="#playground" class="button button-dark">Play the mini adventure <svg class="icon" aria-hidden="true"><use href="#arrow"/></svg></a></p>
+      </div>
+    </section>
+
     <section class="adventure section-pad" id="adventure">
       <div class="wrap">
-        <div class="section-intro centered"><span class="eyebrow"><span class="section-no">02</span> SMALL WINS. BIG ADVENTURES.</span><h2>There’s a whole world<br>in those little hands.</h2><p>First Piano Journey is already on <a href="/learn/">/learn</a>.<br>Each world opens that same-named unit. Later units stay locked until this device is ready.</p></div>
+        <div class="section-intro centered"><span class="eyebrow"><span class="section-no">03</span> SMALL WINS. BIG ADVENTURES.</span><h2>There’s a whole world<br>in those little hands.</h2><p>First Piano Journey is already on <a href="/learn/">/learn</a>.<br>Each world opens that same-named unit. Later units stay locked until this device is ready.</p></div>
         <div class="journey-map" role="group" aria-label="Explore the MeetPiano worlds">
           <svg class="journey-line" viewBox="0 0 1100 200" preserveAspectRatio="none" aria-hidden="true"><path d="M70 115C140 115 155 48 250 48S370 158 455 158 580 42 665 42 790 158 860 158 980 115 1030 115"/></svg>
           <button class="journey-stop selected" data-world="0" aria-pressed="true"><span class="world-orbit"><svg class="world-icon"><use href="#music"/></svg><span class="world-number">01</span></span><strong>First Notes</strong><span>Your “I can do this!” moment</span></button>
@@ -154,7 +196,7 @@
 
     <section class="growing section-pad">
       <div class="wrap growing-grid">
-        <div class="growing-copy"><span class="eyebrow"><span class="section-no">03</span> THE GOOD KIND OF “ONE MORE GO”</span><h2>More than<br>a high score.<br><span class="red-text">“Listen to me!”</span></h2><p>That’s the moment we’re building for. A child who comes back because they can hear themselves getting better.</p><a href="#playground" class="text-link">Start with a little win <svg class="icon"><use href="#arrow"/></svg></a></div>
+        <div class="growing-copy"><span class="eyebrow"><span class="section-no">04</span> THE GOOD KIND OF “ONE MORE GO”</span><h2>More than<br>a high score.<br><span class="red-text">“Listen to me!”</span></h2><p>That’s the moment we’re building for. A child who comes back because they can hear themselves getting better.</p><a href="#playground" class="text-link">Start with a little win <svg class="icon"><use href="#arrow"/></svg></a></div>
         <div class="growth-list">
           <article><span class="growth-number">01</span><div><h3>Practice with a plot.</h3><p>Musical missions give every practice a purpose. Keep the beat, answer a melody, bring a song to life.</p></div><svg class="icon"><use href="#music"/></svg></article>
           <article><span class="growth-number">02</span><div><h3>A challenge that grows with them.</h3><p>First Piano Journey on <a href="/learn/">/learn</a> builds from little melodies toward two-handed playing, one useful skill at a time.</p></div><svg class="icon"><use href="#spark"/></svg></article>
