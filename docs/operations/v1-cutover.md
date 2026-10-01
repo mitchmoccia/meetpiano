@@ -3,13 +3,13 @@
 Status on 2026-10-01: the v1 app is verified on a Vercel preview of `cursor/meetpiano-v1-accounts-83a2` (deployment `dpl_fQVN2P1AKyqBTTk2V8CAcL8iDy6L`) against the Neon development branch with captured email. Production has not changed:
 
 - `meetpiano.app` serves the static site from deployment `dpl_EP7LEzsG8MXVDZViL91YjMHj8HVE` (`main` @ `9e57add`).
-- Neon project `wild-flower-56273415`, production branch `br-wispy-cell-b8yh2eh5`: database `meetpiano` exists, has no tables, and is not marked.
-- The Vercel project has no Production environment variables.
+- Neon project `wild-flower-56273415`, production branch `br-wispy-cell-b8yh2eh5`: migrated, marked `production`, curriculum synced (6 units, 24 lessons, no families). The `meetpiano_owner` password on this branch was reset on 2026-10-01. Copy the new connection strings from the Neon console. Do not reuse the development password.
+- The Vercel project has no Production environment variables. The live site does not use this database yet.
 
 ## Launch blockers
 
 1. **Real email.** No SendGrid sending domain, sender, or API key exists yet, and the SendGrid code path has never sent a real message. Production configuration is rejected without SendGrid settings.
-2. **Production database.** Not migrated, not marked, and the curriculum is not synced.
+2. **Production database.** Done on 2026-10-01. The app still needs the pooled `DATABASE_URL` in Vercel before the production deploy.
 3. **Production configuration.** No Production environment variables are set.
 4. **Privacy and consent.** The open questions below need an owner decision and legal review before any family signs up. Nothing here claims COPPA or any other compliance.
 5. **Public copy.** `public/index.html` (description, structured data, membership note), `public/llms.txt`, and `public/learn/index.md` still say progress stays on this device and that there are no accounts. That is true only for guest practice. The home page has no sign-in link; `/learn` links to family profiles. Several of these phrases are pinned by `pnpm check:static` fixtures, so change the copy and the fixtures together in one deliberate edit.
@@ -19,25 +19,12 @@ Status on 2026-10-01: the v1 app is verified on a Vercel preview of `cursor/meet
 Steps 1 to 4 change nothing visitors see. Step 5 switches the whole site in one deployment; step 8 undoes it.
 
 1. **SendGrid.** In the existing SendGrid account, authenticate the `meetpiano.app` domain (Settings → Sender Authentication) and add the DNS records it lists at the domain's DNS provider. Create an API key with Restricted Access and only Mail Send enabled. Choose a sender on that domain, for example `hello@meetpiano.app`.
-2. **Production database.** In Neon, first reset the `meetpiano_owner` password on the production branch: branches copy role passwords from their parent, and the development branch's credentials were handled during development. Then, from a checkout of the commit you will merge, using the production branch's direct (unpooled) connection string:
+2. **Production database.** Done on 2026-10-01: the production `meetpiano_owner` password was reset, `pnpm db:migrate` applied `drizzle/0000_initial_schema.sql`, the branch was marked `production`, and the curriculum sync reported 6 units and 24 lessons. The development branch was checked afterward and is still marked `development`. Do not insert the marker again. For a later migration, use the production branch's direct host (`ep-icy-river-b8b9ropr`, no `-pooler`). A value set in the shell overrides `.env.local`, which keeps pointing at the development branch.
 
    ```sh
    DATABASE_URL_UNPOOLED='<production direct URL>' pnpm db:migrate
-   ```
-
-   In the Neon SQL editor, on the production branch only:
-
-   ```sql
-   insert into database_environment (environment) values ('production');
-   ```
-
-   Then sync the curriculum and expect `Curriculum synced to the production branch: 6 units, 24 lessons.`
-
-   ```sh
    DATABASE_URL_UNPOOLED='<production direct URL>' pnpm curriculum:sync --expect-environment=production
    ```
-
-   A value set in the shell overrides `.env.local`, which keeps pointing at the development branch.
 3. **Vercel Production variables.** Set these for the Production target only:
    - `DATABASE_URL`: the production branch's pooled connection string (sensitive).
    - `BETTER_AUTH_SECRET`: a new value from `openssl rand -base64 48` (sensitive). Never reuse the preview secret.
