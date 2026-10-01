@@ -76,6 +76,11 @@ export function progressFor(childId: string): Promise<ProgressRow[]> {
   );
 }
 
+export async function syncEventReasons(userId: string): Promise<string[]> {
+  const events = await rows<{ reason: string }>('select reason from progress_sync_event where user_id = $1 order by created_at', [userId]);
+  return events.map((event) => event.reason);
+}
+
 /** The controlled admin bootstrap: the operator CLI, never a sign-up path. */
 export function grantAdmin(email: string): string {
   return execFileSync(
