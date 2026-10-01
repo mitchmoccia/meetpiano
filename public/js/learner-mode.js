@@ -4,7 +4,7 @@ import { setLessonAvailability } from './unit.js';
 import { mergeCloudIntoStore } from './cloud-merge.js';
 import { createOutbox } from './cloud-outbox.js';
 import { installLearnerCopy } from './learner-copy.js';
-import { backingStorage, clearLearnerCookie, readContextCache, readLearnerCookie, writeContextCache } from './learner-storage.js';
+import { backingStorage, clearLearnerCookie, learnerKey, readContextCache, readLearnerCookie, writeContextCache } from './learner-storage.js';
 
 const CONTEXT_URL = '/api/learner/context';
 const AVATARS = new Set(['sun', 'berry', 'ember', 'sky', 'leaf', 'plum']);
@@ -146,8 +146,17 @@ function enterLearner(doc, { context, offline }) {
       : `Saving to ${context.child.nickname}'s family profile. Touch practice is never MIDI verified.`;
   }
   installLearnerCopy(doc.body, { skip: doc.getElementById('learner-bar') });
+  leaveWhenPurgedElsewhere(context.child.id);
   outbox.start(window);
   return { mode: 'learner', storage: outbox.storage, child: context.child };
+}
+
+/** Sign-out or deleting this learner in another tab removes the learner's records; this tab then stops showing them. */
+function leaveWhenPurgedElsewhere(childId) {
+  const syncKey = learnerKey(childId, 'sync');
+  window.addEventListener('storage', (event) => {
+    if (event.key === null || (event.key === syncKey && event.newValue === null)) window.location.replace('/learn/');
+  });
 }
 
 /**
