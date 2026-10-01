@@ -254,6 +254,7 @@ export function validateAttempt(value, lessonId) {
     sessionId: typeof value.sessionId === 'string' ? value.sessionId : null,
     historical,
     exportable: true,
+    ...(value.origin === 'cloud' ? { origin: 'cloud' } : {}),
     restore
   };
 }
@@ -297,9 +298,10 @@ export function validateLesson(value, lessonId) {
   const fromLanes = highestLane(evidenceLanes);
   if (fromLanes) evidenceState = promoteEvidence(evidenceState, fromLanes);
   const currentAttemptId = typeof value.currentAttemptId === 'string' ? value.currentAttemptId : null;
-  const knownCurrent = currentAttemptId && attempts.some((attempt) => attempt.attemptId === currentAttemptId)
+  const resumable = attempts.filter((attempt) => attempt.origin !== 'cloud');
+  const knownCurrent = currentAttemptId && resumable.some((attempt) => attempt.attemptId === currentAttemptId)
     ? currentAttemptId
-    : (attempts.find((attempt) => !attempt.completedAt)?.attemptId ?? null);
+    : (resumable.find((attempt) => !attempt.completedAt)?.attemptId ?? null);
   return {
     lessonId,
     evidenceState,

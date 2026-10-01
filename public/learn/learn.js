@@ -43,7 +43,7 @@ import {
   shouldShowSetupStrip,
   writeSetupState
 } from '../js/setup-strip.js';
-import { isExpressionLesson, isLessonUnlocked, isLeftLesson, isTogetherLesson, parseLessonId, parseUnitId, unitTitleFor, usesClockTake, usesExpressionTake, usesRhythmTake, usesTogetherTake } from '../js/unit.js';
+import { isExpressionLesson, isLessonPaused, isLessonUnlocked, isLeftLesson, isTogetherLesson, parseLessonId, parseUnitId, unitTitleFor, usesClockTake, usesExpressionTake, usesRhythmTake, usesTogetherTake } from '../js/unit.js';
 import { durationMs, renderStaff } from '../js/staff.js';
 import { exportProgress, importProgress, resetProgress } from '../js/portability.js';
 import { recommendAfterLesson } from '../js/recommend.js';
@@ -51,8 +51,10 @@ import { createNarrator, NARRATION_FAIL_COPY, NARRATION_UNAVAILABLE_COPY } from 
 import { kidSpoken } from '../js/kid-copy.js';
 import { clearPause, readPause, resumeHref, writePause } from '../js/session-pause.js';
 import { CLOSER_CONTROL_ID, CLOSER_OVERLAY_ID } from '../js/session-closer.js';
+import { startLearnerMode } from '../js/learner-mode.js';
 
-const progress = createProgress();
+const learner = await startLearnerMode();
+const progress = createProgress(learner.storage);
 progress.touchSession();
 const audio = createAudio();
 const params = new URLSearchParams(window.location.search);
@@ -77,7 +79,7 @@ const pauseOverlay = document.querySelector('#pause-overlay');
 const closerButton = document.querySelector(`#${CLOSER_CONTROL_ID}`);
 const closerOverlay = document.querySelector(`#${CLOSER_OVERLAY_ID}`);
 const showGrownup = parseGrownupView(params.get('view'));
-const pauseState = readPause();
+const pauseState = readPause(learner.storage);
 const setupMount = document.querySelector('#setup-strip-mount');
 let setupState = readSetupState();
 let setupAudioKind = 'needs-gesture';
@@ -236,7 +238,10 @@ if (!lessonId) {
     }
   }
   if (closerButton) closerButton.hidden = showGrownup;
-  if (requested && !unlocked) {
+  if (requested && isLessonPaused(requested)) {
+    document.querySelector('#storage-notice').hidden = false;
+    document.querySelector('#storage-notice').textContent = `${requested} is paused for now. Pick another activity on the journey map.`;
+  } else if (requested && !unlocked) {
     document.querySelector('#storage-notice').hidden = false;
     document.querySelector('#storage-notice').textContent = `${requested} is locked on this device until the earlier activity is ready.`;
   } else if (requestedUnit === 'rhythm-club' && !isLessonUnlocked(store, 'L05')) {
@@ -255,13 +260,14 @@ if (!lessonId) {
     document.querySelector('#storage-notice').hidden = false;
     document.querySelector('#storage-notice').textContent = 'Expression is locked on this device until Complete little piece is Independent.';
   }
+  const guestRecordTools = learner.mode === 'guest'
+    ? { onExport: exportRecords, onImport: importRecords, onReset: resetRecords }
+    : {};
   const hubOpts = {
     onOpen: openLesson,
     onContinue: openLesson,
     focusUnit: requestedUnit,
-    onExport: exportRecords,
-    onImport: importRecords,
-    onReset: resetRecords,
+    ...guestRecordTools,
     pauseState,
     onEnough: openCloser
   };
@@ -327,7 +333,7 @@ function resetRecords() {
   const ok = window.confirm('Clear First Piano Journey records on this device? Export first if you want a copy. This does not create an account or send anything anywhere.');
   if (!ok) return;
   progress.write(resetProgress());
-  clearPause();
+  clearPause(learner.storage);
   resetSetupState();
   setupState = readSetupState();
   const notice = document.querySelector('#storage-notice');
@@ -406,7 +412,7 @@ function startLesson(id) {
 
   const narrator = createNarrator();
   let lessonPaused = false;
-  if (params.get('resume') === '1') clearPause();
+  if (params.get('resume') === '1') clearPause(learner.storage);
   let demoTimers = [];
   let lastFeedback = '';
   let showHouse = false;
@@ -646,7 +652,7 @@ function startLesson(id) {
     }
     stopDemo();
     narrator.cancel();
-    writePause({ lessonId: id, phase: view.phase, takeWasLive: Boolean(view.takeLive || view.takePaused) });
+    writePause({ lessonId: id, phase: view.phase, takeWasLive: Boolean(view.takeLive || view.takePaused) }, learner.storage);
     lessonPaused = true;
     paint();
   }
@@ -659,14 +665,14 @@ function startLesson(id) {
     } else {
       lastFeedback = 'Back. Your try is waiting.';
     }
-    clearPause();
+    clearPause(learner.storage);
     lessonPaused = false;
     paint();
   }
 
   function exitLesson() {
     const view = player.view();
-    writePause({ lessonId: id, phase: view.phase, takeWasLive: Boolean(view.takeLive || view.takePaused) });
+    writePause({ lessonId: id, phase: view.phase, takeWasLive: Boolean(view.takeLive || view.takePaused) }, learner.storage);
     stopDemo();
     narrator.cancel();
     window.location.href = '/learn/';

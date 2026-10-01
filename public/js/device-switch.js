@@ -4,7 +4,7 @@ export const EXISTING_EXPORT_ID = 'export-json';
 export const EXISTING_EXPORT_HREF = '#export-json';
 
 export const DEVICE_SWITCH_COPY = {
-  warning: 'Progress stays on this device and this browser only. A new browser or another device will not have these records unless a grown-up uses the existing Export JSON, then Import JSON on that browser. There is no cloud sync, no account, and no automatic backup.',
+  warning: 'Guest progress stays on this device and this browser only. A new browser or another device will not have these records unless a grown-up uses the existing Export JSON, then Import JSON on that browser. Guest practice has no cloud sync, no account, and no automatic backup. A grown-up can sign in and pick a family learner to save practice to a family profile instead.',
   pointerLabel: 'Show the existing export'
 };
 

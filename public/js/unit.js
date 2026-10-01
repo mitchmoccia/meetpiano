@@ -290,11 +290,47 @@ export function unitTitleFor(lessonId) {
   return UNIT_TITLE;
 }
 
-export function isLessonUnlocked(store, lessonId) {
+const availability = { paused: new Set(), order: new Map() };
+
+export function setLessonAvailability({ paused = [], order = {} } = {}) {
+  availability.paused = new Set(paused.filter((id) => catalogCard(id)));
+  availability.order = new Map(Object.entries(order).filter(([id, position]) => catalogCard(id) && Number.isInteger(position)));
+}
+
+/** Runs fn synchronously with a temporary availability overlay, so concurrent server requests cannot interleave. */
+export function withLessonAvailability(settings, fn) {
+  const previous = { paused: availability.paused, order: availability.order };
+  setLessonAvailability(settings);
+  try {
+    return fn();
+  } finally {
+    availability.paused = previous.paused;
+    availability.order = previous.order;
+  }
+}
+
+export function isLessonPaused(lessonId) {
+  return availability.paused.has(lessonId);
+}
+
+export function meetsLessonUnlockRule(store, lessonId) {
   const card = catalogCard(lessonId);
   if (!card) return false;
   if (!card.unlocksAfter) return true;
   return meetsUnlock(lessonFromStore(store, card.unlocksAfter).evidenceState, card.unlockNeeds);
+}
+
+export function isLessonUnlocked(store, lessonId) {
+  return !isLessonPaused(lessonId) && meetsLessonUnlockRule(store, lessonId);
+}
+
+function orderedCards(list) {
+  if (!availability.order.size) return list;
+  const position = (card, index) => availability.order.get(card.lessonId) ?? index;
+  return list
+    .map((card, index) => ({ card, rank: position(card, index), index }))
+    .sort((a, b) => a.rank - b.rank || a.index - b.index)
+    .map((item) => item.card);
 }
 
 export function nextLessonId(lessonId) {
@@ -322,7 +358,7 @@ export function parseUnitId(value) {
 }
 
 function mapCards(list, store) {
-  return list.map((card) => {
+  return orderedCards(list).map((card) => {
     const lesson = lessonFromStore(store, card.lessonId);
     const unlocked = isLessonUnlocked(store, card.lessonId);
     const inProgress = Boolean(lesson.currentAttemptId);
@@ -331,6 +367,7 @@ function mapCards(list, store) {
       evidenceState: lesson.evidenceState,
       evidenceLanes: lesson.evidenceLanes || null,
       unlocked,
+      paused: isLessonPaused(card.lessonId),
       inProgress,
       firstCompletionRewarded: lesson.firstCompletionRewarded === true
     };
@@ -368,35 +405,35 @@ export function unitView(store) {
         unitId: RHYTHM_UNIT_ID,
         title: RHYTHM_UNIT_TITLE,
         kicker: 'WORLD · RHYTHM CLUB',
-        unlocked: isLessonUnlocked(store, 'L05'),
+        unlocked: meetsLessonUnlockRule(store, 'L05'),
         cards: rhythmCards
       },
       {
         unitId: READ_UNIT_ID,
         title: READ_UNIT_TITLE,
         kicker: 'WORLD · READ AND PLAY',
-        unlocked: isLessonUnlocked(store, 'L09'),
+        unlocked: meetsLessonUnlockRule(store, 'L09'),
         cards: readCards
       },
       {
         unitId: LEFT_UNIT_ID,
         title: LEFT_UNIT_TITLE,
         kicker: 'WORLD · LEFT HAND',
-        unlocked: isLessonUnlocked(store, 'L13'),
+        unlocked: meetsLessonUnlockRule(store, 'L13'),
         cards: leftCards
       },
       {
         unitId: TOGETHER_UNIT_ID,
         title: TOGETHER_UNIT_TITLE,
         kicker: 'WORLD · TOGETHER',
-        unlocked: isLessonUnlocked(store, 'L17'),
+        unlocked: meetsLessonUnlockRule(store, 'L17'),
         cards: togetherCards
       },
       {
         unitId: EXPRESSION_UNIT_ID,
         title: EXPRESSION_UNIT_TITLE,
         kicker: 'WORLD · EXPRESSION',
-        unlocked: isLessonUnlocked(store, 'L21'),
+        unlocked: meetsLessonUnlockRule(store, 'L21'),
         cards: expressionCards
       }
     ],

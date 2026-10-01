@@ -558,7 +558,7 @@ export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit, onEx
     el('p', { className: 'unit-limit hub-grownup-foot' },
       el('a', { className: 'button button-outline', href: '/learn/?view=grown-up' }, 'Grown-up helper')
     ),
-    el('p', { className: 'unit-limit' }, 'Playable lessons are L01–L24 when earlier activities on this device are ready. On-screen keys are an exploration stand-in, not proof of hand coordination or quiet-versus-strong. MIDI reports pitch, time, and velocity if the keyboard sent it — never technique. A grown-up marks listening for a recital. Export stays on the browsers you control. There is no account.')
+    el('p', { className: 'unit-limit' }, 'Playable lessons are L01–L24 when earlier activities on this device are ready. On-screen keys are an exploration stand-in, not proof of hand coordination or quiet-versus-strong. MIDI reports pitch, time, and velocity if the keyboard sent it — never technique. A grown-up marks listening for a recital. Guest records stay on the browsers you control; a grown-up can sign in to save to a family profile instead.')
   ].filter(Boolean));
 }
 
@@ -688,19 +688,21 @@ function unitSection(unit, onOpen, focusUnit) {
 function unitCard(card, onOpen) {
   const locked = !card.unlocked;
   const state = evidenceLabel(card.evidenceState);
-  const action = locked
-    ? lockReason(card)
-    : card.inProgress
-      ? 'Continue'
-      : evidenceRank(card.evidenceState) >= 3
-        ? 'Replay'
-        : 'Open';
+  const action = card.paused
+    ? 'Paused for now. Check back soon.'
+    : locked
+      ? lockReason(card)
+      : card.inProgress
+        ? 'Continue'
+        : evidenceRank(card.evidenceState) >= 3
+          ? 'Replay'
+          : 'Open';
   const lanes = laneSummary(card);
   return el('li', { className: `unit-card ${locked ? 'locked' : 'open'} ${card.inProgress ? 'current' : ''}` },
     el('span', { className: 'unit-id' }, card.lessonId),
     el('strong', {}, card.title),
     el('span', { className: 'unit-blurb' }, card.blurb),
-    el('span', { className: 'unit-state' }, locked ? 'Locked' : state),
+    el('span', { className: 'unit-state' }, card.paused ? 'Paused' : locked ? 'Locked' : state),
     locked ? null : evidenceLaneList(lanes),
     locked
       ? el('p', { className: 'unit-lock-note' }, action)
