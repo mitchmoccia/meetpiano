@@ -24,7 +24,7 @@
     "check:static": "node scripts/static-checks.mjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:seed": "tsx scripts/db/seed.ts",
+    "db:seed": "tsx --conditions=react-server scripts/db/seed.ts",
     "curriculum:sync": "tsx scripts/db/curriculum-sync.ts",
     "admin:grant": "tsx scripts/db/admin.ts grant",
     "admin:revoke": "tsx scripts/db/admin.ts revoke"
