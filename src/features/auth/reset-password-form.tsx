@@ -38,7 +38,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
         autoComplete="new-password"
         minLength={PASSWORD_MIN_LENGTH}
         maxLength={PASSWORD_MAX_LENGTH}
-        hint="At least 10 characters. Changing it signs out every other device."
+        hint="At least 10 characters. Changing it signs the account out on every device."
         required
       />
       <Field id="confirm" name="confirm" label="Confirm new password" type="password" autoComplete="new-password" required />
