@@ -13,6 +13,7 @@ const config = [
     rules: {
       'no-console': ['error', { allow: ['info', 'warn', 'error'] }],
       '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],
       '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports', fixStyle: 'inline-type-imports' }],
       '@typescript-eslint/no-non-null-assertion': 'error'
     }
