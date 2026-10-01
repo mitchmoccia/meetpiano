@@ -10,6 +10,7 @@ export const ADULT_NOTES = ['adult-confirmed-other-c', 'adult-confirmed-other-tw
 export type Phase = (typeof PHASES)[number];
 export type EvidenceState = (typeof EVIDENCE_STATES)[number];
 export type InputMode = (typeof INPUT_MODES)[number];
+export type AttemptSource = 'live' | 'import';
 
 export const CONTENT_VERSION_PATTERN = /^[a-z0-9][a-z0-9.-]{0,39}$/;
 export const CLIENT_ATTEMPT_ID_PATTERN = /^[A-Za-z0-9-]{8,64}$/;

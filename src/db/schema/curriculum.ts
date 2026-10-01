@@ -26,7 +26,7 @@ export const curriculumLesson = pgTable(
       .references(() => curriculumUnit.id, { onDelete: 'restrict' }),
     title: text('title').notNull(),
     position: integer('position').notNull(),
-    status: text('status').notNull().default('available'),
+    status: text('status').$type<'available' | 'paused'>().notNull().default('available'),
     statusNote: text('status_note'),
     currentContentVersion: text('current_content_version').notNull(),
     unlocksAfter: text('unlocks_after'),

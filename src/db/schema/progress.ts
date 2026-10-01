@@ -3,7 +3,7 @@ import { check, foreignKey, index, integer, jsonb, pgTable, primaryKey, text, uu
 import { createdAt, timestampTz, updatedAt } from './columns';
 import { curriculumLesson, curriculumLessonVersion } from './curriculum';
 import { childProfile } from './family';
-import type { AttemptDetails } from '@/features/progress/attempt-details';
+import type { AttemptDetails, AttemptSource, EvidenceState, InputMode, Phase } from '@/features/progress/attempt-details';
 
 const PHASE_VALUES = sql.raw(
   `('explanation', 'demo', 'guided', 'independent', 'transfer', 'remediation', 'review', 'result')`
@@ -21,12 +21,12 @@ export const lessonAttempt = pgTable(
       .references(() => childProfile.id, { onDelete: 'cascade' }),
     lessonId: text('lesson_id').notNull(),
     contentVersion: text('content_version').notNull(),
-    source: text('source').notNull(),
+    source: text('source').$type<AttemptSource>().notNull(),
     revision: integer('revision').notNull(),
-    phase: text('phase').notNull(),
-    furthestPhase: text('furthest_phase').notNull(),
-    evidenceState: text('evidence_state'),
-    inputMode: text('input_mode').notNull(),
+    phase: text('phase').$type<Phase>().notNull(),
+    furthestPhase: text('furthest_phase').$type<Phase>().notNull(),
+    evidenceState: text('evidence_state').$type<EvidenceState>(),
+    inputMode: text('input_mode').$type<InputMode>().notNull(),
     startedAt: timestampTz('started_at').notNull(),
     completedAt: timestampTz('completed_at'),
     firstCompletedAt: timestampTz('first_completed_at'),
@@ -72,7 +72,7 @@ export const lessonProgress = pgTable(
     lessonId: text('lesson_id')
       .notNull()
       .references(() => curriculumLesson.id, { onDelete: 'restrict' }),
-    evidenceState: text('evidence_state'),
+    evidenceState: text('evidence_state').$type<EvidenceState>(),
     attemptCount: integer('attempt_count').notNull().default(0),
     completedAttemptCount: integer('completed_attempt_count').notNull().default(0),
     importedAttemptCount: integer('imported_attempt_count').notNull().default(0),
@@ -83,7 +83,7 @@ export const lessonProgress = pgTable(
     practicedAt: timestampTz('practiced_at'),
     independentAt: timestampTz('independent_at'),
     retainedAt: timestampTz('retained_at'),
-    lastInputMode: text('last_input_mode'),
+    lastInputMode: text('last_input_mode').$type<InputMode>(),
     createdAt: createdAt(),
     updatedAt: updatedAt()
   },

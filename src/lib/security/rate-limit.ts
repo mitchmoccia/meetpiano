@@ -5,7 +5,7 @@ export type RateRule = { windowSeconds: number; max: number };
 
 export const RATE_RULES = {
   attemptSave: { windowSeconds: 60, max: 120 },
-  legacyImport: { windowSeconds: 600, max: 10 },
+  legacyImport: { windowSeconds: 600, max: 30 },
   passwordCheck: { windowSeconds: 600, max: 8 },
   childWrite: { windowSeconds: 600, max: 40 },
   adminWrite: { windowSeconds: 60, max: 60 }

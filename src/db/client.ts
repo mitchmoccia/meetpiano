@@ -5,6 +5,8 @@ import { appEnv, serverEnv } from '@/lib/env';
 import * as schema from './schema';
 
 export type Database = NodePgDatabase<typeof schema>;
+export type Transaction = Parameters<Parameters<Database['transaction']>[0]>[0];
+export type Executor = Database | Transaction;
 
 type DbGlobals = { meetpianoPool?: Pool; meetpianoDb?: Database; meetpianoDbCheck?: Promise<void> };
 const globals = globalThis as unknown as DbGlobals;
