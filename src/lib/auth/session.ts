@@ -2,6 +2,7 @@ import 'server-only';
 import { and, eq } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { cache } from 'react';
 import { assertDatabaseEnvironment, getDb } from '@/db/client';
 import { authAccount } from '@/db/schema';
 import { enforceRateLimit, RATE_RULES } from '@/lib/security';
@@ -29,8 +30,11 @@ export async function readParentSession(requestHeaders?: Headers): Promise<Paren
   };
 }
 
+/** The verified parent for the current page render or server action, read once per request. */
+export const currentParent = cache((): Promise<ParentSession | null> => readParentSession());
+
 export async function requireParent(returnPath: string): Promise<ParentSession> {
-  const session = await readParentSession();
+  const session = await currentParent();
   if (!session) redirect(`/signin?next=${encodeURIComponent(returnPath)}`);
   return session;
 }

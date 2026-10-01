@@ -34,6 +34,8 @@ function createAuth() {
     secret: env.BETTER_AUTH_SECRET,
     trustedOrigins: trustedOrigins(),
     telemetry: { enabled: false },
+    // Info-level entries include email addresses; server logs carry identifiers only.
+    logger: { level: 'warn' },
     database: drizzleAdapter(getDb(), {
       provider: 'pg',
       schema: { user: authUser, session: authSession, account: authAccount, verification: authVerification, rateLimit: authRateLimit }

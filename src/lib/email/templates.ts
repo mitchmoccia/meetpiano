@@ -37,7 +37,7 @@ export function verifyEmailMessage(to: string, url: string): EmailMessage {
 export function resetPasswordMessage(to: string, url: string): EmailMessage {
   const paragraphs = [
     'Someone asked to reset the password for this MeetPiano family account.',
-    'The link works once and expires in 30 minutes. Resetting signs out every other device.'
+    'The link works once and expires in 30 minutes. Resetting signs the account out on every device.'
   ];
   return {
     to,
