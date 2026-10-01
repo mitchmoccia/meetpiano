@@ -1,8 +1,8 @@
-import { STORAGE_KEY, createProgress, emptyStore } from '../dist/js/progress.js';
-import { createPlayer } from '../dist/js/player.js';
-import { FIRST_NOTES_LESSONS, isLessonUnlocked, parseLessonId, unitView } from '../dist/js/unit.js';
-import { L03 } from '../dist/js/lessons/l03.js';
-import { HOME_PHRASE, TRANSFER_PHRASE } from '../dist/js/lessons/l04.js';
+import { STORAGE_KEY, createProgress, emptyStore } from '../public/js/progress.js';
+import { createPlayer } from '../public/js/player.js';
+import { FIRST_NOTES_LESSONS, isLessonUnlocked, parseLessonId, unitView } from '../public/js/unit.js';
+import { L03 } from '../public/js/lessons/l03.js';
+import { HOME_PHRASE, TRANSFER_PHRASE } from '../public/js/lessons/l04.js';
 
 function memoryStorage(seed) {
   const data = seed ? { [STORAGE_KEY]: seed } : {};

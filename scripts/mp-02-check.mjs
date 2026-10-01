@@ -1,10 +1,10 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { applyMidiEvent, createHeldNotes, describeMidiState, parseMidiMessage } from '../dist/js/midi.js';
-import { assessHeardPitch, shouldCountTowardProgress } from '../dist/js/assess.js';
-import { STORAGE_KEY, createProgress, validateAttempt } from '../dist/js/progress.js';
-import { createPlayer } from '../dist/js/player.js';
+import { applyMidiEvent, createHeldNotes, describeMidiState, parseMidiMessage } from '../public/js/midi.js';
+import { assessHeardPitch, shouldCountTowardProgress } from '../public/js/assess.js';
+import { STORAGE_KEY, createProgress, validateAttempt } from '../public/js/progress.js';
+import { createPlayer } from '../public/js/player.js';
 
 const fixtures = JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), 'fixtures/mp-02-midi.json'), 'utf8'));
 

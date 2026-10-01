@@ -1,11 +1,11 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { emptyStore } from '../dist/js/progress.js';
-import { recommendNext } from '../dist/js/recommend.js';
-import { parseGrownupView } from '../dist/js/learn-view.js';
-import { GROWNUP_HONESTY } from '../dist/js/grownup.js';
-import { JOURNEY_LESSONS, isLessonUnlocked, meetsUnlock, parseLessonId, parseUnitId } from '../dist/js/unit.js';
+import { emptyStore } from '../public/js/progress.js';
+import { recommendNext } from '../public/js/recommend.js';
+import { parseGrownupView } from '../public/js/learn-view.js';
+import { GROWNUP_HONESTY } from '../public/js/grownup.js';
+import { JOURNEY_LESSONS, isLessonUnlocked, meetsUnlock, parseLessonId, parseUnitId } from '../public/js/unit.js';
 import {
   SETUP_CONTINUE_HREF,
   SETUP_COPY,
@@ -16,7 +16,7 @@ import {
   describeSetupMidi,
   emptySetupState,
   shouldShowSetupStrip
-} from '../dist/js/setup-strip.js';
+} from '../public/js/setup-strip.js';
 import {
   DEVICE_SWITCH_COPY,
   DEVICE_SWITCH_POINTER_ID,
@@ -24,7 +24,7 @@ import {
   EXISTING_EXPORT_HREF,
   EXISTING_EXPORT_ID,
   focusExistingExport
-} from '../dist/js/device-switch.js';
+} from '../public/js/device-switch.js';
 import {
   CLOSER_CONTROL_ID,
   CLOSER_COPY,
@@ -34,8 +34,8 @@ import {
   CLOSER_RESUME_ID,
   CLOSER_STAY_ID,
   closerResumeTarget
-} from '../dist/js/session-closer.js';
-import { clearPause, readPause, resumeHref, writePause } from '../dist/js/session-pause.js';
+} from '../public/js/session-closer.js';
+import { clearPause, readPause, resumeHref, writePause } from '../public/js/session-pause.js';
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -97,8 +97,8 @@ const packet = read('docs/missions/first-piano-journey-release.md');
 assert(packet.includes('docs/pilots/first-piano-journey-v1') || packet.includes('../pilots/first-piano-journey-v1'), 'release packet points at the v1 pilot pack');
 assert(packet.includes('Do not contact'), 'release packet still blocks outreach');
 
-const home = read('dist/index.html');
-const appJs = read('dist/app.js');
+const home = read('public/index.html');
+const appJs = read('public/app.js');
 assert(home.includes('Start First Piano Journey'), 'home hero primary CTA is Start First Piano Journey');
 assert(/href="\/learn\/?" class="button button-dark hero-cta"/.test(home), 'hero primary points at /learn');
 assert(home.includes('Play the mini adventure'), 'home keeps a secondary mini-adventure path');
@@ -243,14 +243,14 @@ assert(!homeLower.includes('lime') && !home.includes('vermilion'), 'home copy do
 const fresh = recommendNext(emptyStore(), { isNew: true, sessionId: 'fresh' });
 assert(fresh.lessonId === 'L01' && fresh.action === 'Start Meet the keyboard', 'fresh hub recommends Start Meet the keyboard');
 
-const hubJs = read('dist/js/learn-view.js');
+const hubJs = read('public/js/learn-view.js');
 assert(hubJs.includes("'Start Meet the keyboard'"), 'hub primary on a fresh device is Start Meet the keyboard');
 assert(hubJs.includes('Continue ${continueCard.title}'), 'hub primary with progress continues the next unlocked lesson');
 assert(hubJs.includes("hub-grownup"), 'hub shows Grown-up view beside the continue card');
 assert(hubJs.includes('hub-continue'), 'hub continue is a strong button');
 assert(hubJs.includes("href: '/learn/?view=grown-up'"), 'hub secondary is Grown-up view');
 
-const learnHtml = read('dist/learn/index.html');
+const learnHtml = read('public/learn/index.html');
 assert(learnHtml.includes('device-disclosure'), 'learn keeps the yellow disclosure');
 assert(learnHtml.includes('id="kid-target"'), 'learn keeps yellow jobs');
 assert(learnHtml.includes('Xpancom, LLC'), 'learn copyright stays');
@@ -271,19 +271,19 @@ assert(parseGrownupView(null) === false, 'missing view stays on the kid hub');
 assert(parseGrownupView('') === false, 'empty view stays on the kid hub');
 assert(parseGrownupView('grown-up') === true, 'view=grown-up opens the helper');
 assert(!learnHtml.includes('view=grown-up" aria-current'), 'default learn HTML does not mark grown-up as the current view');
-const learnJs = read('dist/learn/learn.js');
+const learnJs = read('public/learn/learn.js');
 assert(learnJs.includes("parseGrownupView(params.get('view'))"), 'grown-up helper opens only from the view query');
 assert(!/const showGrownup = true/.test(learnJs), 'learn.js does not hard-open the grown-up helper');
 for (const phrase of n03.honestyMustInclude) {
   assert(GROWNUP_HONESTY.includes(phrase), `grown-up honesty states ${phrase}`);
 }
-const grownupSurface = `${learnHtml}\n${hubJs}\n${GROWNUP_HONESTY}\n${read('dist/js/grownup.js')}`;
+const grownupSurface = `${learnHtml}\n${hubJs}\n${GROWNUP_HONESTY}\n${read('public/js/grownup.js')}`;
 const grownupLower = grownupSurface.toLowerCase();
 for (const phrase of n03.bannedPhrases) {
   assert(!grownupLower.includes(phrase.toLowerCase()), `learn/grown-up surfaces must not say ${phrase}`);
 }
 assert(!grownupLower.includes('lime') && !grownupSurface.includes('vermilion'), 'learn copy does not introduce banned palette names');
-assert(!/#00f|#4f46|#6366|linear-gradient/i.test(read('dist/learn/learn.css')), 'learn CSS has no blue/purple gradient restyle');
+assert(!/#00f|#4f46|#6366|linear-gradient/i.test(read('public/learn/learn.css')), 'learn CSS has no blue/purple gradient restyle');
 assert(home.includes(n03.homeMustKeepParentPointer), 'home keeps the N01 grown-up pointer');
 for (const phrase of n03.homeMustMarkCloudProfilesFuture) {
   assert(home.includes(phrase), `home still marks cloud family profiles as future (${phrase})`);
@@ -358,7 +358,7 @@ assert(describeSetupMidi('denied').includes(n04.midi.deniedMustInclude), 'denied
 assert(SETUP_COPY.midiIdle.includes('MIDI is optional'), 'idle MIDI copy stays optional');
 assert(n04.midi.optional === true, 'fixture marks MIDI optional');
 
-const setupSurface = `${JSON.stringify(SETUP_COPY)}\n${hubJs}\n${learnJs}\n${read('dist/js/setup-strip.js')}`;
+const setupSurface = `${JSON.stringify(SETUP_COPY)}\n${hubJs}\n${learnJs}\n${read('public/js/setup-strip.js')}`;
 const setupLower = setupSurface.toLowerCase();
 for (const phrase of n04.honestyMustInclude) {
   assert(setupSurface.includes(phrase), `setup honesty states ${phrase}`);
@@ -367,12 +367,12 @@ for (const phrase of n04.bannedPhrases) {
   assert(!setupLower.includes(phrase.toLowerCase()), `setup surfaces must not say ${phrase}`);
 }
 assert(!setupLower.includes('lime') && !setupSurface.includes('vermilion'), 'setup copy does not introduce banned palette names');
-assert(!/#00f|#4f46|#6366|linear-gradient/i.test(read('dist/learn/learn.css')), 'learn CSS still has no blue/purple gradient restyle');
+assert(!/#00f|#4f46|#6366|linear-gradient/i.test(read('public/learn/learn.css')), 'learn CSS still has no blue/purple gradient restyle');
 assert(!/hardware[- ]midi[- ]verified|verified midi hardware/i.test(setupLower), 'setup does not claim hardware MIDI verified');
 
 const n05 = JSON.parse(read('scripts/fixtures/n05-device-switch-export.json'));
-const deviceSwitchJs = read('dist/js/device-switch.js');
-const portabilityJs = read('dist/js/portability.js');
+const deviceSwitchJs = read('public/js/device-switch.js');
+const portabilityJs = read('public/js/portability.js');
 assert(n05.noSecondExportUi === true, 'fixture forbids a second export UI');
 assert(n05.pointerMustNotDownload === true, 'fixture says the pointer must not download');
 assert(DEVICE_SWITCH_WARNING_ID === n05.warningId, 'warning id matches the fixture');
@@ -404,7 +404,7 @@ for (const phrase of n05.bannedImplications) {
 for (const phrase of n05.bannedPhrases) {
   assert(!switchLower.includes(phrase.toLowerCase()), `device-switch surfaces must not say ${phrase}`);
 }
-assert(!/#00f|#4f46|#6366|linear-gradient/i.test(read('dist/learn/learn.css')), 'learn CSS still has no blue/purple gradient restyle after N05');
+assert(!/#00f|#4f46|#6366|linear-gradient/i.test(read('public/learn/learn.css')), 'learn CSS still has no blue/purple gradient restyle after N05');
 
 const exportControl = {
   scrolled: false,
@@ -420,7 +420,7 @@ assert(exportControl.scrolled && exportControl.focused, 'pointer scrolls to and 
 assert(focusExistingExport({ querySelector: () => null }) === false, 'pointer does not invent an export control');
 
 const n06 = JSON.parse(read('scripts/fixtures/n06-enough-for-today.json'));
-const closerJs = read('dist/js/session-closer.js');
+const closerJs = read('public/js/session-closer.js');
 const pauseJs = read(n06.pauseModule);
 assert(CLOSER_CONTROL_ID === n06.controlId, 'closer control id matches the fixture');
 assert(CLOSER_OVERLAY_ID === n06.overlayId, 'closer overlay id matches the fixture');
@@ -505,7 +505,7 @@ for (const phrase of n06.bannedGuiltPhrases) {
   assert(!closerLower.includes(phrase.toLowerCase()), `closer must not guilt with ${phrase}`);
 }
 assert(!closerLower.includes('lime') && !closerOwn.includes('vermilion'), 'closer copy does not introduce banned palette names');
-assert(!/#00f|#4f46|#6366|linear-gradient/i.test(read('dist/learn/learn.css')), 'learn CSS still has no blue/purple gradient restyle after N06');
+assert(!/#00f|#4f46|#6366|linear-gradient/i.test(read('public/learn/learn.css')), 'learn CSS still has no blue/purple gradient restyle after N06');
 assert(!/account|notification|push alert/i.test(JSON.stringify(CLOSER_COPY)), 'closer does not add accounts or notifications');
 
 const n07 = JSON.parse(read('scripts/fixtures/n07-hardware-midi-honesty.json'));

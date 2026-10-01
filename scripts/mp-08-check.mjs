@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { STORAGE_KEY, createProgress, emptyStore } from '../dist/js/progress.js';
-import { createPlayer } from '../dist/js/player.js';
+import { STORAGE_KEY, createProgress, emptyStore } from '../public/js/progress.js';
+import { createPlayer } from '../public/js/player.js';
 import {
   FIRST_NOTES_LESSONS,
   LEFT_HAND_LESSONS,
@@ -13,16 +13,16 @@ import {
   parseLessonId,
   parseUnitId,
   unitView
-} from '../dist/js/unit.js';
-import { BASS_CLEF, TREBLE_CLEF, staffAgrees } from '../dist/js/staff.js';
-import { pianoRangeFor } from '../dist/js/hands.js';
-import { togetherHonesty } from '../dist/js/evidence.js';
-import { HOME_NOTES as L17_HOME, HOME_PATTERN as L17_HOME_PATTERN, L17, TRANSFER_NOTES as L17_TRANSFER } from '../dist/js/lessons/l17.js';
-import { HEAD_UNTIL, HOME_NOTES as L18_HOME, HOME_PATTERN as L18_HOME_PATTERN, L18 } from '../dist/js/lessons/l18.js';
-import { HOME_NOTES as L19_HOME, HOME_PATTERN as L19_HOME_PATTERN, L19 } from '../dist/js/lessons/l19.js';
-import { HOME_EVENTS as L20_HOME_EVENTS, HOME_NOTES as L20_HOME, HOME_PATTERN as L20_HOME_PATTERN, L20 } from '../dist/js/lessons/l20.js';
-import { createRhythmTake, eventsForPart, eventsUntilBeat } from '../dist/js/rhythm-score.js';
-import { HOME_PATTERN as L16_HOME } from '../dist/js/lessons/l16.js';
+} from '../public/js/unit.js';
+import { BASS_CLEF, TREBLE_CLEF, staffAgrees } from '../public/js/staff.js';
+import { pianoRangeFor } from '../public/js/hands.js';
+import { togetherHonesty } from '../public/js/evidence.js';
+import { HOME_NOTES as L17_HOME, HOME_PATTERN as L17_HOME_PATTERN, L17, TRANSFER_NOTES as L17_TRANSFER } from '../public/js/lessons/l17.js';
+import { HEAD_UNTIL, HOME_NOTES as L18_HOME, HOME_PATTERN as L18_HOME_PATTERN, L18 } from '../public/js/lessons/l18.js';
+import { HOME_NOTES as L19_HOME, HOME_PATTERN as L19_HOME_PATTERN, L19 } from '../public/js/lessons/l19.js';
+import { HOME_EVENTS as L20_HOME_EVENTS, HOME_NOTES as L20_HOME, HOME_PATTERN as L20_HOME_PATTERN, L20 } from '../public/js/lessons/l20.js';
+import { createRhythmTake, eventsForPart, eventsUntilBeat } from '../public/js/rhythm-score.js';
+import { HOME_PATTERN as L16_HOME } from '../public/js/lessons/l16.js';
 
 const fixtures = JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), 'fixtures/mp-08-together.json'), 'utf8'));
 

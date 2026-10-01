@@ -12,42 +12,42 @@
     "notes"
   ],
   "honestySurfaces": [
-    "dist/index.html",
-    "dist/learn/index.html",
-    "dist/learn/index.md",
-    "dist/js/setup-strip.js",
-    "dist/js/grownup.js",
-    "dist/js/learn-view.js",
-    "dist/js/evidence.js",
-    "dist/js/midi.js",
-    "dist/app.js",
-    "dist/llms.txt",
+    "public/index.html",
+    "public/learn/index.html",
+    "public/learn/index.md",
+    "public/js/setup-strip.js",
+    "public/js/grownup.js",
+    "public/js/learn-view.js",
+    "public/js/evidence.js",
+    "public/js/midi.js",
+    "public/app.js",
+    "public/llms.txt",
     "README.md"
   ],
   "surfaceMustInclude": {
-    "dist/index.html": [
+    "public/index.html": [
       "Physical MIDI hardware is not verified",
       "Optional Web MIDI",
       "on-screen keys",
       "computer keyboard"
     ],
-    "dist/learn/index.html": [
+    "public/learn/index.html": [
       "Physical MIDI hardware is not verified",
       "Optional Web MIDI",
       "on-screen keys",
       "computer keys"
     ],
-    "dist/learn/index.md": [
+    "public/learn/index.md": [
       "Physical MIDI hardware is not verified",
       "Web MIDI is optional",
       "On-screen keys"
     ],
-    "dist/js/setup-strip.js": [
+    "public/js/setup-strip.js": [
       "MIDI is optional",
       "On-screen keys and computer keys still work",
       "Physical MIDI hardware is not verified"
     ],
-    "dist/llms.txt": [
+    "public/llms.txt": [
       "Physical MIDI hardware is not verified",
       "Web MIDI is optional"
     ]

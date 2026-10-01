@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { STORAGE_KEY, createProgress, emptyStore } from '../dist/js/progress.js';
-import { createPlayer } from '../dist/js/player.js';
+import { STORAGE_KEY, createProgress, emptyStore } from '../public/js/progress.js';
+import { createPlayer } from '../public/js/player.js';
 import {
   FIRST_NOTES_LESSONS,
   READ_AND_PLAY_LESSONS,
@@ -11,14 +11,14 @@ import {
   parseLessonId,
   parseUnitId,
   unitView
-} from '../dist/js/unit.js';
-import { staffAgrees } from '../dist/js/staff.js';
-import { L09_F, L09_G } from '../dist/js/lessons/l09.js';
-import { HOME_CHAIN, TRANSFER_CHAIN } from '../dist/js/lessons/l10.js';
-import { creativityOk } from '../dist/js/lessons/l10-play.js';
-import { L11, STAFF_WALK, TRANSFER_ORDER } from '../dist/js/lessons/l11.js';
-import { HOME_NOTES, HOME_PHRASE, TRANSFER_NOTES, TRANSFER_PHRASE } from '../dist/js/lessons/l12.js';
-import { HOME_PHRASE as LITTLE_WAVE } from '../dist/js/lessons/l04.js';
+} from '../public/js/unit.js';
+import { staffAgrees } from '../public/js/staff.js';
+import { L09_F, L09_G } from '../public/js/lessons/l09.js';
+import { HOME_CHAIN, TRANSFER_CHAIN } from '../public/js/lessons/l10.js';
+import { creativityOk } from '../public/js/lessons/l10-play.js';
+import { L11, STAFF_WALK, TRANSFER_ORDER } from '../public/js/lessons/l11.js';
+import { HOME_NOTES, HOME_PHRASE, TRANSFER_NOTES, TRANSFER_PHRASE } from '../public/js/lessons/l12.js';
+import { HOME_PHRASE as LITTLE_WAVE } from '../public/js/lessons/l04.js';
 
 const fixtures = JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), 'fixtures/mp-05-read.json'), 'utf8'));
 
