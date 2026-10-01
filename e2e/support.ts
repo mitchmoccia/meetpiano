@@ -107,7 +107,7 @@ export function isAttemptsPost(response: Response): boolean {
   return response.request().method() === 'POST' && new URL(response.url()).pathname === '/api/learner/attempts';
 }
 
-function finishesLesson(response: Response, lessonId: string): boolean {
+export function finishesLesson(response: Response, lessonId: string): boolean {
   if (!isAttemptsPost(response) || !response.ok()) return false;
   const envelope = response.request().postDataJSON() as Envelope;
   return envelope.entries.some((entry) => entry.attempt.lessonId === lessonId && entry.attempt.completedAt);
@@ -115,15 +115,17 @@ function finishesLesson(response: Response, lessonId: string): boolean {
 
 export type PianoInput = 'touch' | 'computer-keys';
 
-const COMPUTER_KEY_FOR: Record<number, string> = { 60: 'a', 61: 'w', 66: 't', 71: 'j' };
+export const COMPUTER_KEY_FOR: Record<number, string> = { 60: 'a', 61: 'w', 66: 't', 71: 'j' };
 
 export function pianoKey(page: Page, note: number): Locator {
   return page.locator(`#piano .piano-key[data-note="${note}"]`);
 }
 
 /** High then low, a two-black group then a three-black group: the guided L01 check. */
+export const GUIDED_NOTES = [71, 60, 61, 66];
+
 export async function playGuidedNotes(page: Page, input: PianoInput, play?: (note: number) => Promise<void>): Promise<void> {
-  for (const note of [71, 60, 61, 66]) {
+  for (const note of GUIDED_NOTES) {
     if (play) await play(note);
     else if (input === 'touch') await pianoKey(page, note).click();
     else await page.keyboard.press(COMPUTER_KEY_FOR[note] ?? '');
