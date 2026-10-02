@@ -68,14 +68,18 @@ export const L01 = {
       remediation: 'Higher means the sound climbs, usually to the right — not which key is taller.',
       hearWhite: 'Hear two white keys: high, then low',
       finishForNow: 'Save and finish for now',
+      goToDone: 'Go to Done',
+      goToDoneNeedHighLow: 'Play a high sound, then a lower one. Then Go to Done can finish this check.',
+      goToDoneNeedGroups: 'High, then low is in. Find both clumps with no glow. Then Go to Done can finish.',
       done: 'That check is in. Next is a different pair of two, or a grown-up confirm.'
     },
     transfer: {
       eyebrow: 'ONE MORE LOOK',
       title: 'Another clump of two',
-      otherTwo: 'Find a different group of two black keys than the one you used while practicing. On this small stand-in there is only one pair. Play a two-black group in another octave on a connected keyboard, or point to another pair on a real piano.',
-      adultTwo: 'A grown-up confirms we found another group of two on a real piano (or we only have one pair on this preview).',
-      three: 'This preview shows one group of three. Point to a group of three on a real piano if you have one.',
+      otherTwo: 'Find a different group of two black keys than the one you used while practicing. This stand-in shows another pair in the next octave. You can also play one on a connected keyboard, or a grown-up can point to another pair on a real piano.',
+      adultTwo: 'A grown-up confirms we found another group of two on a real piano.',
+      goToDoneNeedOther: 'Find the other clump of two on this stand-in, or a grown-up can confirm. Then Go to Done.',
+      three: 'This stand-in shows another group of three in the next octave. Play that group here, or point to a group of three on a real piano.',
       adultThree: 'A grown-up confirms the learner pointed to a group of three.',
       action: 'See how this try went'
     },
@@ -112,4 +116,14 @@ export function interval(a, b) {
 
 export function isLower(second, first) {
   return second < first;
+}
+
+export function l01DoneGate({ phase, independentStep, transferStep, adultTwo } = {}) {
+  if (phase === 'result') return 'already-done';
+  if (phase === 'independent' && independentStep === 'high-low') return 'need-high-low';
+  if (phase === 'independent' && independentStep === 'groups') return 'need-groups';
+  if (phase === 'independent') return 'advance-transfer';
+  if (phase === 'transfer' && transferStep === 'other-two' && !adultTwo) return 'need-other-two';
+  if (phase === 'transfer') return 'finish';
+  return 'not-check';
 }

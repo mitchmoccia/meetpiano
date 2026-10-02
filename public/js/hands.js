@@ -14,6 +14,9 @@ export const RIGHT_FROM = 60;
 export const RIGHT_TO = 71;
 export const BOTH_FROM = 48;
 export const BOTH_TO = 71;
+export const OCTAVE_SPAN_KEY = 'meetpiano:octave-span';
+export const DEFAULT_OCTAVE_SPAN = 2;
+const LEFT_ROOM_LESSONS = ['L13', 'L14', 'L15', 'L16', 'L17', 'L18', 'L19', 'L20'];
 
 export const HAND_FOCUSES = ['left', 'right', 'both'];
 
@@ -32,13 +35,50 @@ export function normalizeHandFocus(value, lessonId) {
   return defaultHandFocus(lessonId);
 }
 
-export function pianoRangeFor(lessonId) {
-  if (['L13', 'L14', 'L15', 'L16', 'L17', 'L18', 'L19', 'L20'].includes(lessonId)) {
-    return { from: BOTH_FROM, to: BOTH_TO, wide: true };
-  }
-  return { from: RIGHT_FROM, to: RIGHT_TO, wide: false };
+export function normalizeOctaveSpan(value) {
+  const span = Number(value);
+  return span === 1 || span === 2 || span === 3 ? span : DEFAULT_OCTAVE_SPAN;
 }
 
-export function usesWidePiano(lessonId) {
-  return pianoRangeFor(lessonId).wide;
+export function readOctaveSpan(storage) {
+  try {
+    return normalizeOctaveSpan(storage?.getItem(OCTAVE_SPAN_KEY));
+  } catch (_) {
+    return DEFAULT_OCTAVE_SPAN;
+  }
+}
+
+export function writeOctaveSpan(span, storage) {
+  const next = normalizeOctaveSpan(span);
+  try {
+    storage?.setItem(OCTAVE_SPAN_KEY, String(next));
+  } catch (_) {
+    return next;
+  }
+  return next;
+}
+
+export function pianoRangeFor(lessonId, octaveSpan = DEFAULT_OCTAVE_SPAN) {
+  const span = normalizeOctaveSpan(octaveSpan);
+  const left = LEFT_ROOM_LESSONS.includes(lessonId);
+  const from = left ? LEFT_FROM : RIGHT_FROM;
+  const taughtSpan = left && span < 2 ? 2 : span;
+  const to = from + taughtSpan * 12;
+  return {
+    from,
+    to,
+    wide: to - from > 12,
+    octaveSpan: span,
+    taughtSpan,
+    startC: from,
+    endC: to
+  };
+}
+
+export function usesWidePiano(lessonId, octaveSpan = DEFAULT_OCTAVE_SPAN) {
+  return pianoRangeFor(lessonId, octaveSpan).wide;
+}
+
+export function usesLeftRoom(lessonId) {
+  return LEFT_ROOM_LESSONS.includes(lessonId);
 }

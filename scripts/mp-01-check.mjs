@@ -9,7 +9,10 @@ import {
   validateStore
 } from '../public/js/progress.js';
 import { createPlayer } from '../public/js/player.js';
-import { blackGroupId } from '../public/js/piano.js';
+import { blackGroupId, computerKeysForRange, whiteNotesInRange } from '../public/js/piano.js';
+import { l01DoneGate } from '../public/js/lessons/l01.js';
+import { pianoRangeFor } from '../public/js/hands.js';
+import { stepVisualIndex } from '../public/js/learn-view.js';
 
 function memoryStorage(seed) {
   const data = seed ? { [STORAGE_KEY]: seed } : {};
@@ -134,5 +137,18 @@ const rawAttempt = createAttempt('L01');
 assert(validateAttempt(rawAttempt, 'L01'), 'fresh attempt matches the versioned shape');
 assert(validateStore(emptyStore()).ok, 'empty store is valid');
 assert(blackGroupId(61) === 'two-4' && blackGroupId(66) === 'three-4', 'black-key groups match L01 preview');
+assert(blackGroupId(73) === 'two-5', 'next octave still has a two-black group');
+
+const teaching = pianoRangeFor('L01');
+const whites = whiteNotesInRange(teaching.from, teaching.to);
+assert(whites[0] === 60 && whites.at(-1) === 84, 'default stand-in shows both end Cs');
+assert(whites.filter((note) => note % 12 === 0).length === 3, 'C4, C5, and C6 are visible');
+const keys = computerKeysForRange(60, 84, 'both');
+assert(keys.a === 60 && keys.j === 71 && keys.z === 72 && keys[','] === 84, 'computer keys cover both octaves and the top C');
+assert(pianoRangeFor('L01', 1).to === 72 && pianoRangeFor('L01', 3).to === 96, 'grown-up span is 1, 2, or 3 octaves');
+assert(l01DoneGate({ phase: 'independent', independentStep: 'high-low' }) === 'need-high-low', 'Go to Done waits for a high-low try');
+assert(l01DoneGate({ phase: 'independent', independentStep: 'groups' }) === 'need-groups', 'Go to Done waits for both clumps');
+assert(l01DoneGate({ phase: 'transfer', transferStep: 'three', adultTwo: true }) === 'finish', 'a finished quiet check can open Done');
+assert(stepVisualIndex(3) === 3 && stepVisualIndex(5) === 4, 'result lights pill 5 Done');
 
 console.log('mp-01 checks passed');

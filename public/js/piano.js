@@ -1,4 +1,6 @@
 export const WHITE_NOTES = [60, 62, 64, 65, 67, 69, 71];
+export const DEFAULT_PIANO_FROM = 60;
+export const DEFAULT_PIANO_TO = 84;
 export const BLACK_NOTES = [
   { note: 61, className: 'black-1', group: 'two-4' },
   { note: 63, className: 'black-2', group: 'two-4' },
@@ -12,6 +14,8 @@ export const COMPUTER_KEYS = {
 };
 
 const LEFT_ROW = { z: 48, x: 50, c: 52, v: 53, b: 55, n: 57, m: 59 };
+const UPPER_WHITES = { z: 72, x: 74, c: 76, v: 77, b: 79, n: 81, m: 83 };
+const TOP_C_KEY = ',';
 
 export function computerKeysFor(focus = 'right') {
   if (focus === 'left') {
@@ -19,6 +23,38 @@ export function computerKeysFor(focus = 'right') {
   }
   if (focus === 'both') return { ...COMPUTER_KEYS, ...LEFT_ROW };
   return { ...COMPUTER_KEYS };
+}
+
+export function computerKeysForRange(from = DEFAULT_PIANO_FROM, to = DEFAULT_PIANO_TO, focus = 'both') {
+  const map = {};
+  const inRange = (note) => note >= from && note <= to;
+  if (focus === 'left') {
+    for (const [key, note] of Object.entries(computerKeysFor('left'))) {
+      if (inRange(note)) map[key] = note;
+    }
+    return map;
+  }
+  for (const [key, note] of Object.entries(COMPUTER_KEYS)) {
+    if (inRange(note)) map[key] = note;
+  }
+  if (focus === 'right') return map;
+  const extra = from <= 48 ? LEFT_ROW : UPPER_WHITES;
+  for (const [key, note] of Object.entries(extra)) {
+    if (inRange(note)) map[key] = note;
+  }
+  const endIsC = ((to % 12) + 12) % 12 === 0;
+  if (endIsC && !Object.values(map).includes(to)) map[TOP_C_KEY] = to;
+  return map;
+}
+
+export function computerHelpFor(range = { from: DEFAULT_PIANO_FROM, to: DEFAULT_PIANO_TO, octaveSpan: 2 }) {
+  if (range.from <= 48) {
+    return 'or use Z X C V B N M for the left room, A S D F G H J for the right room, and comma for the top C';
+  }
+  if (range.octaveSpan === 3) {
+    return 'or use A S D F G H J for the first octave and Z X C V B N M for the next. The third octave is on the screen. Comma plays the top C.';
+  }
+  return 'or use A S D F G H J for the first octave, Z X C V B N M for the next octave, and comma for the top C';
 }
 
 export function whiteNotesInRange(from = 60, to = 71) {
@@ -62,23 +98,29 @@ export function groupKind(groupId) {
 }
 
 export function renderPiano(root, options = {}) {
-  const from = Number.isInteger(options.from) ? options.from : 60;
-  const to = Number.isInteger(options.to) ? options.to : 71;
-  const wide = Boolean(options.wide) || (to - from > 12);
-  const whites = wide ? whiteNotesInRange(from, to) : WHITE_NOTES.slice();
-  const blacks = wide ? blackNotesInRange(from, to) : BLACK_NOTES;
+  const from = Number.isInteger(options.from) ? options.from : DEFAULT_PIANO_FROM;
+  const to = Number.isInteger(options.to) ? options.to : DEFAULT_PIANO_TO;
+  const whites = whiteNotesInRange(from, to);
+  const blacks = blackNotesInRange(from, to);
+  const wide = whites.length > 8;
   root.replaceChildren();
   root.classList.add('piano');
   root.classList.toggle('wide', wide);
+  root.dataset.from = String(from);
+  root.dataset.to = String(to);
   root.style.setProperty('--white-count', String(whites.length));
-  root.setAttribute('aria-label', wide ? 'On-screen piano stand-in, two rooms' : 'On-screen piano stand-in');
+  const endC = ((to % 12) + 12) % 12 === 0;
+  const startC = ((from % 12) + 12) % 12 === 0;
+  root.setAttribute('aria-label', startC && endC
+    ? 'On-screen piano stand-in, C to C'
+    : 'On-screen piano stand-in');
   whites.forEach((note) => {
     const key = document.createElement('button');
     key.type = 'button';
     key.className = 'piano-key white-key';
     key.dataset.note = String(note);
     key.dataset.region = note < 60 ? 'left' : 'right';
-    key.setAttribute('aria-label', `${note < 60 ? 'Left room' : 'Right room'} white key, computer key ${computerLabel(note, wide)}`);
+    key.setAttribute('aria-label', `${note < 60 ? 'Left room' : 'Right room'} white key, computer key ${computerLabel(note, from, to)}`);
     root.append(key);
   });
   blacks.forEach((item) => {
@@ -89,11 +131,11 @@ export function renderPiano(root, options = {}) {
     key.dataset.group = item.group;
     key.dataset.groupKind = groupKind(item.group) || '';
     key.dataset.region = item.note < 60 ? 'left' : 'right';
-    if (wide && Number.isInteger(item.whiteIndex)) {
+    if (Number.isInteger(item.whiteIndex)) {
       key.style.left = `${((item.whiteIndex + 0.75) / whites.length) * 100}%`;
       key.style.width = `${(8.7 * 7) / whites.length}%`;
     }
-    key.setAttribute('aria-label', `${item.note < 60 ? 'Left room' : 'Right room'} black key, computer key ${computerLabel(item.note, wide)}`);
+    key.setAttribute('aria-label', `${item.note < 60 ? 'Left room' : 'Right room'} black key, computer key ${computerLabel(item.note, from, to)}`);
     root.append(key);
   });
 }
@@ -104,8 +146,8 @@ export function setPianoRegion(root, focus = 'both') {
   root.classList.add(`region-${focus}`);
 }
 
-function computerLabel(note, wide) {
-  const map = wide ? computerKeysFor('both') : COMPUTER_KEYS;
+function computerLabel(note, from, to) {
+  const map = computerKeysForRange(from, to, 'both');
   const found = Object.entries(map).find(([, value]) => value === note);
   return found ? found[0].toUpperCase() : '';
 }

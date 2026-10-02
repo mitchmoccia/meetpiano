@@ -169,8 +169,17 @@
             </div>
             <div class="piano" id="piano"></div>
             <div class="keyboard-help">
-              <span>This on-screen keyboard is a stand-in. Tap keys <span class="computer-help">or use A S D F G H J for the right room, Z X C V B N M for the left room</span></span>
+              <span>This on-screen keyboard is a stand-in. Tap keys <span class="computer-help">or use A S D F G H J for the first octave, Z X C V B N M for the next octave, and comma for the top C</span></span>
               <button type="button" id="sound-toggle" aria-pressed="false" aria-label="Mute sound"><svg class="icon"><use href="#volume"/></svg><span>Sound on</span></button>
+            </div>
+            <div class="octave-pref" id="octave-pref">
+              <span id="octave-pref-label">Grown-up: octaves on this stand-in</span>
+              <div class="octave-pref-row" role="group" aria-labelledby="octave-pref-label">
+                <button type="button" data-span="1" aria-pressed="false">1</button>
+                <button type="button" data-span="2" aria-pressed="true">2</button>
+                <button type="button" data-span="3" aria-pressed="false">3</button>
+              </div>
+              <p class="octave-pref-note">MIDI keeps this same window. Not a full 61-key mirror. On-screen keys stay a stand-in.</p>
             </div>
             <figure class="seating-card" id="seating-card" hidden>
               <svg viewBox="0 0 280 120" role="img" aria-labelledby="seating-title seating-desc">

@@ -204,11 +204,19 @@ function createL01Player({ progress }) {
 
   function handleTransferNote(note) {
     const step = TRANSFER_STEPS[attempt.restore.transferStep] || 'other-two';
+    const group = blackGroupId(note);
+    if (step === 'three') {
+      if (groupKind(group) === 'three') {
+        persist();
+        return { ok: true, message: 'That clump of three. Go to Done saves this check.' };
+      }
+      persist();
+      return { ignore: true };
+    }
     if (step !== 'other-two') {
       persist();
       return { ignore: true };
     }
-    const group = blackGroupId(note);
     if (groupKind(group) !== 'two') {
       persist();
       return { ok: false, message: lessonSpec.copy.feedback.needTwo };
@@ -218,12 +226,12 @@ function createL01Player({ progress }) {
       persist();
       return {
         ok: false,
-        message: 'That is the same preview pair. Try another octave on a keyboard, or ask a grown-up to confirm another pair on a real piano.'
+        message: 'That is the same preview pair. Try the pair in the next octave, or ask a grown-up to confirm another pair on a real piano.'
       };
     }
     attempt.restore.transferStep = 1;
     persist();
-    return { ok: true, message: 'A different house of two. One last grown-up check.' };
+    return { ok: true, message: 'A different house of two. Go to Done when you are ready.' };
   }
 
   function takeHighLow(note, mode) {

@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { applyMidiEvent, createHeldNotes, describeMidiState, parseMidiMessage } from '../public/js/midi.js';
+import { applyMidiEvent, createHeldNotes, dedupeMidiDevices, describeMidiState, parseMidiMessage } from '../public/js/midi.js';
 import { assessHeardPitch, shouldCountTowardProgress } from '../public/js/assess.js';
 import { STORAGE_KEY, createProgress, validateAttempt } from '../public/js/progress.js';
 import { createPlayer } from '../public/js/player.js';
@@ -92,6 +92,37 @@ assert(/on-screen keys/.test(unsupported.status), 'unsupported copy keeps the fa
 const empty = describeMidiState({ supported: true, permission: 'granted', devices: [] });
 assert(empty.kind === 'ready-empty', 'granted with no device is ready-empty');
 assert(/No keyboard is connected/.test(empty.status), 'no-device copy is honest');
+
+const keystation = describeMidiState({
+  supported: true,
+  permission: 'granted',
+  devices: [
+    { id: 'usb', name: 'Keystation 61 MK3 (USB MIDI)', manufacturer: 'M-Audio', state: 'connected' },
+    { id: 'transport', name: 'Keystation 61 MK3 (Transport)', manufacturer: 'M-Audio', state: 'connected' }
+  ],
+  previousIds: []
+});
+assert(keystation.devices.length === 1, 'one Keystation counts as one keyboard');
+assert(keystation.buttonLabel === 'Keyboard connected', 'button count is physical devices');
+assert(/Keystation 61 MK3/.test(keystation.status), 'status names the Keystation');
+assert(!/Transport/.test(keystation.status), 'status does not list Transport as a second keyboard');
+assert(keystation.devices[0].id === 'usb', 'note port is the listed device');
+assert(keystation.devices[0].controlPorts.length === 1, 'Transport port is nested');
+assert(dedupeMidiDevices([
+  { id: 'a', name: 'Keystation 61 MK3 (USB MIDI)', manufacturer: 'M-Audio', state: 'connected' },
+  { id: 'b', name: 'Yamaha P-125', manufacturer: 'Yamaha', state: 'connected' }
+]).length === 2, 'two different instruments stay two keyboards');
+
+const stillThere = describeMidiState({
+  supported: true,
+  permission: 'granted',
+  devices: [
+    { id: 'usb', name: 'Keystation 61 MK3 (USB MIDI)', manufacturer: 'M-Audio', state: 'connected' },
+    { id: 'transport', name: 'Keystation 61 MK3 (Transport)', manufacturer: 'M-Audio', state: 'connected' }
+  ],
+  previousIds: ['usb']
+});
+assert(stillThere.change == null, 'a nested Transport port is not a new keyboard');
 
 const player = createPlayer({ progress: createProgress(memoryStorage()) });
 player.advanceFrom('explanation');

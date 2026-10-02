@@ -7,7 +7,8 @@ import { patternSpanSec } from '../js/rhythm-score.js';
 import {
   COMPUTER_KEYS,
   clearPressed,
-  computerKeysFor,
+  computerHelpFor,
+  computerKeysForRange,
   renderPiano,
   setGroupOutlines,
   setHints,
@@ -15,7 +16,8 @@ import {
   setPianoRegion,
   setSweep
 } from '../js/piano.js';
-import { pianoRangeFor, usesWidePiano } from '../js/hands.js';
+import { l01DoneGate } from '../js/lessons/l01.js';
+import { pianoRangeFor, readOctaveSpan, usesLeftRoom, writeOctaveSpan } from '../js/hands.js';
 import {
   el,
   evidenceLabel,
@@ -193,7 +195,32 @@ function onHubSetupKey(event) {
   });
 }
 
-if (pianoRoot) renderPiano(pianoRoot);
+let octaveSpan = readOctaveSpan(globalThis.localStorage);
+
+function pianoRange(id) {
+  return pianoRangeFor(id || 'L01', octaveSpan);
+}
+
+function paintOctavePref() {
+  document.querySelectorAll('#octave-pref [data-span]').forEach((node) => {
+    node.setAttribute('aria-pressed', String(Number(node.dataset.span) === octaveSpan));
+  });
+}
+
+function paintComputerHelp(id) {
+  const help = document.querySelector('.computer-help');
+  if (help) help.textContent = computerHelpFor(pianoRange(id));
+}
+
+function applyPianoRange(id) {
+  const range = pianoRange(id);
+  if (pianoRoot) renderPiano(pianoRoot, range);
+  paintComputerHelp(id);
+  paintOctavePref();
+  return range;
+}
+
+if (pianoRoot) applyPianoRange('L01');
 
 const midiStatus = document.querySelector('#midi-status');
 const midiButton = document.querySelector('#midi-button');
@@ -211,7 +238,14 @@ function paintMidi(view) {
     midiDevices.hidden = !view.devices.length;
     view.devices.forEach((device) => {
       const item = document.createElement('li');
-      item.textContent = device.manufacturer ? `${device.name} · ${device.manufacturer}` : device.name;
+      const name = device.manufacturer ? `${device.name} · ${device.manufacturer}` : device.name;
+      item.append(document.createTextNode(name));
+      if (device.controlPorts?.length) {
+        const nest = document.createElement('div');
+        nest.className = 'midi-nested';
+        nest.textContent = 'Transport port stays with this keyboard. Not a second instrument.';
+        item.append(nest);
+      }
       midiDevices.append(item);
     });
   }
@@ -346,7 +380,7 @@ function resetRecords() {
 
 function startLesson(id) {
   if (grownupLink) grownupLink.hidden = true;
-  if (pianoRoot) renderPiano(pianoRoot, pianoRangeFor(id));
+  applyPianoRange(id);
   const clock = createRhythmClock({
     now: () => {
       const audioNow = audio.currentTime();
@@ -365,7 +399,11 @@ function startLesson(id) {
       if (player.handleRelease) applyNote(player.handleRelease(note, source, extras));
     },
     isDemoPlaying: () => player.isDemoPlaying(),
-    getComputerKeys: () => computerKeysFor(player.view()?.handFocus || (usesWidePiano(id) ? 'both' : 'right')),
+    getComputerKeys: () => {
+      const range = pianoRange(id);
+      const focus = player.view()?.handFocus || 'both';
+      return computerKeysForRange(range.from, range.to, focus);
+    },
     onMidiStatus: (view) => {
       paintMidi(view);
       if ((usesRhythmTake(id) || (usesExpressionTake(id) && player.view()?.useClock)) && view.change?.type === 'disconnect' && player.abortTake) {
@@ -580,12 +618,13 @@ function startLesson(id) {
     if (view.sourceHonesty && ui.evidence) ui.evidence.title = view.sourceHonesty;
     ui.seating.hidden = id !== 'L01' || (view.phase !== 'demo' && view.phase !== 'guided');
     ui.groups.hidden = id !== 'L01' || (view.phase !== 'demo' && !(view.phase === 'guided' && view.guidedStep === 'groups' && view.hintsOn));
+    placeGroupTags();
     ui.hand.hidden = id !== 'L03' || (view.phase !== 'demo' && !(view.phase === 'guided' && view.guidedStep === 'row' && view.hintsOn));
     if (ui.leftHand) {
       ui.leftHand.hidden = id !== 'L13' || (view.phase !== 'demo' && !(view.phase === 'guided' && (view.guidedStep === 'neighbors' || view.guidedStep === 'fingering') && view.hintsOn));
     }
     paintHandFocus(view);
-    if (pianoRoot) setPianoRegion(pianoRoot, view.handFocus || (usesWidePiano(id) ? 'both' : 'right'));
+    if (pianoRoot) setPianoRegion(pianoRoot, view.handFocus || 'both');
     ui.house.hidden = id !== 'L02' || !showHouse;
     if (ui.threeHouse) ui.threeHouse.hidden = id !== 'L09' || !showThreeHouse;
     ui.wave.hidden = id !== 'L04' || (view.phase !== 'demo' && view.phase !== 'guided');
@@ -678,10 +717,23 @@ function startLesson(id) {
     window.location.href = '/learn/';
   }
 
+  function placeGroupTags() {
+    if (!ui.groups || ui.groups.hidden || !pianoRoot) return;
+    const two = pianoRoot.querySelector('.black-key[data-group-kind="two"]');
+    const three = pianoRoot.querySelector('.black-key[data-group-kind="three"]');
+    const tagTwo = ui.groups.querySelector('.tag-two');
+    const tagThree = ui.groups.querySelector('.tag-three');
+    if (two && tagTwo && two.style.left) tagTwo.style.left = two.style.left;
+    if (three && tagThree && three.style.left) tagThree.style.left = three.style.left;
+  }
+
   function hintNotes(view) {
     if (view.recitalMode) return [];
     if (view.phase !== 'guided' || !view.hintsOn) return [];
-    if (id === 'L01' && view.guidedStep === 'high-low') return view.lessonSpec.hintHighLow;
+    if (id === 'L01' && view.guidedStep === 'high-low') {
+      const range = pianoRange(id);
+      return [range.to, range.from];
+    }
     if (id === 'L02' && view.guidedStep === 'find') return [view.lessonSpec.guidedC];
     if (id === 'L02' && view.guidedStep === 'other') return [view.lessonSpec.guidedC];
     if (id === 'L03' && view.guidedStep === 'find-c') return [60];
@@ -702,7 +754,7 @@ function startLesson(id) {
     if (!ui.handFocus) return;
     const show = (isLeftLesson(id) || isTogetherLesson(id)) && view.phase !== 'explanation' && view.phase !== 'result';
     ui.handFocus.hidden = !show;
-    if (ui.regionLabels) ui.regionLabels.hidden = !usesWidePiano(id) || view.phase === 'result';
+    if (ui.regionLabels) ui.regionLabels.hidden = !usesLeftRoom(id) || view.phase === 'result';
     if (!show) return;
     const current = view.handFocus || 'both';
     ui.handFocus.querySelectorAll('[data-focus]').forEach((button) => {
@@ -1037,6 +1089,9 @@ function startLesson(id) {
     const spec = view.lessonSpec;
     const copy = spec.copy.guided;
     if (id === 'L01') {
+      if (view.phase === 'remediation') {
+        ui.extras.append(el('p', {}, 'This smaller try is not Done. After a real high-then-low on the quiet check, Go to Done finishes.'));
+      }
       if (view.guidedStep === 'unlock') {
         ui.actions.append(button(copy.unlockAction, () => {
           const ok = audio.ensure();
@@ -1442,9 +1497,53 @@ function startLesson(id) {
     }));
   }
 
+  function finishL01TowardDone() {
+    const view = player.view();
+    const copy = view.lessonSpec.copy;
+    const gate = l01DoneGate({
+      phase: view.phase,
+      independentStep: view.independentStep,
+      transferStep: view.transferStep,
+      adultTwo: view.attempt.adultObserved.note === 'adult-confirmed-other-two-group'
+    });
+    if (gate === 'need-high-low') {
+      lastFeedback = copy.independent.goToDoneNeedHighLow;
+      paint();
+      return;
+    }
+    if (gate === 'need-groups') {
+      lastFeedback = copy.independent.goToDoneNeedGroups;
+      paint();
+      return;
+    }
+    if (gate === 'advance-transfer') {
+      go('independent');
+      lastFeedback = copy.transfer.goToDoneNeedOther;
+      paint();
+      return;
+    }
+    if (gate === 'need-other-two') {
+      lastFeedback = copy.transfer.goToDoneNeedOther;
+      paint();
+      return;
+    }
+    if (gate === 'finish') {
+      go('transfer');
+      lastFeedback = 'Saved on this device.';
+      paint();
+    }
+  }
+
+  function goToDoneButton() {
+    return button(player.lessonSpec.copy.independent.goToDone, finishL01TowardDone, 'button-dark', {
+      dataset: { action: 'go-to-done' }
+    });
+  }
+
   function renderIndependent(view) {
     const spec = view.lessonSpec;
     const copy = spec.copy.independent;
+    if (id === 'L01') ui.actions.append(goToDoneButton());
     if (id === 'L01' && view.independentStep === 'high-low') {
       ui.actions.append(button(copy.hearWhite, () => playSequence(spec.demo.whiteHighLow, 520)));
     }
@@ -1512,6 +1611,12 @@ function startLesson(id) {
     const spec = view.lessonSpec;
     const copy = spec.copy.transfer;
     if (id === 'L01') {
+      ui.actions.append(goToDoneButton());
+      ui.actions.append(button(spec.copy.independent.finishForNow, () => {
+        player.finishForNow();
+        lastFeedback = '';
+        paint();
+      }));
       if (view.transferStep === 'other-two') {
         ui.extras.append(checkbox(copy.adultTwo, false, (checked) => {
           if (!checked) return;
@@ -1635,8 +1740,8 @@ function startLesson(id) {
     paint();
   }
 
-  function button(label, onClick, className = 'button-outline') {
-    return el('button', { className: `button ${className}`, type: 'button', onClick }, label);
+  function button(label, onClick, className = 'button-outline', extra = {}) {
+    return el('button', { className: `button ${className}`, type: 'button', onClick, ...extra }, label);
   }
 
   function checkbox(label, checked, onChange) {
@@ -1655,6 +1760,14 @@ function startLesson(id) {
 
   midiButton.addEventListener('click', () => {
     input.requestMidi(midiStatus, midiButtonLabel || midiButton, midiDevices).then(paintMidi);
+  });
+
+  document.querySelectorAll('#octave-pref [data-span]').forEach((node) => {
+    node.addEventListener('click', () => {
+      octaveSpan = writeOctaveSpan(Number(node.dataset.span), globalThis.localStorage);
+      applyPianoRange(id);
+      paint();
+    });
   });
 
   restartButton.addEventListener('click', confirmRestart);
