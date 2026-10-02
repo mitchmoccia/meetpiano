@@ -256,7 +256,7 @@ export function describeMidiState({
   }
   return {
     kind: 'idle',
-    buttonLabel: 'Have a compatible keyboard? Try connecting it',
+    buttonLabel: 'Try a compatible keyboard',
     status: 'Optional. A piano or MIDI keyboard is best for transfer. This on-screen keyboard is a stand-in if none is connected.',
     devices: [],
     change: null
