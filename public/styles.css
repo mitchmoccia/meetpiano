@@ -26,3 +26,19 @@
 
 /* Readable supporting copy and interactive labels. */
 .mission-panel p,.growth-list p,.parents-copy>p,.membership-card>p,.membership-card ul,details>p,.world-detail p{font-size:16px}.game-bottomline button,.keyboard-help,.keyboard-help button,.listen-button,.mission-feedback,.skill-tags span{font-size:14px}.keyboard-help{flex-wrap:wrap}.hero-caption{max-width:80%;text-align:right}.mission-feedback{margin-top:12px}.membership-label{font-size:12px}.membership-card .button,.membership-card .text-link{font-size:14px}.plan-status span{font-size:12px}.parents-copy .text-link,.parent-points span{font-size:14px}.site-header nav{font-size:14px}.hero-bottom{flex-wrap:wrap}.hero-copy>.eyebrow{font-size:12px}.song-sticker small{font-size:12px;letter-spacing:.6px}.journey-stop>span:last-child{font-size:14px}.hero-bottom>a{font-size:12px}.keyboard-help>span{font-size:12px}.mission-eyebrow{padding-right:0}.game-bottomline{align-items:flex-start}.preview-label{white-space:normal;text-align:right}.footer-main>a:last-child{font-size:12px}.footer-bottom{font-size:12px}@media(max-width:800px){.site-header nav{gap:14px}.song-sticker small{font-size:12px;max-width:125px}.hero-caption{display:none}.hero-copy>.eyebrow{font-size:12px;letter-spacing:.7px}.hero-copy h1{font-size:clamp(53px,8vw,72px)}.parents-copy{padding-inline:28px}.parent-points span{font-size:14px}.membership-card{padding-inline:22px}.plan-status span{display:block}.membership-label{line-height:1.5}.journey-stop>span:last-child{font-size:12px}.game-body{grid-template-columns:1fr 1.45fr}.keyboard-help{gap:5px}}@media(max-width:600px){.hero-copy h1{font-size:clamp(58px,14vw,83px)}.hero-bottom>span{font-size:12px}.hero-art{margin-top:9px}.mission-feedback{display:block;margin:12px 0 0;max-width:none}.game-body{display:flex}.parents-copy>p{font-size:16px}.game-bottomline .preview-label{text-align:left}.mission-eyebrow{max-width:calc(100% - 75px)}.mission-steps{top:26px}.journey-stop>span:last-child{font-size:14px}.membership-label{font-size:12px}.world-detail{min-height:270px}.footer-main{display:block}.footer-main>p{margin-block:15px 7px}.footer-main>a:last-child{display:inline-block}.footer-bottom>span:nth-child(2){font-size:12px}.hero-cta{font-size:14px}}
+
+
+/* Phone and small-tablet header: Sign in stays visible. Other links open from Menu. */
+.nav-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.nav-signin{white-space:nowrap}
+.nav-menu{display:none}
+@media(max-width:980px){
+  .site-header{height:auto}
+  .nav-wrap{height:auto;min-height:72px;flex-wrap:wrap;gap:10px;padding-block:10px}
+  .site-header nav{display:none;flex:1 0 100%;flex-direction:column;align-items:stretch;gap:0;order:4;padding-bottom:6px}
+  .site-header.is-open nav{display:flex}
+  .site-header nav a,.site-header nav a:last-child{display:flex;align-items:center;min-height:44px;padding:8px 2px;font-size:16px;border-top:1px solid rgba(41,37,31,.14)}
+  .site-header nav a:after{display:none}
+  .nav-menu{display:inline-flex;min-height:44px;padding-inline:14px}
+  .nav-signin,.site-header .nav-actions .button-small{min-height:44px}
+}
