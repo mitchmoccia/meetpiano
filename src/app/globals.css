@@ -1,0 +1,102 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  font-weight: 700;
+  font-display: swap;
+  src: url('/assets/bricolage-grotesque-700.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  font-weight: 800;
+  font-display: swap;
+  src: url('/assets/bricolage-grotesque-800.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'DM Sans';
+  font-weight: 400;
+  font-display: swap;
+  src: url('/assets/dm-sans-400.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'DM Sans';
+  font-weight: 600;
+  font-display: swap;
+  src: url('/assets/dm-sans-600.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'DM Sans';
+  font-weight: 700;
+  font-display: swap;
+  src: url('/assets/dm-sans-700.ttf') format('truetype');
+}
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --radius: 0.75rem;
+  --background: #fffdf6;
+  --foreground: #29251f;
+  --card: #ffffff;
+  --card-foreground: #29251f;
+  --primary: #29251f;
+  --primary-foreground: #fffdf6;
+  --secondary: #ffdc63;
+  --secondary-foreground: #29251f;
+  --muted: #f4f0e4;
+  --muted-foreground: #5f574d;
+  --accent: #f1aec0;
+  --accent-foreground: #29251f;
+  --destructive: #b8321f;
+  --destructive-foreground: #ffffff;
+  --border: #ddd8ca;
+  --input: #bdb6a6;
+  --ring: #de4936;
+  --success: #2f6b3a;
+}
+
+@theme inline {
+  --font-sans: 'DM Sans', Arial, sans-serif;
+  --font-display: 'Bricolage Grotesque', 'Arial Rounded MT Bold', sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/60;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display tracking-tight;
+  }
+  :focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 3px;
+  }
+}

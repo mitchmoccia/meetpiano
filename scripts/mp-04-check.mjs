@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { STORAGE_KEY, createProgress, emptyStore } from '../dist/js/progress.js';
-import { createPlayer } from '../dist/js/player.js';
+import { STORAGE_KEY, createProgress, emptyStore } from '../public/js/progress.js';
+import { createPlayer } from '../public/js/player.js';
 import {
   FIRST_NOTES_LESSONS,
   RHYTHM_CLUB_LESSONS,
@@ -10,13 +10,13 @@ import {
   parseLessonId,
   parseUnitId,
   unitView
-} from '../dist/js/unit.js';
-import { beatsToSeconds, createFakeClock, createRhythmClock } from '../dist/js/rhythm-clock.js';
-import { createRhythmTake } from '../dist/js/rhythm-score.js';
-import { HEARTBEAT } from '../dist/js/lessons/l05.js';
-import { LONG_SHORT, SHORT_SHORT_LONG } from '../dist/js/lessons/l06.js';
-import { REST_HOME } from '../dist/js/lessons/l07.js';
-import { WALK_EVEN, WALK_LONG_HEAD } from '../dist/js/lessons/l08.js';
+} from '../public/js/unit.js';
+import { beatsToSeconds, createFakeClock, createRhythmClock } from '../public/js/rhythm-clock.js';
+import { createRhythmTake } from '../public/js/rhythm-score.js';
+import { HEARTBEAT } from '../public/js/lessons/l05.js';
+import { LONG_SHORT, SHORT_SHORT_LONG } from '../public/js/lessons/l06.js';
+import { REST_HOME } from '../public/js/lessons/l07.js';
+import { WALK_EVEN, WALK_LONG_HEAD } from '../public/js/lessons/l08.js';
 
 const fixtures = JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), 'fixtures/mp-04-rhythm.json'), 'utf8'));
 

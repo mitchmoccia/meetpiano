@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { currentCopyrightYear, stampCopyrightYear } from '../dist/js/copyright.js';
+import { currentCopyrightYear, stampCopyrightYear } from '../public/js/copyright.js';
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -13,7 +13,7 @@ const stamped = stampCopyrightYear({ querySelectorAll: () => [node] }, new Date(
 assert(stamped === '2028', 'stamp returns the runtime year');
 assert(node.textContent === '2028', 'stamp writes the year into marked nodes');
 
-const pages = ['dist/index.html', 'dist/learn/index.html'];
+const pages = ['public/index.html', 'public/learn/index.html'];
 for (const file of pages) {
   const html = readFileSync(file, 'utf8');
   assert(html.includes('data-copyright-year'), `${file} has a dynamic year hook`);
@@ -23,7 +23,7 @@ for (const file of pages) {
   assert(html.includes('/js/copyright.js'), `${file} loads the copyright helper`);
 }
 
-const source = readFileSync('dist/js/copyright.js', 'utf8');
+const source = readFileSync('public/js/copyright.js', 'utf8');
 assert(source.includes('getFullYear()'), 'copyright helper uses a runtime year');
 
 console.log('copyright footer checks passed');

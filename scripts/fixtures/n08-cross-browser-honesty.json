@@ -44,10 +44,10 @@
     }
   ],
   "honestySurfaces": [
-    "dist/index.html",
-    "dist/learn/index.html",
-    "dist/learn/index.md",
-    "dist/llms.txt",
+    "public/index.html",
+    "public/learn/index.html",
+    "public/learn/index.md",
+    "public/llms.txt",
     "README.md"
   ],
   "bannedPhrases": [

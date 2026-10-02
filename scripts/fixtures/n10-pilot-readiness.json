@@ -40,7 +40,7 @@
         "grown-up-prompt.md",
         "readiness-checklist.md"
       ],
-      "liveSurfaces": ["dist/index.html", "dist/learn/index.html"]
+      "liveSurfaces": ["public/index.html", "public/learn/index.html"]
     },
     {
       "id": "l01",
@@ -51,7 +51,7 @@
         "observation-checklist.md",
         "readiness-checklist.md"
       ],
-      "liveSurfaces": ["dist/index.html", "dist/learn/index.html"]
+      "liveSurfaces": ["public/index.html", "public/learn/index.html"]
     },
     {
       "id": "grown-up-view",
@@ -61,7 +61,7 @@
         "grown-up-prompt.md",
         "readiness-checklist.md"
       ],
-      "liveSurfaces": ["dist/index.html", "dist/learn/index.html"]
+      "liveSurfaces": ["public/index.html", "public/learn/index.html"]
     },
     {
       "id": "journey-cta",
@@ -71,7 +71,7 @@
         "session-script.md",
         "readiness-checklist.md"
       ],
-      "liveSurfaces": ["dist/index.html"]
+      "liveSurfaces": ["public/index.html"]
     },
     {
       "id": "n04-setup-strip",
@@ -83,7 +83,7 @@
         "observation-checklist.md",
         "readiness-checklist.md"
       ],
-      "liveSurfaces": ["dist/learn/index.html", "dist/js/learn-view.js"]
+      "liveSurfaces": ["public/learn/index.html", "public/js/learn-view.js"]
     },
     {
       "id": "n05-export-warning",
@@ -94,7 +94,7 @@
         "observation-checklist.md",
         "readiness-checklist.md"
       ],
-      "liveSurfaces": ["dist/js/device-switch.js"]
+      "liveSurfaces": ["public/js/device-switch.js"]
     },
     {
       "id": "n06-enough-for-today",
@@ -106,7 +106,7 @@
         "grown-up-prompt.md",
         "readiness-checklist.md"
       ],
-      "liveSurfaces": ["dist/learn/index.html", "dist/js/session-closer.js"]
+      "liveSurfaces": ["public/learn/index.html", "public/js/session-closer.js"]
     },
     {
       "id": "n08-chrome-simulated",
@@ -123,13 +123,13 @@
       "packNeedle": "Physical MIDI hardware is not verified",
       "liveNeedle": "Physical MIDI hardware is not verified",
       "packSurfaces": ["README.md", "readiness-checklist.md"],
-      "liveSurfaces": ["dist/learn/index.html", "dist/js/setup-strip.js"]
+      "liveSurfaces": ["public/learn/index.html", "public/js/setup-strip.js"]
     },
     {
       "id": "n09-lesson-range",
       "needle": "L01–L24",
       "packSurfaces": ["README.md", "readiness-checklist.md"],
-      "liveSurfaces": ["dist/index.html", "README.md"]
+      "liveSurfaces": ["public/index.html", "README.md"]
     }
   ],
   "blockedBrowserNeedles": ["Safari", "iPad", "Firefox", "BLOCKED"],

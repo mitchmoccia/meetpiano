@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { STORAGE_KEY, createProgress, emptyStore } from '../dist/js/progress.js';
-import { createPlayer } from '../dist/js/player.js';
+import { STORAGE_KEY, createProgress, emptyStore } from '../public/js/progress.js';
+import { createPlayer } from '../public/js/player.js';
 import {
   FIRST_NOTES_LESSONS,
   LEFT_HAND_LESSONS,
@@ -12,17 +12,17 @@ import {
   parseLessonId,
   parseUnitId,
   unitView
-} from '../dist/js/unit.js';
-import { BASS_CLEF, TREBLE_CLEF, staffAgrees } from '../dist/js/staff.js';
-import { L13_C, L13_TRANSFER, L13_WALK } from '../dist/js/lessons/l13.js';
-import { BASS_TRANSFER, BASS_WALK, L14 } from '../dist/js/lessons/l14.js';
-import { ANSWER, CONVERSATION, L15, QUESTION, TRANSFER_CONVERSATION } from '../dist/js/lessons/l15.js';
-import { HOME_NOTES, HOME_PATTERN, L16, TRANSFER_NOTES } from '../dist/js/lessons/l16.js';
-import { createRhythmTake } from '../dist/js/rhythm-score.js';
-import { HOME_PHRASE as PORCH } from '../dist/js/lessons/l12.js';
+} from '../public/js/unit.js';
+import { BASS_CLEF, TREBLE_CLEF, staffAgrees } from '../public/js/staff.js';
+import { L13_C, L13_TRANSFER, L13_WALK } from '../public/js/lessons/l13.js';
+import { BASS_TRANSFER, BASS_WALK, L14 } from '../public/js/lessons/l14.js';
+import { ANSWER, CONVERSATION, L15, QUESTION, TRANSFER_CONVERSATION } from '../public/js/lessons/l15.js';
+import { HOME_NOTES, HOME_PATTERN, L16, TRANSFER_NOTES } from '../public/js/lessons/l16.js';
+import { createRhythmTake } from '../public/js/rhythm-score.js';
+import { HOME_PHRASE as PORCH } from '../public/js/lessons/l12.js';
 
 const fixtures = JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), 'fixtures/mp-07-left.json'), 'utf8'));
-const learnViewSrc = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../dist/js/learn-view.js'), 'utf8');
+const learnViewSrc = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../public/js/learn-view.js'), 'utf8');
 assert(learnViewSrc.includes('].filter(Boolean)'), 'hub replaceChildren drops null children');
 
 function assert(condition, message) {

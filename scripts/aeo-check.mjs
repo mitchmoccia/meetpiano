@@ -19,7 +19,7 @@ const banned = [
   'ratingvalue'
 ];
 
-const llms = read('dist/llms.txt');
+const llms = read('public/llms.txt');
 assert(llms.startsWith('# MeetPiano\n'), 'llms.txt H1 is MeetPiano');
 assert(/^> /m.test(llms), 'llms.txt has a blockquote summary');
 assert(llms.includes('## Pages'), 'llms.txt has a Pages section');
@@ -33,7 +33,7 @@ assert(llms.includes('Physical MIDI hardware is not verified'), 'llms.txt keeps 
 assert(llms.includes('this device only'), 'llms.txt says progress is device-local');
 assert(!/\d+(\.\d+)?%/.test(llms), 'llms.txt invents no percentage metrics');
 
-const robots = read('dist/robots.txt');
+const robots = read('public/robots.txt');
 assert(robots.includes('User-agent: *'), 'robots.txt allows the default crawler');
 assert(robots.includes('Allow: /'), 'robots.txt allows the public site');
 assert(robots.includes('User-agent: GPTBot'), 'robots.txt names GPTBot');
@@ -44,7 +44,7 @@ assert(!/^\s*Disallow:\s*\/\s*$/m.test(robots), 'robots.txt does not block the w
 assert(robots.includes('Sitemap: https://meetpiano.app/sitemap.xml'), 'robots.txt references the sitemap');
 assert(robots.includes('llms.txt'), 'robots.txt notes llms.txt');
 
-const sitemap = read('dist/sitemap.xml');
+const sitemap = read('public/sitemap.xml');
 assert(sitemap.includes('https://meetpiano.app/'), 'sitemap lists the home URL');
 assert(sitemap.includes('https://meetpiano.app/learn/'), 'sitemap lists the learn hub');
 assert(!sitemap.includes('/learn/?'), 'sitemap does not list learn query URLs');
@@ -53,10 +53,10 @@ const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[
 assert(locs.length === 2, 'sitemap lists only the two public indexable URLs');
 assert(locs[0] === 'https://meetpiano.app/' && locs[1] === 'https://meetpiano.app/learn/', 'sitemap URL order is home then learn');
 
-const home = read('dist/index.html');
-const learn = read('dist/learn/index.html');
-const hubJs = read('dist/js/learn-view.js');
-const overview = read('dist/learn/index.md');
+const home = read('public/index.html');
+const learn = read('public/learn/index.html');
+const hubJs = read('public/js/learn-view.js');
+const overview = read('public/learn/index.md');
 
 assert(home.includes('<title>MeetPiano · Little keys. Big possibilities.</title>'), 'home title is unique');
 assert(learn.includes('<title>First Piano Journey · MeetPiano</title>'), 'learn title is unique');
@@ -86,6 +86,7 @@ for (const phrase of banned) {
 }
 
 const vercel = read('vercel.json');
-assert(vercel.includes('"outputDirectory": "dist"'), 'Vercel still publishes dist/');
+assert(vercel.includes('"framework": "nextjs"'), 'Vercel builds the Next.js app that serves public/');
+assert(read('next.config.ts').includes("destination: '/learn/index.html'"), 'Next.js keeps /learn on the static journey page');
 
 console.log('aeo llms.txt / robots / sitemap checks passed');

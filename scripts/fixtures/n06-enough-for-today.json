@@ -7,7 +7,7 @@
   "cueId": "enough-today-cue",
   "surfaces": ["hub", "lesson"],
   "controlLabel": "Enough for today",
-  "pauseModule": "dist/js/session-pause.js",
+  "pauseModule": "public/js/session-pause.js",
   "pauseKey": "meetpiano:beginner-v1:pause",
   "pauseResumeQuery": "resume=1",
   "honestyMustInclude": [

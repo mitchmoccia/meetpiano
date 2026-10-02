@@ -1,11 +1,11 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { JOURNEY_LESSONS, unitView } from '../dist/js/unit.js';
-import { emptyStore } from '../dist/js/progress.js';
-import { exportProgress, importProgress } from '../dist/js/portability.js';
-import { hasKidTarget } from '../dist/js/kid-copy.js';
-import { GROWNUP_HONESTY } from '../dist/js/grownup.js';
+import { JOURNEY_LESSONS, unitView } from '../public/js/unit.js';
+import { emptyStore } from '../public/js/progress.js';
+import { exportProgress, importProgress } from '../public/js/portability.js';
+import { hasKidTarget } from '../public/js/kid-copy.js';
+import { GROWNUP_HONESTY } from '../public/js/grownup.js';
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -57,10 +57,10 @@ assert(!imported.store.lessons.L24, 'import cannot invent L24');
 assert(GROWNUP_HONESTY.includes('not privacy protection'), 'grown-up honesty stays');
 assert(GROWNUP_HONESTY.includes('not a login'), 'grown-up view is not an account');
 
-const learnHtml = read('dist/learn/index.html');
-const learnJs = read('dist/learn/learn.js');
-const learnCss = read('dist/learn/learn.css');
-const indexHtml = read('dist/index.html');
+const learnHtml = read('public/learn/index.html');
+const learnJs = read('public/learn/learn.js');
+const learnCss = read('public/learn/learn.css');
+const indexHtml = read('public/index.html');
 const readme = read('README.md');
 const packet = read('docs/missions/first-piano-journey-release.md');
 const evidence = read('docs/evidence/first-piano-journey/mp-11.md');

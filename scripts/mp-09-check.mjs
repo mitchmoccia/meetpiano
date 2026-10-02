@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { STORAGE_KEY, createProgress, emptyStore } from '../dist/js/progress.js';
-import { createPlayer } from '../dist/js/player.js';
+import { STORAGE_KEY, createProgress, emptyStore } from '../public/js/progress.js';
+import { createPlayer } from '../public/js/player.js';
 import {
   EXPRESSION_LESSONS,
   FIRST_NOTES_LESSONS,
@@ -15,15 +15,15 @@ import {
   parseLessonId,
   parseUnitId,
   unitView
-} from '../dist/js/unit.js';
-import { staffAgrees } from '../dist/js/staff.js';
-import { pianoRangeFor } from '../dist/js/hands.js';
-import { expressionHonesty } from '../dist/js/evidence.js';
-import { HOME_PHRASE as L21_HOME, L21, TRANSFER_PHRASE as L21_TRANSFER } from '../dist/js/lessons/l21.js';
-import { HOME_HOME, HOME_OPEN, HOME_TURN, L22, TRANSFER_HOME } from '../dist/js/lessons/l22.js';
-import { HOME_PHRASE as L23_HOME, L23 } from '../dist/js/lessons/l23.js';
-import { L24, WAVE_PHRASE } from '../dist/js/lessons/l24.js';
-import { HOME_PHRASE as LITTLE_WAVE } from '../dist/js/lessons/l04.js';
+} from '../public/js/unit.js';
+import { staffAgrees } from '../public/js/staff.js';
+import { pianoRangeFor } from '../public/js/hands.js';
+import { expressionHonesty } from '../public/js/evidence.js';
+import { HOME_PHRASE as L21_HOME, L21, TRANSFER_PHRASE as L21_TRANSFER } from '../public/js/lessons/l21.js';
+import { HOME_HOME, HOME_OPEN, HOME_TURN, L22, TRANSFER_HOME } from '../public/js/lessons/l22.js';
+import { HOME_PHRASE as L23_HOME, L23 } from '../public/js/lessons/l23.js';
+import { L24, WAVE_PHRASE } from '../public/js/lessons/l24.js';
+import { HOME_PHRASE as LITTLE_WAVE } from '../public/js/lessons/l04.js';
 import {
   alignHeard,
   compareDynamics,
@@ -32,7 +32,7 @@ import {
   recitalPhrase,
   rhythmFromOnsets,
   velocityCapable
-} from '../dist/js/expression-score.js';
+} from '../public/js/expression-score.js';
 
 const fixtures = JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), 'fixtures/mp-09-expression.json'), 'utf8'));
 

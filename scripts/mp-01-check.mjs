@@ -7,9 +7,9 @@ import {
   shouldGrantFirstCompletion,
   validateAttempt,
   validateStore
-} from '../dist/js/progress.js';
-import { createPlayer } from '../dist/js/player.js';
-import { blackGroupId } from '../dist/js/piano.js';
+} from '../public/js/progress.js';
+import { createPlayer } from '../public/js/player.js';
+import { blackGroupId } from '../public/js/piano.js';
 
 function memoryStorage(seed) {
   const data = seed ? { [STORAGE_KEY]: seed } : {};

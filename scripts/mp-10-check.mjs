@@ -1,14 +1,14 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { STORAGE_KEY, createProgress, emptyStore } from '../dist/js/progress.js';
-import { JOURNEY_LESSONS, isLessonUnlocked } from '../dist/js/unit.js';
-import { exportProgress, importProgress, resetProgress } from '../dist/js/portability.js';
-import { hasKidTarget, kidLine, kidSpoken, kidTarget } from '../dist/js/kid-copy.js';
-import { createNarrator, NARRATION_FAIL_COPY, NARRATION_UNAVAILABLE_COPY, narrationAvailable } from '../dist/js/narrate.js';
-import { PAUSE_KEY, clearPause, readPause, resumeHref, validatePause, writePause } from '../dist/js/session-pause.js';
-import { GROWNUP_HONESTY, grownupReport, observedLessons, suggestOfflinePractice } from '../dist/js/grownup.js';
-import { parseGrownupView } from '../dist/js/learn-view.js';
+import { STORAGE_KEY, createProgress, emptyStore } from '../public/js/progress.js';
+import { JOURNEY_LESSONS, isLessonUnlocked } from '../public/js/unit.js';
+import { exportProgress, importProgress, resetProgress } from '../public/js/portability.js';
+import { hasKidTarget, kidLine, kidSpoken, kidTarget } from '../public/js/kid-copy.js';
+import { createNarrator, NARRATION_FAIL_COPY, NARRATION_UNAVAILABLE_COPY, narrationAvailable } from '../public/js/narrate.js';
+import { PAUSE_KEY, clearPause, readPause, resumeHref, validatePause, writePause } from '../public/js/session-pause.js';
+import { GROWNUP_HONESTY, grownupReport, observedLessons, suggestOfflinePractice } from '../public/js/grownup.js';
+import { parseGrownupView } from '../public/js/learn-view.js';
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -148,10 +148,10 @@ for (const card of JOURNEY_LESSONS) {
 assert(JOURNEY_LESSONS.length === 24, 'all 24 lessons remain authored');
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const learnHtml = readFileSync(join(root, 'dist/learn/index.html'), 'utf8');
-const learnJs = readFileSync(join(root, 'dist/learn/learn.js'), 'utf8');
-const learnCss = readFileSync(join(root, 'dist/learn/learn.css'), 'utf8');
-const grownupJs = readFileSync(join(root, 'dist/js/grownup.js'), 'utf8');
+const learnHtml = readFileSync(join(root, 'public/learn/index.html'), 'utf8');
+const learnJs = readFileSync(join(root, 'public/learn/learn.js'), 'utf8');
+const learnCss = readFileSync(join(root, 'public/learn/learn.css'), 'utf8');
+const grownupJs = readFileSync(join(root, 'public/js/grownup.js'), 'utf8');
 const scan = `${learnHtml}\n${learnJs}\n${learnCss}\n${grownupJs}`;
 for (const banned of ['mailto:', 'type="email"', 'gtag(', 'googletagmanager', 'facebook.net', 'adsbygoogle', 'stripe', 'billing', 'upload recording', 'chat widget', 'public profile']) {
   assert(!scan.toLowerCase().includes(banned.toLowerCase()), `learn surface has no ${banned}`);

@@ -1,10 +1,10 @@
-import { STORAGE_KEY, createAttempt, createProgress, emptyStore, validateStore } from '../dist/js/progress.js';
-import { createPlayer } from '../dist/js/player.js';
-import { isLessonUnlocked } from '../dist/js/unit.js';
-import { invalidateSkills, isMidiVerifiedSource, recordMissOn, sourceHonesty } from '../dist/js/evidence.js';
-import { recommendNext } from '../dist/js/recommend.js';
-import { exportProgress, importProgress } from '../dist/js/portability.js';
-import { HOME_PHRASE, TRANSFER_PHRASE } from '../dist/js/lessons/l04.js';
+import { STORAGE_KEY, createAttempt, createProgress, emptyStore, validateStore } from '../public/js/progress.js';
+import { createPlayer } from '../public/js/player.js';
+import { isLessonUnlocked } from '../public/js/unit.js';
+import { invalidateSkills, isMidiVerifiedSource, recordMissOn, sourceHonesty } from '../public/js/evidence.js';
+import { recommendNext } from '../public/js/recommend.js';
+import { exportProgress, importProgress } from '../public/js/portability.js';
+import { HOME_PHRASE, TRANSFER_PHRASE } from '../public/js/lessons/l04.js';
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
