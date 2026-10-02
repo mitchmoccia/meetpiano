@@ -15,6 +15,7 @@
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/styles.css">
   <script src="/app.js" defer></script>
+  <script src="/js/nav-menu.js" defer></script>
   <script type="module" src="/js/copyright.js"></script>
   <script type="application/ld+json">
   {
@@ -69,8 +70,12 @@
   <header class="site-header">
     <div class="nav-wrap wrap">
       <a href="#" class="brand" aria-label="MeetPiano home"><span class="brand-keys" aria-hidden="true"><i></i><i></i><i></i></span>meetpiano<span class="brand-period">.</span></a>
-      <nav aria-label="Main navigation"><a href="/learn">Learn</a><a href="#adventure">The adventure</a><a href="#grown-ups">For grown-ups</a><a href="#questions">Good questions</a></nav>
-      <a href="/learn/" class="button button-small button-dark">Journey <svg class="icon"><use href="#arrow"/></svg></a>
+      <nav id="site-nav" aria-label="Main navigation"><a href="/learn">Learn</a><a href="#adventure">The adventure</a><a href="#grown-ups">For grown-ups</a><a href="#questions">Good questions</a><a href="/family">Family profiles</a></nav>
+      <div class="nav-actions">
+        <a href="/signin" class="button button-small button-outline nav-signin" data-account-link>Sign in</a>
+        <a href="/learn/" class="button button-small button-dark">Journey <svg class="icon"><use href="#arrow"/></svg></a>
+        <button type="button" class="button button-small button-outline nav-menu" aria-expanded="false" aria-controls="site-nav">Menu</button>
+      </div>
     </div>
   </header>
   <main id="main">

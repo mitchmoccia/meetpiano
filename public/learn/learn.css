@@ -612,11 +612,11 @@
   .unit-map { grid-template-columns: 1fr; padding-inline: 17px; }
   .unit-intro { padding-inline: 17px; }
   .unit-world { padding-inline: 17px; }
+  .learn-nav-actions { flex: 1 0 100%; }
   .learn-nav-actions .button-small { padding: 10px 12px; font-size: 13px; min-height: 44px; }
   .kid-target { position: sticky; top: 8px; z-index: 3; }
   .pause-card, .session-closer-card { margin: 16px; padding: 22px 18px; }
   .grownup-intro, .grownup-practice, .grownup-skills { padding-inline: 17px; }
-  .learn-page .site-header nav a:nth-child(n+3) { display: none; }
 }
 
 .pause-overlay {
