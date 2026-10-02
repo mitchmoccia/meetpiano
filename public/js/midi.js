@@ -104,6 +104,69 @@ export function connectedMidiInputs(access) {
   return listMidiInputs(access).filter((input) => input.state === 'connected');
 }
 
+const CONTROL_PORT = /\b(transport|ctrl|control|daw|mackie|hui|mixer|remote)\b/i;
+
+export function isControlOnlyPort(device) {
+  return CONTROL_PORT.test(String(device?.name || ''));
+}
+
+export function physicalDeviceKey(device) {
+  const name = String(device?.name || 'MIDI keyboard');
+  const base = name
+    .replace(/\([^)]*(transport|ctrl|control|daw|midi|usb|port)[^)]*\)/ig, ' ')
+    .replace(/\b(usb|midi|port|transport|ctrl|control|daw)\b/ig, ' ')
+    .replace(/[^a-z0-9]+/gi, ' ')
+    .trim()
+    .toLowerCase();
+  const maker = String(device?.manufacturer || '').trim().toLowerCase();
+  return `${maker}::${base || name.toLowerCase()}`;
+}
+
+function displayPortName(name) {
+  return String(name || 'MIDI keyboard')
+    .replace(/\s*\((usb\s*)?midi\)\s*/ig, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+export function dedupeMidiDevices(devices) {
+  const notePorts = [];
+  const controlPorts = [];
+  for (const device of devices || []) {
+    if (device?.state && device.state !== 'connected') continue;
+    (isControlOnlyPort(device) ? controlPorts : notePorts).push(device);
+  }
+  const usedControls = new Set();
+  const physical = notePorts.map((port) => {
+    const key = physicalDeviceKey(port);
+    const nested = controlPorts.filter((control) => physicalDeviceKey(control) === key && !usedControls.has(control.id));
+    nested.forEach((control) => usedControls.add(control.id));
+    return {
+      id: port.id,
+      name: displayPortName(port.name),
+      manufacturer: port.manufacturer || '',
+      state: port.state || 'connected',
+      physicalKey: key,
+      portIds: [port.id, ...nested.map((control) => control.id)].filter(Boolean),
+      controlPorts: nested.map((control) => control.name || 'Transport')
+    };
+  });
+  for (const control of controlPorts) {
+    if (usedControls.has(control.id)) continue;
+    usedControls.add(control.id);
+    physical.push({
+      id: control.id,
+      name: displayPortName(control.name),
+      manufacturer: control.manufacturer || '',
+      state: control.state || 'connected',
+      physicalKey: physicalDeviceKey(control),
+      portIds: [control.id].filter(Boolean),
+      controlPorts: []
+    });
+  }
+  return physical;
+}
+
 export function deviceIdentity(input) {
   if (!input) return null;
   const id = typeof input.id === 'string' && input.id ? input.id : null;
@@ -120,10 +183,11 @@ export function describeMidiState({
   previousIds = [],
   requesting = false
 }) {
-  const connected = devices.filter((device) => device.state === 'connected');
+  const connected = dedupeMidiDevices(devices.filter((device) => !device.state || device.state === 'connected'));
   const names = connected.map((device) => device.name || 'MIDI keyboard');
+  const liveIds = connected.flatMap((device) => device.portIds?.length ? device.portIds : [device.id]);
   const currentIds = connected.map((device) => device.id);
-  const lost = previousIds.filter((id) => !currentIds.includes(id));
+  const lost = previousIds.filter((id) => !liveIds.includes(id));
   const gained = currentIds.filter((id) => !previousIds.includes(id));
 
   if (supported === false) {
@@ -204,6 +268,7 @@ export function createMidiSession({ onNote, onRelease, onStatus, requestMIDIAcce
   let access = null;
   let permission = 'unknown';
   let previousIds = [];
+  let previousPortIds = [];
   let requesting = false;
 
   function snapshot(extra = {}) {
@@ -246,11 +311,12 @@ export function createMidiSession({ onNote, onRelease, onStatus, requestMIDIAcce
       previousIds,
       requesting: false
     });
-    const gone = previousIds.filter((id) => !connected.some((item) => item.id === id));
+    const gone = previousPortIds.filter((id) => !connected.some((item) => item.id === id));
     gone.forEach((id) => {
       held.clearPort(id).forEach((note) => onRelease?.(note, { id, name: null, manufacturer: null }));
     });
-    previousIds = connected.map((item) => item.id);
+    previousIds = view.devices.map((device) => device.id);
+    previousPortIds = connected.map((item) => item.id);
     onStatus?.(view);
   }
 

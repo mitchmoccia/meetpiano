@@ -123,8 +123,9 @@ assert(JSON.stringify(HOME_TURN) !== JSON.stringify(HOME_HOME), 'turn ending is 
 assert(WAVE_PHRASE.join() === LITTLE_WAVE.join(), 'recital wave is Little Wave');
 assert(fixtures.provenance.audio.includes('Web Audio'), 'audio provenance documented');
 
-assert(pianoRangeFor('L21').wide === false, 'Expression stays one octave');
-assert(pianoRangeFor('L01').wide === false, 'L01 stays one octave');
+assert(pianoRangeFor('L21').from === 60 && pianoRangeFor('L21').to === 84, 'Expression uses the same C4–C6 teaching window');
+assert(pianoRangeFor('L01').to - pianoRangeFor('L01').from === 24, 'L01 default is two octaves');
+assert(pianoRangeFor('L21', 1).to === 72, 'one-octave preference still ends on C');
 assert(expressionHonesty('touch').includes('cannot show quiet versus strong'), 'touch honesty');
 assert(expressionHonesty('midi').includes('Not technique'), 'MIDI honesty does not infer technique');
 assert(velocityCapable('touch', { velocity: 0.75 }) === false, 'touch velocity is not evidence');

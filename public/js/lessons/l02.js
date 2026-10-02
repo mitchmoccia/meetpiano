@@ -49,7 +49,7 @@ export const L02 = {
       title: 'The doorstep',
       find: 'Play the white key hugging the left of this two-black group. That is C.',
       name: 'Say it aloud: “C.” Hear it again if you want.',
-      other: 'If you have a wider keyboard or MIDI, play any other C. On this stand-in there is only one C — a grown-up can point to another on a real piano.',
+      other: 'Play a C in another octave. This stand-in shows more than one C. A grown-up can also point to a different C on a real piano.',
       action: 'Continue to a quiet check',
       hintsOn: 'Hints on',
       hintsOff: 'Hints off',
@@ -60,7 +60,7 @@ export const L02 = {
       title: 'No glow this time',
       find: 'Find C again. Hints and letter labels stay off.',
       register: 'Now a C in a new room — a different MIDI C if you have one, or point to a different C on a real piano.',
-      adultRegister: 'A grown-up confirms we found a different C on a real piano (this preview only shows one C).',
+      adultRegister: 'A grown-up confirms we found a different C on a real piano, if we are not playing another C on this stand-in.',
       remediation: 'C is the doorstep on the left, not the room in the middle.',
       hearDoorstep: 'Hear C, then D — which one was the doorstep?',
       finishForNow: 'Save and finish for now'
@@ -98,7 +98,7 @@ export const L02 = {
       needDifferentC: 'That is the same C as practice. Try another octave, or ask a grown-up to confirm a different C.',
       houseYes: 'Another house, same doorstep name.',
       audioMissing: 'Sound is not available. You can still tap keys. Pitch checks stay incomplete until sound works.',
-      previewOneC: 'This stand-in shows one C. A helper piano or MIDI can reach a higher or lower C.'
+      previewOneC: 'This stand-in shows more than one C. A real piano can reach still more rooms.'
     }
   }
 };

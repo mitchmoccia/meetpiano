@@ -48,10 +48,18 @@ export function el(tag, attrs = {}, ...children) {
   return node;
 }
 
+export function stepVisualIndex(phaseIndex) {
+  const last = STEP_LABELS.length - 1;
+  const index = Number.isFinite(phaseIndex) ? phaseIndex : 0;
+  if (index >= STEP_LABELS.length) return last;
+  return Math.max(0, index);
+}
+
 export function renderSteps(root, phaseIndex) {
+  const active = stepVisualIndex(phaseIndex);
   root.replaceChildren(...STEP_LABELS.map((label, index) => {
-    const state = index < phaseIndex ? 'done' : index === phaseIndex ? 'active' : '';
-    return el('li', { className: `phase-step ${state}`, 'aria-current': index === phaseIndex ? 'step' : null }, String(index + 1), el('span', {}, label));
+    const state = index < active ? 'done' : index === active ? 'active' : '';
+    return el('li', { className: `phase-step ${state}`, 'aria-current': index === active ? 'step' : null }, String(index + 1), el('span', {}, label));
   }));
 }
 

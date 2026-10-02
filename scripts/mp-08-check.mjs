@@ -121,8 +121,11 @@ assert(L20.scoreReleases === true, 'L20 scores releases');
 assert(HEAD_UNTIL === 2, 'L18 loops the first two beats');
 
 const range = pianoRangeFor('L17');
-assert(range.from === 48 && range.to === 71 && range.wide === true, 'Together uses the two named rooms');
-assert(pianoRangeFor('L01').wide === false, 'L01 stays one octave');
+assert(range.from === 48 && range.to === 72 && range.wide === true, 'Together uses C3–C5, both end Cs');
+assert(range.from % 12 === 0 && range.to % 12 === 0, 'Together window starts and ends on C');
+const l01Range = pianoRangeFor('L01');
+assert(l01Range.from === 60 && l01Range.to === 84 && l01Range.octaveSpan === 2, 'L01 default is C4–C6');
+assert(l01Range.to - l01Range.from === 24, 'L01 default is two octaves, not a 61-key mirror');
 assert(togetherHonesty('touch').includes('exploration stand-in'), 'touch is a stand-in');
 assert(togetherHonesty('midi').includes('not proof of hand coordination'), 'MIDI is not coordination proof');
 

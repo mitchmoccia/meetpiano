@@ -102,7 +102,7 @@ export const L09 = {
       needThisG: 'That is a G in another room. This check wants this G on the preview.',
       transferYes: 'G then F. The neighbors turned around.',
       audioMissing: 'Sound is not available. You can still tap keys. Pitch checks stay incomplete until sound works.',
-      previewOneRoom: 'This stand-in shows one F and one G. A helper piano or MIDI can reach another room.'
+      previewOneRoom: 'This stand-in shows F and G around middle C. A wider octave setting, or a real piano, can reach another room.'
     }
   }
 };
