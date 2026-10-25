@@ -193,6 +193,7 @@ assert(read('next.config.ts').includes("destination: '/songs/index.html'"), 'Nex
 assert(read('scripts/static-checks.mjs').includes('song-score-check.mjs'), 'static checks run this script');
 assert(read('scripts/static-checks.mjs').includes('song-notation-check.mjs'), 'static checks run the notation audit');
 assert(read('scripts/static-checks.mjs').includes('song-results-check.mjs'), 'static checks run the results dialog audit');
+assert(read('scripts/static-checks.mjs').includes('song-note-inspect-check.mjs'), 'static checks run the note inspect audit');
 
 const banned = ['skibidi', 'rizz', 'gyatt', 'brainrot', 'stupid', 'dumb', 'hate'];
 for (const word of banned) assert(!surface.toLowerCase().includes(word), `copy avoids ${word}`);

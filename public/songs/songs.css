@@ -13,6 +13,130 @@
   font-weight: normal;
   font-style: normal;
 }
+.sheet-mount svg text,
+.sheet-mount svg line,
+.sheet-mount svg circle {
+  pointer-events: none;
+}
+.note-hit {
+  cursor: pointer;
+  pointer-events: all;
+}
+@media (hover: hover) and (pointer: fine) {
+  .note-hit:hover { fill: rgba(255, 220, 99, 0.42); }
+}
+.note-hit.is-open[data-hand="rh"] { fill: rgba(255, 220, 99, 0.55); }
+.note-hit.is-open[data-hand="lh"] { fill: rgba(241, 174, 192, 0.55); }
+.note-popover {
+  position: fixed;
+  z-index: 30;
+  width: min(280px, calc(100vw - 16px));
+  margin: 0;
+  padding: 12px 12px 14px;
+  border: 2px solid var(--ink);
+  border-radius: 16px;
+  background: #fffdf8;
+  color: var(--ink);
+  box-shadow: 0 12px 32px rgba(41, 37, 31, 0.18);
+}
+.note-popover-close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  font-size: 22px;
+  line-height: 1;
+}
+.note-popover-name {
+  margin: 0 32px 0 0;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+.note-popover-plain,
+.note-popover-meta {
+  margin: 4px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+.note-popover-meta { color: #71695f; }
+.note-mini {
+  position: relative;
+  height: 74px;
+  margin-top: 10px;
+}
+.note-mini-whites {
+  display: flex;
+  height: 100%;
+  gap: 1px;
+}
+.note-mini-white {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  border: 1px solid #29251f;
+  border-radius: 0 0 4px 4px;
+  background: #fff;
+}
+.note-mini-white span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 3px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 800;
+}
+.note-mini-blacks {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 46px;
+  pointer-events: none;
+}
+.note-mini-black {
+  position: absolute;
+  top: 0;
+  width: 8px;
+  height: 44px;
+  margin-left: -4px;
+  border-radius: 0 0 2px 2px;
+  background: #29251f;
+}
+.note-mini-white.is-on.is-rh,
+.note-mini-black.is-on.is-rh { background: #ffdc63; }
+.note-mini-white.is-on.is-lh,
+.note-mini-black.is-on.is-lh { background: #f1aec0; }
+.note-mini-black.is-on { box-shadow: inset 0 0 0 1px #29251f; }
+.note-mini-white.is-chord.is-rh { background: #ffe9a3; }
+.note-mini-white.is-chord.is-lh { background: #f7d0dc; }
+.note-mini-black.is-chord.is-rh { background: #ffdc63; }
+.note-mini-black.is-chord.is-lh { background: #f1aec0; }
+.note-play {
+  margin-top: 10px;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--yellow);
+  font-weight: 800;
+}
+@media (max-width: 720px) {
+  .note-popover {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: auto;
+    width: auto;
+    max-height: 46dvh;
+    overflow: auto;
+    border-radius: 16px 16px 0 0;
+    padding-bottom: calc(14px + env(safe-area-inset-bottom));
+  }
+}
 
 html:has(body.song-page) {
   height: 100%;
@@ -547,6 +671,7 @@ html:has(body.song-page) {
 .song-tools .midi-help summary { cursor: pointer; font-weight: 700; color: #fffdf8; }
 #midi-status { margin: 8px 0 0; max-width: 70ch; }
 
+.note-popover[hidden],
 .sheet-mount[hidden],
 .roll-canvas[hidden],
 .results-screen[hidden],

@@ -1,3 +1,4 @@
+import { hitBox, noteInspectLabel } from './song-note.js';
 import { bassDegree, letterForMidi, staffY, trebleDegree, BASS_CLEF, TREBLE_CLEF } from './staff.js';
 
 const NS = 'http://www.w3.org/2000/svg';
@@ -85,13 +86,33 @@ export function createStaffView(root) {
        engraving on the left, so the 30% playhead landed near 16%. */
     const scale = Math.min(1.2, cssH / userH);
     const next = Math.round(Math.min(16000, Math.max(320, cssW / scale)));
-    if (svg.dataset.windowW === String(next)) return true;
-    svg.dataset.windowW = String(next);
-    svg.setAttribute('viewBox', `0 0 ${next} ${userH}`);
-    root.querySelectorAll('[data-span="paper"]').forEach((line) => line.setAttribute('x2', String(next - 8)));
-    lastPlayhead = '';
-    lastTransform = '';
+    if (svg.dataset.windowW !== String(next)) {
+      svg.dataset.windowW = String(next);
+      svg.setAttribute('viewBox', `0 0 ${next} ${userH}`);
+      root.querySelectorAll('[data-span="paper"]').forEach((line) => line.setAttribute('x2', String(next - 8)));
+      lastPlayhead = '';
+      lastTransform = '';
+    }
+    sizeHits();
     return true;
+  }
+
+  /* Hit targets grow with the mount, not on the playback frame. */
+  function sizeHits() {
+    const svg = root.querySelector('svg');
+    const userH = Number(svg?.dataset.userH);
+    const cssH = root.clientHeight;
+    if (!userH || cssH < 8) return;
+    const scale = Math.min(1.2, cssH / userH);
+    const touch = typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches;
+    for (const head of heads) {
+      if (!head.hit) continue;
+      const box = hitBox(head, scale, { touch });
+      head.hit.setAttribute('x', String(box.x));
+      head.hit.setAttribute('y', String(box.y));
+      head.hit.setAttribute('width', String(box.width));
+      head.hit.setAttribute('height', String(box.height));
+    }
   }
 
   function systemBrace(parent) {
@@ -130,11 +151,9 @@ export function createStaffView(root) {
     const height = layout.metrics.height;
     const width = 1100;
     root.replaceChildren();
-    const svg = svgEl('svg', { viewBox: `0 0 ${width} ${height}`, role: 'img' });
+    const svg = svgEl('svg', { viewBox: `0 0 ${width} ${height}` });
     svg.dataset.userH = String(height);
     svg.setAttribute('preserveAspectRatio', 'xMinYMid meet');
-    const clefLabel = grand ? 'Treble and bass clefs' : 'Treble clef';
-    svg.setAttribute('aria-label', `${label || 'Sheet music'}. ${clefLabel}, ${beatsPerBar}/4.`);
     const title = svgEl('title');
     title.textContent = label || 'Sheet music with a moving cursor';
     svg.append(title);
@@ -178,6 +197,8 @@ export function createStaffView(root) {
       for (const note of chord.notes) heads.push(drawNote(scoreGroup, note, showLetters, layout.metrics.lyricY));
       drawStem(scoreGroup, chord);
     }
+    const ordered = heads.filter((head) => head.hit).sort((a, b) => a.x - b.x || a.y - b.y);
+    ordered.forEach((head, index) => head.hit.setAttribute('tabindex', index === 0 ? '0' : '-1'));
     for (const beam of layout.beams) {
       scoreGroup.append(svgEl('line', {
         x1: beam.x1,
@@ -557,6 +578,25 @@ function drawNote(parent, note, showLetters, lyricY) {
     }));
   }
   const head = musicText(parent, spec.char, x - note.half, y);
+  const box = hitBox(note, 1);
+  const hit = svgEl('rect', {
+    x: box.x,
+    y: box.y,
+    width: box.width,
+    height: box.height,
+    class: 'note-hit',
+    role: 'button',
+    tabindex: '-1',
+    fill: 'transparent',
+    'aria-label': noteInspectLabel(note)
+  });
+  hit.setAttribute('data-note-id', note.id);
+  hit.setAttribute('data-pitch', String(note.pitch));
+  hit.setAttribute('data-hand', note.hand === 'lh' ? 'lh' : 'rh');
+  hit.setAttribute('data-clef', note.clef);
+  hit.setAttribute('data-x', String(note.x));
+  hit.setAttribute('data-y', String(note.y));
+  parent.append(hit);
   if (Math.abs(note.dur - 3) < 0.05 || Math.abs(note.dur - 1.5) < 0.05) {
     const onLine = note.degree % 2 === 0;
     parent.append(svgEl('circle', {
@@ -579,7 +619,7 @@ function drawNote(parent, note, showLetters, lyricY) {
     label.setAttribute('y', String(Math.min(offset + 128, (lyricY || offset + 150) - 16)));
     parent.append(label);
   }
-  return { id: note.id, node: head };
+  return { id: note.id, node: head, hit, x: note.x, y: note.y, half: note.half };
 }
 
 function drawStem(parent, chord) {
