@@ -14,6 +14,7 @@ const checks = [
   'aeo-check.mjs',
   'pilot-cta-check.mjs',
   'song-score-check.mjs',
+  'song-notation-check.mjs',
   'csp-static-check.mjs'
 ];
 
