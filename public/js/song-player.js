@@ -19,6 +19,7 @@ import {
   missCopy,
   missesByBar,
   notesForDifficulty,
+  handCaption,
   pitchName,
   positionLabel,
   pitchesForKeyboard,
@@ -846,15 +847,14 @@ function renderReadout(cursor) {
   const chordKey = `${waiting ? 1 : 0}:${chord.map((note) => note.id).join(',')}`;
   if (chordKey !== nowKey) {
     nowKey = chordKey;
-    ui.now.replaceChildren(...(chord.length ? chord.map(describeNote) : [textNode('Listen, then play the lit keys.')]));
+    ui.now.replaceChildren(...(chord.length ? handCaption(chord).map(handSpan) : [textNode('Listen, then play the lit keys.')]));
   }
   paintTempo();
 }
 
-function describeNote(note) {
+function handSpan(text) {
   const span = document.createElement('span');
-  const hand = note.hand === 'lh' ? 'Left hand' : 'Right hand';
-  span.textContent = `${hand} · ${pitchName(note.pitch)}`;
+  span.textContent = text;
   return span;
 }
 

@@ -179,7 +179,8 @@ assert(staff.includes('BARLINE_INSET') && staff.includes('\\uE000'), 'barlines s
 assert(!staff.includes('M40 ${98'), 'the hand-drawn treble clef is gone');
 assert(css.includes('U+E000'), 'the music font includes the system brace');
 assert(css.includes('meetpiano-music.woff2') && css.includes('OFL'), 'the music font is self-hosted under the OFL');
-assert(player.includes('Right hand') && !player.includes('· key'), 'the note label names the hand and the pitch');
+assert(read('public/js/song-score.js').includes('Right hand') && read('public/js/song-score.js').includes('Left hand'), 'the note label names the hand and the pitch');
+assert(player.includes('handCaption') && !player.includes('· key'), 'the player groups one label per hand');
 assert(player.includes('function paintAt(cursor)'), 'one cursor paints the views');
 const paint = player.slice(player.indexOf('function paintAt(cursor)'), player.indexOf('function paintAt(cursor)') + 400);
 assert(paint.includes('staffView.sync(cursor') && paint.includes('rollView.sync(cursor') && paint.includes('lightKeyboard(cursor'), 'sheet, falling notes, and keys share that cursor');
@@ -190,6 +191,7 @@ assert(hub.includes('id: \'song-player-entry\'') || hub.includes("id: 'song-play
 assert(hub.includes('L01–L24') || hub.includes('twenty-four'), 'the hub still describes the lesson journey');
 assert(read('next.config.ts').includes("destination: '/songs/index.html'"), 'Next serves the song page');
 assert(read('scripts/static-checks.mjs').includes('song-score-check.mjs'), 'static checks run this script');
+assert(read('scripts/static-checks.mjs').includes('song-notation-check.mjs'), 'static checks run the notation audit');
 
 const banned = ['skibidi', 'rizz', 'gyatt', 'brainrot', 'stupid', 'dumb', 'hate'];
 for (const word of banned) assert(!surface.toLowerCase().includes(word), `copy avoids ${word}`);

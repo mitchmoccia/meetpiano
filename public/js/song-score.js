@@ -141,6 +141,23 @@ export function pitchName(pitch) {
   return NAMES[((Number(pitch) % 12) + 12) % 12];
 }
 
+/** One label per hand, so a chord reads "Left hand · G B" instead of a label per note. */
+export function handCaption(notes) {
+  const lines = [];
+  for (const hand of ['rh', 'lh']) {
+    const names = [];
+    const group = (notes || [])
+      .filter((note) => (note.hand === 'lh' ? 'lh' : 'rh') === hand)
+      .sort((a, b) => a.pitch - b.pitch);
+    for (const note of group) {
+      const name = pitchName(note.pitch);
+      if (!names.includes(name)) names.push(name);
+    }
+    if (names.length) lines.push(`${hand === 'lh' ? 'Left hand' : 'Right hand'} · ${names.join(' ')}`);
+  }
+  return lines;
+}
+
 export function defaultsFor(difficulty) {
   if (difficulty === 'noob') return { waitMode: true, timingScored: false, label: 'Noob' };
   if (difficulty === 'pro') return { waitMode: false, timingScored: false, label: 'Pro' };

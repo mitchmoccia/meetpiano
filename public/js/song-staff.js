@@ -143,32 +143,49 @@ export function createStaffView(root) {
     svg.append(paper);
 
     scoreGroup = svgEl('g');
-    const bars = Math.ceil(length / beatsPerBar);
-    for (let bar = 1; bar <= bars; bar += 1) {
-      const x = PLAYHEAD + bar * beatsPerBar * pixelsPerBeat - BARLINE_INSET;
+    const layout = engrave(notes, { beatsPerBar, grand, pixelsPerBeat });
+    for (const line of layout.barlines) {
       scoreGroup.append(svgEl('line', {
-        x1: x,
+        x1: line.x,
         y1: yTop,
-        x2: x,
+        x2: line.x,
         y2: yBot,
         stroke: INK,
-        'stroke-width': bar === bars ? 3.2 : 1.6
+        'stroke-width': line.final ? 3.2 : 1.6
       }));
     }
-    for (let bar = 0; bar < bars; bar += 1) {
-      const x = PLAYHEAD + bar * beatsPerBar * pixelsPerBeat - BARLINE_INSET;
+    const numbers = [
+      { n: 1, x: PLAYHEAD - BARLINE_INSET },
+      ...layout.barlines.slice(0, -1).map((line, index) => ({ n: index + 2, x: line.x }))
+    ];
+    for (const mark of numbers) {
       const num = svgEl('text', {
-        x,
+        x: mark.x,
         y: 18,
         'text-anchor': 'middle',
         'font-size': 11,
         'font-weight': 700,
         fill: '#71695f'
       });
-      num.textContent = String(bar + 1);
+      num.textContent = String(mark.n);
       scoreGroup.append(num);
     }
-    heads = layoutNotes(notes, grand).map((note) => drawNote(scoreGroup, note, showLetters));
+    heads = [];
+    for (const chord of layout.chords) {
+      for (const note of chord.notes) heads.push(drawNote(scoreGroup, note, showLetters));
+      drawStem(scoreGroup, chord);
+    }
+    for (const beam of layout.beams) {
+      scoreGroup.append(svgEl('line', {
+        x1: beam.x1,
+        y1: beam.y1,
+        x2: beam.x2,
+        y2: beam.y2,
+        stroke: INK,
+        'stroke-width': 4.5,
+        'stroke-linecap': 'butt'
+      }));
+    }
     for (const line of lyrics) {
       const text = svgEl('text', {
         x: PLAYHEAD + line.beat * pixelsPerBeat,
@@ -250,29 +267,190 @@ export function createStaffView(root) {
   };
 }
 
-function layoutNotes(notes, grand) {
-  const placed = [];
-  for (const note of notes) {
+function ledgerDegrees(degree) {
+  const lines = [];
+  if (degree <= -1) {
+    for (let line = -2; line >= degree; line -= 2) lines.push(line);
+  }
+  if (degree >= 9) {
+    for (let line = 10; line <= degree; line += 2) lines.push(line);
+  }
+  return lines;
+}
+
+/**
+ * Staff positions for one take. Left hand uses the bass staff whenever the
+ * grand staff is showing; pitch does not choose the clef. Eighths that share
+ * a beat and a staff share one beam. Barlines sit in the gap between noteheads.
+ */
+export function engrave(notes, { beatsPerBar = 4, grand = false, pixelsPerBeat = PIXELS_PER_BEAT } = {}) {
+  const prepared = (notes || []).map((note) => {
     const clef = grand && note.hand === 'lh' ? BASS_CLEF : TREBLE_CLEF;
     const degree = clef === BASS_CLEF ? bassDegree(note.pitch) : trebleDegree(note.pitch);
-    const clash = placed.some((other) => (
-      other.clef === clef
-      && Math.abs(other.beat - note.beat) < 0.03
-      && Math.abs(other.degree - degree) <= 1
-    ));
-    placed.push({ ...note, clef, degree, shift: clash ? 12 : 0 });
+    const kind = glyphFor(note.dur);
+    return {
+      ...note,
+      clef,
+      degree,
+      kind,
+      ledgerCount: ledgerDegrees(degree).length,
+      half: (HEADS[kind].width * SPACE) / 2,
+      shift: 0,
+      beam: null
+    };
+  });
+  const clusters = [];
+  for (const note of prepared) {
+    let cluster = clusters.find((item) => item.clef === note.clef && Math.abs(item.beat - note.beat) < 0.03);
+    if (!cluster) {
+      cluster = { clef: note.clef, beat: note.beat, notes: [] };
+      clusters.push(cluster);
+    }
+    cluster.notes.push(note);
   }
-  return placed;
+  const chords = [];
+  for (const cluster of clusters) {
+    const byDur = new Map();
+    for (const note of cluster.notes) {
+      const key = Math.round(note.dur * 1000);
+      if (!byDur.has(key)) byDur.set(key, []);
+      byDur.get(key).push(note);
+    }
+    for (const group of byDur.values()) {
+      const chord = {
+        clef: cluster.clef,
+        beat: cluster.beat,
+        dur: group[0].dur,
+        notes: group,
+        stemUp: null,
+        beam: null,
+        beamY: null,
+        stemX: 0
+      };
+      chords.push(chord);
+      for (const note of group) note.chord = chord;
+    }
+  }
+  const beamBuckets = new Map();
+  for (const chord of chords) {
+    if (chord.dur >= 0.75) continue;
+    const key = `${chord.clef}:${Math.floor(chord.beat + 1e-6)}`;
+    if (!beamBuckets.has(key)) beamBuckets.set(key, []);
+    beamBuckets.get(key).push(chord);
+  }
+  let beamSerial = 0;
+  const beams = [];
+  for (const group of beamBuckets.values()) {
+    group.sort((a, b) => a.beat - b.beat);
+    if (group.length < 2) continue;
+    const id = `beam-${beamSerial}`;
+    beamSerial += 1;
+    const degrees = group.flatMap((chord) => chord.notes.map((note) => note.degree));
+    const mid = degrees.reduce((sum, degree) => sum + degree, 0) / degrees.length;
+    const stemUp = mid < 4;
+    for (const chord of group) {
+      chord.beam = id;
+      chord.stemUp = stemUp;
+      for (const note of chord.notes) {
+        note.beam = id;
+        note.stemUp = stemUp;
+      }
+    }
+    beams.push({ id, chords: group, stemUp });
+  }
+  for (const chord of chords) {
+    if (chord.stemUp == null) {
+      const degrees = chord.notes.map((note) => note.degree);
+      const mid = degrees.reduce((sum, degree) => sum + degree, 0) / degrees.length;
+      chord.stemUp = mid < 4;
+      for (const note of chord.notes) note.stemUp = chord.stemUp;
+    }
+  }
+  for (const cluster of clusters) separateSeconds(cluster);
+  for (const note of prepared) {
+    note.x = PLAYHEAD + note.beat * pixelsPerBeat + note.shift;
+    const offset = (note.clef === BASS_CLEF ? BASS_OFFSET : 0) + STAFF_PAD;
+    note.y = staffY(note.pitch, note.clef, offset);
+  }
+  for (const chord of chords) {
+    const voiced = chord.notes.filter((note) => note.kind !== 'whole');
+    const anchor = voiced.find((note) => note.shift === 0) || voiced[0] || chord.notes.find((note) => note.shift === 0) || chord.notes[0];
+    chord.stemX = chord.stemUp ? anchor.x + anchor.half : anchor.x - anchor.half;
+  }
+  for (const beam of beams) {
+    const { stemUp, chords: group } = beam;
+    const ends = group.map((chord) => {
+      const values = chord.notes.map((note) => note.y);
+      return stemUp ? Math.min(...values) : Math.max(...values);
+    });
+    const minStem = 3.25 * SPACE;
+    let y1 = stemUp ? ends[0] - minStem : ends[0] + minStem;
+    let y2 = stemUp ? ends[ends.length - 1] - minStem : ends[ends.length - 1] + minStem;
+    const maxSlant = SPACE * 1.25;
+    if (y2 - y1 > maxSlant) y2 = y1 + maxSlant;
+    if (y1 - y2 > maxSlant) y2 = y1 - maxSlant;
+    for (let i = 0; i < group.length; i += 1) {
+      const t = group.length === 1 ? 0 : i / (group.length - 1);
+      const beamY = y1 + (y2 - y1) * t;
+      const end = ends[i];
+      if (stemUp && end - beamY < minStem) {
+        const delta = minStem - (end - beamY);
+        y1 -= delta;
+        y2 -= delta;
+      }
+      if (!stemUp && beamY - end < minStem) {
+        const delta = minStem - (beamY - end);
+        y1 += delta;
+        y2 += delta;
+      }
+    }
+    beam.x1 = group[0].stemX;
+    beam.x2 = group[group.length - 1].stemX;
+    beam.y1 = y1;
+    beam.y2 = y2;
+    group.forEach((chord, index) => {
+      const t = group.length === 1 ? 0 : index / (group.length - 1);
+      chord.beamY = y1 + (y2 - y1) * t;
+    });
+  }
+  const length = prepared.reduce((max, note) => Math.max(max, note.beat + note.dur), 0);
+  const bars = Math.max(1, Math.ceil(length / beatsPerBar));
+  const barlines = [];
+  for (let bar = 1; bar <= bars; bar += 1) {
+    const boundary = bar * beatsPerBar;
+    const before = prepared.filter((note) => note.beat < boundary - 1e-3);
+    const after = prepared.filter((note) => note.beat >= boundary - 1e-3);
+    let x = PLAYHEAD + boundary * pixelsPerBeat - BARLINE_INSET;
+    if (before.length && after.length) {
+      const right = Math.max(...before.map((note) => note.x + note.half));
+      const left = Math.min(...after.map((note) => note.x - note.half));
+      if (left > right + 2) x = (right + left) / 2;
+    }
+    barlines.push({ beat: boundary, x, final: bar === bars });
+  }
+  return { notes: prepared, chords, barlines, beams, bars };
+}
+
+function separateSeconds(cluster) {
+  const notes = [...cluster.notes].sort((a, b) => a.degree - b.degree);
+  const voiced = notes.filter((note) => note.kind !== 'whole');
+  const stemUp = (voiced[0] || notes[0]).stemUp !== false;
+  if (stemUp) {
+    for (let i = 1; i < notes.length; i += 1) {
+      if (notes[i].degree - notes[i - 1].degree <= 1 && notes[i - 1].shift === 0) notes[i].shift = 12;
+    }
+  } else {
+    for (let i = notes.length - 2; i >= 0; i -= 1) {
+      if (notes[i + 1].degree - notes[i].degree <= 1 && notes[i + 1].shift === 0) notes[i].shift = 12;
+    }
+  }
 }
 
 function drawNote(parent, note, showLetters) {
   const offset = (note.clef === BASS_CLEF ? BASS_OFFSET : 0) + STAFF_PAD;
-  const x = PLAYHEAD + note.beat * PIXELS_PER_BEAT + note.shift;
-  const y = staffY(note.pitch, note.clef, offset);
-  const kind = glyphFor(note.dur);
-  const spec = HEADS[kind];
-  const half = (spec.width * SPACE) / 2;
-  const ledgerExtend = half + 0.4 * SPACE;
+  const { x, y } = note;
+  const spec = HEADS[note.kind];
+  const ledgerExtend = note.half + 0.4 * SPACE;
   for (const degree of ledgerDegrees(note.degree)) {
     const ledgerY = y + (note.degree - degree) * (SPACE / 2);
     parent.append(svgEl('line', {
@@ -284,22 +462,14 @@ function drawNote(parent, note, showLetters) {
       'stroke-width': 1.6
     }));
   }
-  const originX = x - half;
-  const head = musicText(parent, spec.char, originX, y);
-  if (kind !== 'whole') {
-    const stemUp = note.degree < 4;
-    const [ax, ay] = stemUp ? spec.stemUp : spec.stemDown;
-    const sx = originX + ax * SPACE;
-    const sy = y - ay * SPACE;
-    const tip = stemUp ? y - 3.5 * SPACE : y + 3.5 * SPACE;
-    parent.append(svgEl('line', {
-      x1: sx,
-      y1: sy,
-      x2: sx,
-      y2: tip,
-      stroke: INK,
-      'stroke-width': 1.7,
-      'stroke-linecap': 'butt'
+  const head = musicText(parent, spec.char, x - note.half, y);
+  if (Math.abs(note.dur - 3) < 0.05 || Math.abs(note.dur - 1.5) < 0.05) {
+    const onLine = note.degree % 2 === 0;
+    parent.append(svgEl('circle', {
+      cx: x + note.half + 6,
+      cy: onLine ? y - SPACE / 2 : y,
+      r: 2.2,
+      fill: INK
     }));
   }
   if (showLetters) {
@@ -317,13 +487,23 @@ function drawNote(parent, note, showLetters) {
   return { id: note.id, node: head };
 }
 
-function ledgerDegrees(degree) {
-  const lines = [];
-  if (degree <= -1) {
-    for (let line = -2; line >= degree; line -= 2) lines.push(line);
-  }
-  if (degree >= 9) {
-    for (let line = 10; line <= degree; line += 2) lines.push(line);
-  }
-  return lines;
+function drawStem(parent, chord) {
+  const voiced = chord.notes.filter((note) => note.kind !== 'whole');
+  if (!voiced.length) return;
+  const stemUp = chord.stemUp;
+  const low = Math.max(...voiced.map((note) => note.y));
+  const high = Math.min(...voiced.map((note) => note.y));
+  const yStart = stemUp ? low - 0.15 * SPACE : high + 0.15 * SPACE;
+  const yEnd = chord.beamY != null
+    ? chord.beamY
+    : (stemUp ? high - 3.5 * SPACE : low + 3.5 * SPACE);
+  parent.append(svgEl('line', {
+    x1: chord.stemX,
+    y1: yStart,
+    x2: chord.stemX,
+    y2: yEnd,
+    stroke: INK,
+    'stroke-width': 1.7,
+    'stroke-linecap': 'butt'
+  }));
 }
