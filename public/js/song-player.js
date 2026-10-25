@@ -28,6 +28,7 @@ import {
   rememberBest,
   rewindLoop,
   scoreLength,
+  songTitle,
   stepTake,
   validateScore,
   windowsFor
@@ -407,7 +408,23 @@ window.addEventListener('resize', () => {
 
 applyRange();
 paintClick();
+applyInitialTitle();
 loadSongs();
+
+function requestedSongId() {
+  const requested = new URLSearchParams(location.search).get('song');
+  if (songTitle(requested)) return requested;
+  const prefs = readPrefs();
+  if (songTitle(prefs?.songId)) return prefs.songId;
+  return SONG_CATALOG[0].id;
+}
+
+function applyInitialTitle() {
+  const title = songTitle(requestedSongId());
+  if (!title || !ui.title) return;
+  ui.title.textContent = title;
+  document.title = `${title} · Songs · MeetPiano`;
+}
 
 async function loadSongs() {
   try {
