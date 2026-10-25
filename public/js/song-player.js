@@ -21,6 +21,7 @@ import {
   notesForDifficulty,
   pitchName,
   positionLabel,
+  pitchesForKeyboard,
   rangeCovering,
   rampedBpm,
   rememberBest,
@@ -127,6 +128,7 @@ let wasWaiting = false;
 let lastPosition = '';
 let lastStreak = '';
 let lastLyric = '';
+let lastFollow = '';
 let lastBpm = '';
 let nowKey = '';
 const scheduledClicks = new Set();
@@ -290,6 +292,11 @@ ui.list.addEventListener('keydown', (event) => {
   }
 });
 document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && ui.drawer.hidden && document.querySelector('#practice-panel')?.open) {
+    event.preventDefault();
+    document.querySelector('#practice-panel').open = false;
+    return;
+  }
   if (ui.drawer.hidden) return;
   if (event.key === 'Escape') {
     event.preventDefault();
@@ -311,7 +318,7 @@ document.addEventListener('keydown', (event) => {
 });
 
 window.addEventListener('resize', () => {
-  if (octaveChoice == null) applyRange();
+  if (octaveChoice == null || octaveChoice === 0) applyRange();
   else layoutDirty = true;
   paintAt(displayCursor());
 });
@@ -426,9 +433,9 @@ function selectDifficulty(next) {
   ui.wait.setAttribute('aria-pressed', waitOn ? 'true' : 'false');
   stopTransport();
   applyDifficultyChrome();
+  applyRange();
   rebuildTake(cursor);
   savePrefs();
-  announce(`${defaultsFor(next).label}. ${DIFFICULTY_COPY[next]}`);
   paintAt(take.cursor);
 }
 
@@ -470,10 +477,16 @@ function updateOctaveChrome() {
 }
 
 function applyRange() {
-  const pitches = score ? score.notes.map((note) => note.pitch) : [60, 72];
   const choice = octaveChoice == null ? autoOctaves(window.innerWidth) : octaveChoice;
-  const range = rangeCovering(pitches, choice);
+  const narrow = window.innerWidth < 720;
+  const pitches = score
+    ? pitchesForKeyboard(score.notes, { difficulty, narrow, fit: choice === 0 })
+    : [60, 72];
+  const range = rangeCovering(pitches.length ? pitches : [60, 72], choice);
   renderPiano(piano, range);
+  const whiteCount = piano.querySelectorAll('.white-key').length;
+  stage?.style.setProperty('--white-count', String(whiteCount));
+  lastFollow = '';
   computer = computerKeysForRange(range.from, range.to, 'both');
   keyByPitch = new Map();
   piano.querySelectorAll('.piano-key').forEach((key) => {
@@ -484,6 +497,7 @@ function applyRange() {
   ui.keyHelp.textContent = `On-screen keys are a stand-in. ${computerHelpFor({ from: range.from, to: range.to, octaveSpan: span })}.`;
   updateOctaveChrome();
   layoutDirty = true;
+  requestAnimationFrame(parkKeyboard);
 }
 
 function rebuildTake(cursor) {
@@ -733,7 +747,38 @@ function paintAt(cursor) {
   staffView.sync(cursor, take.notes);
   rollView.sync(cursor, take.notes, keyCenters);
   lightKeyboard(cursor, take.notes);
+  followActiveKey(cursor, take.notes);
   renderReadout(cursor);
+}
+
+function parkKeyboard() {
+  const scroller = piano.closest('.kb-scroll');
+  if (!scroller) return;
+  if (scroller.scrollWidth <= scroller.clientWidth + 1) {
+    scroller.scrollLeft = 0;
+    return;
+  }
+  const home = piano.querySelector('[data-note="60"]') || piano.querySelector('.white-key');
+  if (!home) return;
+  scroller.scrollLeft = Math.max(0, home.offsetLeft - 12);
+}
+
+function followActiveKey(cursor, notes) {
+  if (window.innerWidth >= 720) return;
+  const scroller = piano.closest('.kb-scroll');
+  if (!scroller || scroller.scrollWidth <= scroller.clientWidth + 1) return;
+  const active = notes.find((note) => cursor + 0.03 >= note.beat && cursor < note.beat + note.dur)
+    || notes.find((note) => note.beat >= cursor - 0.06 && note.status !== 'hit' && note.status !== 'missed');
+  if (!active) return;
+  const key = keyByPitch.get(active.pitch);
+  if (!key || String(active.pitch) === lastFollow) return;
+  lastFollow = String(active.pitch);
+  const viewLeft = scroller.scrollLeft;
+  const viewRight = viewLeft + scroller.clientWidth;
+  const keyLeft = key.offsetLeft;
+  const keyRight = keyLeft + key.offsetWidth;
+  if (keyLeft >= viewLeft + 4 && keyRight <= viewRight - 4) return;
+  scroller.scrollLeft = Math.max(0, keyLeft - (scroller.clientWidth - key.offsetWidth) / 2);
 }
 
 function lightKeyboard(cursor, notes) {

@@ -14,6 +14,7 @@ import {
   gradeTake,
   judgePitch,
   autoOctaves,
+  pitchesForKeyboard,
   loopFromBars,
   missesByBar,
   notesForDifficulty,
@@ -140,6 +141,13 @@ assert(rampedBpm(100, 8, { ramp: true, rampBeats: 8 }) === 100, 'ease-in reaches
 assert(rollLandingY(4, 4, 200, 80) === 200, 'a note lands on the keyboard line at its beat');
 assert(sheetCursorX(4, 4, 118, 54) === 118, 'the staff cursor meets the note at the same beat');
 assert(autoOctaves(1440) === 4 && autoOctaves(1000) === 3 && autoOctaves(390) === 0, 'wide screens default to more octaves');
+const phoneNotes = [{ pitch: 48, hand: 'lh', part: 'bass' }, { pitch: 60, hand: 'rh', part: 'melody' }, { pitch: 64, hand: 'rh', part: 'melody' }];
+const phoneNoob = pitchesForKeyboard(phoneNotes, { difficulty: 'noob', narrow: true, fit: true });
+assert(!phoneNoob.includes(48) && phoneNoob.includes(60), 'narrow Noob fit hides the low left-hand octave');
+const phonePro = pitchesForKeyboard(phoneNotes, { difficulty: 'pro', narrow: true, fit: true });
+assert(phonePro.includes(48) && phonePro.includes(60), 'narrow Pro fit keeps the left hand so the keyboard can scroll to it');
+const deskNoob = pitchesForKeyboard(phoneNotes, { difficulty: 'noob', narrow: false, fit: true });
+assert(deskNoob.includes(48), 'a wide Noob keyboard still includes the whole song');
 const fitted = rangeCovering([64, 67, 60], 0);
 assert(fitted.from <= 60 && fitted.to >= 67, 'fit covers the song');
 const wide = rangeCovering([60, 64], 4);

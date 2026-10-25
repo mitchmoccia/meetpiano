@@ -45,6 +45,7 @@ html:has(body.song-page) {
 }
 .song-setup {
   flex: 0 1 auto;
+  position: relative;
   min-height: 0;
   max-height: min(460px, 48%);
   overflow: auto;
@@ -228,6 +229,18 @@ html:has(body.song-page) {
   border: 1.5px solid var(--border);
   border-radius: 14px;
   background: #fff;
+}
+/* Open Practice covers the setup, so the staff underneath keeps its height. */
+.practice-panel[open] {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  background: #fffdf8;
+  box-shadow: 0 10px 0 rgba(41, 37, 31, 0.12);
 }
 .practice-panel summary {
   display: flex;
@@ -441,7 +454,7 @@ html:has(body.song-page) {
 .sheet-mount svg { width: 100%; height: 100%; display: block; }
 .view-legend .music-well {
   display: grid;
-  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1.4fr) minmax(0, 0.6fr) auto;
 }
 .view-legend .sheet-mount {
   grid-row: 1;
@@ -590,6 +603,55 @@ html:has(body.song-page) {
   .view-keys .piano { height: 120px; }
 }
 
+@media (max-height: 820px) {
+  .song-setup {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 10px;
+    max-height: none;
+    padding-bottom: 4px;
+  }
+  .song-setup h1 {
+    flex: 1 1 160px;
+    margin: 0;
+    font-size: 20px;
+    line-height: 1;
+    min-width: 0;
+  }
+  .song-current,
+  .song-meta-row,
+  .practice-panel { flex: 0 1 auto; margin: 0; }
+  .song-meta-row { margin-bottom: 0; }
+  .control-row {
+    flex: 1 1 520px;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+  }
+  .control-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .hint-row { flex: 1 1 100%; margin: 0; }
+  .view-row button,
+  .difficulty-row button { min-height: 36px; }
+  .difficulty-row button { padding: 4px 12px; }
+  .view-legend .music-well {
+    grid-template-rows: minmax(110px, 1.5fr) minmax(36px, 0.5fr) auto;
+  }
+  .song-tools { max-height: 32px; }
+  .octave-switch button { min-height: 26px; }
+}
+
 @media (max-width: 720px) {
   .song-setup h1 { letter-spacing: -1px; }
   .song-privacy { font-size: 13px; margin-bottom: 6px; }
@@ -629,6 +691,14 @@ html:has(body.song-page) {
   .lyric-line { font-size: 20px; padding-top: 4px; }
   .now-card { font-size: 15px; padding-bottom: 2px; }
   .song-feedback { flex-basis: 100%; }
+  .music-well,
+  .kb-scroll,
+  .view-legend .kb-scroll { min-width: 0; max-width: 100%; }
+  .kb-scroll { overflow-x: auto; overflow-y: hidden; }
+  .kb-stack {
+    width: max(100%, calc(var(--white-count, 8) * 40px));
+    min-width: 100%;
+  }
   .song-stage .piano {
     width: 100%;
     min-width: 0;
@@ -637,6 +707,8 @@ html:has(body.song-page) {
     height: 96px;
     min-height: 96px;
   }
+  .song-stage .white-key { flex: 1 0 40px; min-width: 40px; }
+  .roll-canvas { width: 100%; max-width: none; }
   .view-keys .piano { height: 120px; min-height: 110px; }
   .song-stage .white-key { padding-bottom: 6px; }
   .song-stage .white-key > span { font-size: 12px; }

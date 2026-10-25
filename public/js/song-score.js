@@ -77,6 +77,22 @@ function whiteAtOrAbove(pitch) {
   return note;
 }
 
+/**
+ * Narrow Fit prefers the right hand. Noob does not show the low left-hand
+ * octave, because that hand is not in the part. Pro and Expert keep it so
+ * the keyboard can scroll to those notes.
+ */
+export function pitchesForKeyboard(notes, { difficulty = 'pro', narrow = false, fit = true } = {}) {
+  const list = Array.isArray(notes) ? notes : [];
+  const pitches = list.map((note) => Number(note.pitch)).filter(Number.isFinite);
+  if (!narrow || !fit || difficulty !== 'noob') return pitches;
+  const right = list
+    .filter((note) => note.hand === 'rh' || note.part === 'melody')
+    .map((note) => Number(note.pitch))
+    .filter(Number.isFinite);
+  return right.length ? right : pitches;
+}
+
 /** Fit the on-screen keyboard around the song. octaves 0 keeps the tight span. */
 export function rangeCovering(pitches, octaves = 0) {
   const list = (pitches || []).map(Number).filter(Number.isFinite);
