@@ -1,0 +1,424 @@
+{
+  "id": "happy-birthday",
+  "title": "Happy Birthday",
+  "key": "C",
+  "tempo": 92,
+  "timeSignature": [
+    4,
+    4
+  ],
+  "level": "Beginner",
+  "tags": [
+    "Kids"
+  ],
+  "provenance": {
+    "source": "Melody by Patty Hill and Mildred J. Hill, first published as “Good Morning to All” in Song Stories for the Kindergarten (Chicago: Clayton F. Summy, 1893). A 2016 U.S. court ruling, Marya v. Warner/Chappell, held this melody is in the public domain in the United States. This setting uses the white-key form with G as the tonic, so no B-flat is required.",
+    "publicationYear": 1893,
+    "publicDomain": true,
+    "arrangement": "Original simple arrangement written for MeetPiano. Not copied from a copyrighted method book."
+  },
+  "phrases": [
+    {
+      "id": "to-you",
+      "label": "Happy birthday to you",
+      "start": 0,
+      "end": 16
+    },
+    {
+      "id": "dear",
+      "label": "Dear friend",
+      "start": 16,
+      "end": 24
+    },
+    {
+      "id": "to-you-2",
+      "label": "Happy birthday to you",
+      "start": 24,
+      "end": 32
+    }
+  ],
+  "lyrics": [
+    {
+      "beat": 0,
+      "text": "Happy birthday to you"
+    },
+    {
+      "beat": 8,
+      "text": "Happy birthday to you"
+    },
+    {
+      "beat": 16,
+      "text": "Happy birthday, dear friend"
+    },
+    {
+      "beat": 24,
+      "text": "Happy birthday to you"
+    }
+  ],
+  "notes": [
+    {
+      "pitch": 67,
+      "beat": 0,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 1,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 69,
+      "beat": 2,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 3,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 72,
+      "beat": 4,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 71,
+      "beat": 5,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 6,
+      "dur": 2,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 8,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 9,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 69,
+      "beat": 10,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 11,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 74,
+      "beat": 12,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 72,
+      "beat": 13,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 14,
+      "dur": 2,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 16,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 17,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 79,
+      "beat": 18,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 76,
+      "beat": 19,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 72,
+      "beat": 20,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 71,
+      "beat": 21,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 69,
+      "beat": 22,
+      "dur": 2,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 65,
+      "beat": 24,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 65,
+      "beat": 25,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 26,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 60,
+      "beat": 27,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 62,
+      "beat": 28,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 60,
+      "beat": 29,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 60,
+      "beat": 30,
+      "dur": 2,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 0,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 67,
+      "beat": 4,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 67,
+      "beat": 8,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 67,
+      "beat": 12,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 67,
+      "beat": 16,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 67,
+      "beat": 20,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 67,
+      "beat": 24,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 67,
+      "beat": 28,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 71,
+      "beat": 0,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 74,
+      "beat": 2,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 71,
+      "beat": 4,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 74,
+      "beat": 6,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 71,
+      "beat": 8,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 74,
+      "beat": 10,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 71,
+      "beat": 12,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 74,
+      "beat": 14,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 71,
+      "beat": 16,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 74,
+      "beat": 18,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 71,
+      "beat": 20,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 74,
+      "beat": 22,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 71,
+      "beat": 24,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 74,
+      "beat": 26,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 71,
+      "beat": 28,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 74,
+      "beat": 30,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    }
+  ]
+}

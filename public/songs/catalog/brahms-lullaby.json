@@ -1,0 +1,390 @@
+{
+  "id": "brahms-lullaby",
+  "title": "Brahms' Lullaby",
+  "key": "C",
+  "tempo": 72,
+  "timeSignature": [
+    3,
+    4
+  ],
+  "level": "Beginner",
+  "tags": [
+    "Classical"
+  ],
+  "provenance": {
+    "source": "Johannes Brahms, Wiegenlied, Op. 49 No. 4, published in 1868. The melody and the original words are public domain in the United States. This beginner setting is in 3/4 and stays on the white keys.",
+    "publicationYear": 1868,
+    "publicDomain": true,
+    "arrangement": "Original simple arrangement written for MeetPiano. Not copied from a copyrighted method book."
+  },
+  "phrases": [
+    {
+      "id": "lullaby",
+      "label": "Lullaby",
+      "start": 0,
+      "end": 12
+    },
+    {
+      "id": "sleep",
+      "label": "Lay thee down",
+      "start": 12,
+      "end": 24
+    }
+  ],
+  "lyrics": [
+    {
+      "beat": 0,
+      "text": "Lullaby and good night"
+    },
+    {
+      "beat": 6,
+      "text": "With roses bedight"
+    },
+    {
+      "beat": 12,
+      "text": "With lilies o’er spread"
+    },
+    {
+      "beat": 18,
+      "text": "Is baby’s wee bed"
+    }
+  ],
+  "notes": [
+    {
+      "pitch": 64,
+      "beat": 0,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 1,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 2,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 3,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 4,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 5,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 6,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 7,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 72,
+      "beat": 8,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 71,
+      "beat": 9,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 69,
+      "beat": 10,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 11,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 69,
+      "beat": 12,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 69,
+      "beat": 13,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 72,
+      "beat": 14,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 69,
+      "beat": 15,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 69,
+      "beat": 16,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 72,
+      "beat": 17,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 69,
+      "beat": 18,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 72,
+      "beat": 19,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 71,
+      "beat": 20,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 69,
+      "beat": 21,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 22,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 23,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 0,
+      "dur": 3,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 64,
+      "beat": 3,
+      "dur": 3,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 64,
+      "beat": 6,
+      "dur": 3,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 64,
+      "beat": 9,
+      "dur": 3,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 64,
+      "beat": 12,
+      "dur": 3,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 64,
+      "beat": 15,
+      "dur": 3,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 64,
+      "beat": 18,
+      "dur": 3,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 64,
+      "beat": 21,
+      "dur": 3,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 67,
+      "beat": 0,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 71,
+      "beat": 2,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 67,
+      "beat": 3,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 71,
+      "beat": 5,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 67,
+      "beat": 6,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 71,
+      "beat": 8,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 67,
+      "beat": 9,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 71,
+      "beat": 11,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 67,
+      "beat": 12,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 71,
+      "beat": 14,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 67,
+      "beat": 15,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 71,
+      "beat": 17,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 67,
+      "beat": 18,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 71,
+      "beat": 20,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 67,
+      "beat": 21,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 71,
+      "beat": 23,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    }
+  ]
+}

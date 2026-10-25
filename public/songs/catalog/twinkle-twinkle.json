@@ -3,7 +3,10 @@
   "title": "Twinkle Twinkle Little Star",
   "key": "C",
   "tempo": 100,
-  "timeSignature": [4, 4],
+  "timeSignature": [
+    4,
+    4
+  ],
   "provenance": {
     "source": "French folk tune published as Ah! vous dirai-je, maman (Paris: Boüin, 1761). The English nursery words “Twinkle, twinkle, little star” are from Jane Taylor, Rhymes for the Nursery (1806).",
     "publicationYear": 1761,
@@ -12,87 +15,536 @@
     "arrangement": "Original simple arrangement written for MeetPiano. Not copied from a copyrighted method book."
   },
   "phrases": [
-    { "id": "twinkle", "label": "Twinkle, twinkle", "start": 0, "end": 8 },
-    { "id": "wonder", "label": "How I wonder", "start": 8, "end": 16 },
-    { "id": "above", "label": "Up above the world", "start": 16, "end": 24 },
-    { "id": "diamond", "label": "Like a diamond", "start": 24, "end": 32 },
-    { "id": "twinkle-2", "label": "Twinkle again", "start": 32, "end": 40 },
-    { "id": "wonder-2", "label": "How I wonder again", "start": 40, "end": 48 }
+    {
+      "id": "twinkle",
+      "label": "Twinkle, twinkle",
+      "start": 0,
+      "end": 8
+    },
+    {
+      "id": "wonder",
+      "label": "How I wonder",
+      "start": 8,
+      "end": 16
+    },
+    {
+      "id": "above",
+      "label": "Up above the world",
+      "start": 16,
+      "end": 24
+    },
+    {
+      "id": "diamond",
+      "label": "Like a diamond",
+      "start": 24,
+      "end": 32
+    },
+    {
+      "id": "twinkle-2",
+      "label": "Twinkle again",
+      "start": 32,
+      "end": 40
+    },
+    {
+      "id": "wonder-2",
+      "label": "How I wonder again",
+      "start": 40,
+      "end": 48
+    }
   ],
   "lyrics": [
-    { "beat": 0, "text": "Twinkle, twinkle, little star" },
-    { "beat": 8, "text": "How I wonder what you are" },
-    { "beat": 16, "text": "Up above the world so high" },
-    { "beat": 24, "text": "Like a diamond in the sky" },
-    { "beat": 32, "text": "Twinkle, twinkle, little star" },
-    { "beat": 40, "text": "How I wonder what you are" }
+    {
+      "beat": 0,
+      "text": "Twinkle, twinkle, little star"
+    },
+    {
+      "beat": 8,
+      "text": "How I wonder what you are"
+    },
+    {
+      "beat": 16,
+      "text": "Up above the world so high"
+    },
+    {
+      "beat": 24,
+      "text": "Like a diamond in the sky"
+    },
+    {
+      "beat": 32,
+      "text": "Twinkle, twinkle, little star"
+    },
+    {
+      "beat": 40,
+      "text": "How I wonder what you are"
+    }
   ],
   "notes": [
-    { "pitch": 60, "beat": 0, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 60, "beat": 1, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 67, "beat": 2, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 67, "beat": 3, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 69, "beat": 4, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 69, "beat": 5, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 67, "beat": 6, "dur": 2, "hand": "rh", "part": "melody" },
-    { "pitch": 65, "beat": 8, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 65, "beat": 9, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 64, "beat": 10, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 64, "beat": 11, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 62, "beat": 12, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 62, "beat": 13, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 60, "beat": 14, "dur": 2, "hand": "rh", "part": "melody" },
-    { "pitch": 67, "beat": 16, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 67, "beat": 17, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 65, "beat": 18, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 65, "beat": 19, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 64, "beat": 20, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 64, "beat": 21, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 62, "beat": 22, "dur": 2, "hand": "rh", "part": "melody" },
-    { "pitch": 67, "beat": 24, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 67, "beat": 25, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 65, "beat": 26, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 65, "beat": 27, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 64, "beat": 28, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 64, "beat": 29, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 62, "beat": 30, "dur": 2, "hand": "rh", "part": "melody" },
-    { "pitch": 60, "beat": 32, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 60, "beat": 33, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 67, "beat": 34, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 67, "beat": 35, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 69, "beat": 36, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 69, "beat": 37, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 67, "beat": 38, "dur": 2, "hand": "rh", "part": "melody" },
-    { "pitch": 65, "beat": 40, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 65, "beat": 41, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 64, "beat": 42, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 64, "beat": 43, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 62, "beat": 44, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 62, "beat": 45, "dur": 1, "hand": "rh", "part": "melody" },
-    { "pitch": 60, "beat": 46, "dur": 2, "hand": "rh", "part": "melody" },
-    { "pitch": 48, "beat": 0, "dur": 4, "hand": "lh", "part": "bass" },
-    { "pitch": 48, "beat": 4, "dur": 4, "hand": "lh", "part": "bass" },
-    { "pitch": 53, "beat": 8, "dur": 4, "hand": "lh", "part": "bass" },
-    { "pitch": 48, "beat": 12, "dur": 4, "hand": "lh", "part": "bass" },
-    { "pitch": 48, "beat": 16, "dur": 4, "hand": "lh", "part": "bass" },
-    { "pitch": 55, "beat": 20, "dur": 4, "hand": "lh", "part": "bass" },
-    { "pitch": 48, "beat": 24, "dur": 4, "hand": "lh", "part": "bass" },
-    { "pitch": 55, "beat": 28, "dur": 4, "hand": "lh", "part": "bass" },
-    { "pitch": 48, "beat": 32, "dur": 4, "hand": "lh", "part": "bass" },
-    { "pitch": 48, "beat": 36, "dur": 4, "hand": "lh", "part": "bass" },
-    { "pitch": 53, "beat": 40, "dur": 4, "hand": "lh", "part": "bass" },
-    { "pitch": 48, "beat": 44, "dur": 4, "hand": "lh", "part": "bass" },
-    { "pitch": 52, "beat": 0, "dur": 4, "hand": "lh", "part": "color" },
-    { "pitch": 52, "beat": 4, "dur": 4, "hand": "lh", "part": "color" },
-    { "pitch": 57, "beat": 8, "dur": 4, "hand": "lh", "part": "color" },
-    { "pitch": 52, "beat": 12, "dur": 4, "hand": "lh", "part": "color" },
-    { "pitch": 52, "beat": 16, "dur": 4, "hand": "lh", "part": "color" },
-    { "pitch": 59, "beat": 20, "dur": 4, "hand": "lh", "part": "color" },
-    { "pitch": 52, "beat": 24, "dur": 4, "hand": "lh", "part": "color" },
-    { "pitch": 59, "beat": 28, "dur": 4, "hand": "lh", "part": "color" },
-    { "pitch": 52, "beat": 32, "dur": 4, "hand": "lh", "part": "color" },
-    { "pitch": 52, "beat": 36, "dur": 4, "hand": "lh", "part": "color" },
-    { "pitch": 57, "beat": 40, "dur": 4, "hand": "lh", "part": "color" },
-    { "pitch": 52, "beat": 44, "dur": 4, "hand": "lh", "part": "color" }
+    {
+      "pitch": 60,
+      "beat": 0,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 60,
+      "beat": 1,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 2,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 3,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 69,
+      "beat": 4,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 69,
+      "beat": 5,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 6,
+      "dur": 2,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 65,
+      "beat": 8,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 65,
+      "beat": 9,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 10,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 11,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 62,
+      "beat": 12,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 62,
+      "beat": 13,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 60,
+      "beat": 14,
+      "dur": 2,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 16,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 17,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 65,
+      "beat": 18,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 65,
+      "beat": 19,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 20,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 21,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 62,
+      "beat": 22,
+      "dur": 2,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 24,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 25,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 65,
+      "beat": 26,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 65,
+      "beat": 27,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 28,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 29,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 62,
+      "beat": 30,
+      "dur": 2,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 60,
+      "beat": 32,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 60,
+      "beat": 33,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 34,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 35,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 69,
+      "beat": 36,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 69,
+      "beat": 37,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 38,
+      "dur": 2,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 65,
+      "beat": 40,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 65,
+      "beat": 41,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 42,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 43,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 62,
+      "beat": 44,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 62,
+      "beat": 45,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 60,
+      "beat": 46,
+      "dur": 2,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 48,
+      "beat": 0,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 48,
+      "beat": 4,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 53,
+      "beat": 8,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 48,
+      "beat": 12,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 48,
+      "beat": 16,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 55,
+      "beat": 20,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 48,
+      "beat": 24,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 55,
+      "beat": 28,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 48,
+      "beat": 32,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 48,
+      "beat": 36,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 53,
+      "beat": 40,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 48,
+      "beat": 44,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 52,
+      "beat": 0,
+      "dur": 4,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 52,
+      "beat": 4,
+      "dur": 4,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 57,
+      "beat": 8,
+      "dur": 4,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 52,
+      "beat": 12,
+      "dur": 4,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 52,
+      "beat": 16,
+      "dur": 4,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 59,
+      "beat": 20,
+      "dur": 4,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 52,
+      "beat": 24,
+      "dur": 4,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 59,
+      "beat": 28,
+      "dur": 4,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 52,
+      "beat": 32,
+      "dur": 4,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 52,
+      "beat": 36,
+      "dur": 4,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 57,
+      "beat": 40,
+      "dur": 4,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 52,
+      "beat": 44,
+      "dur": 4,
+      "hand": "lh",
+      "part": "color"
+    }
+  ],
+  "level": "Beginner",
+  "tags": [
+    "Kids",
+    "Folk"
   ]
 }

@@ -1,0 +1,459 @@
+{
+  "id": "frere-jacques",
+  "title": "Are You Sleeping",
+  "key": "C",
+  "tempo": 96,
+  "timeSignature": [
+    4,
+    4
+  ],
+  "level": "Beginner",
+  "tags": [
+    "Kids",
+    "Folk"
+  ],
+  "provenance": {
+    "source": "French traditional round, Frère Jacques. The tune was in print by the early 19th century (a familiar publication is around 1811) and the English words “Are you sleeping” are a traditional translation. Public domain in the United States.",
+    "publicationYear": 1811,
+    "publicDomain": true,
+    "arrangement": "Original simple arrangement written for MeetPiano. Not copied from a copyrighted method book."
+  },
+  "phrases": [
+    {
+      "id": "sleeping",
+      "label": "Are you sleeping",
+      "start": 0,
+      "end": 8
+    },
+    {
+      "id": "morning",
+      "label": "Morning bells",
+      "start": 8,
+      "end": 16
+    },
+    {
+      "id": "ding",
+      "label": "Ding ding dong",
+      "start": 16,
+      "end": 24
+    },
+    {
+      "id": "dong",
+      "label": "Ding dang dong",
+      "start": 24,
+      "end": 32
+    }
+  ],
+  "lyrics": [
+    {
+      "beat": 0,
+      "text": "Are you sleeping, are you sleeping"
+    },
+    {
+      "beat": 8,
+      "text": "Brother John, brother John"
+    },
+    {
+      "beat": 16,
+      "text": "Morning bells are ringing"
+    },
+    {
+      "beat": 24,
+      "text": "Ding dang dong"
+    }
+  ],
+  "notes": [
+    {
+      "pitch": 60,
+      "beat": 0,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 62,
+      "beat": 1,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 2,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 60,
+      "beat": 3,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 60,
+      "beat": 4,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 62,
+      "beat": 5,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 6,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 60,
+      "beat": 7,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 8,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 65,
+      "beat": 9,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 10,
+      "dur": 2,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 12,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 65,
+      "beat": 13,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 14,
+      "dur": 2,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 16,
+      "dur": 0.5,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 69,
+      "beat": 16.5,
+      "dur": 0.5,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 17,
+      "dur": 0.5,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 65,
+      "beat": 17.5,
+      "dur": 0.5,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 18,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 60,
+      "beat": 19,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 20,
+      "dur": 0.5,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 69,
+      "beat": 20.5,
+      "dur": 0.5,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 21,
+      "dur": 0.5,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 65,
+      "beat": 21.5,
+      "dur": 0.5,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 22,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 60,
+      "beat": 23,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 60,
+      "beat": 24,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 25,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 60,
+      "beat": 26,
+      "dur": 2,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 60,
+      "beat": 28,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 29,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 60,
+      "beat": 30,
+      "dur": 2,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 60,
+      "beat": 0,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 60,
+      "beat": 4,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 60,
+      "beat": 8,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 60,
+      "beat": 12,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 60,
+      "beat": 16,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 60,
+      "beat": 20,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 60,
+      "beat": 24,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 60,
+      "beat": 28,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 64,
+      "beat": 0,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 67,
+      "beat": 2,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 64,
+      "beat": 4,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 67,
+      "beat": 6,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 64,
+      "beat": 8,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 67,
+      "beat": 10,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 64,
+      "beat": 12,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 67,
+      "beat": 14,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 64,
+      "beat": 16,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 67,
+      "beat": 18,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 64,
+      "beat": 20,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 67,
+      "beat": 22,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 64,
+      "beat": 24,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 67,
+      "beat": 26,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 64,
+      "beat": 28,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 67,
+      "beat": 30,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    }
+  ]
+}

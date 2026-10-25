@@ -1,0 +1,405 @@
+{
+  "id": "skip-to-my-lou",
+  "title": "Skip to My Lou",
+  "key": "C",
+  "tempo": 112,
+  "timeSignature": [
+    4,
+    4
+  ],
+  "level": "Beginner",
+  "tags": [
+    "Kids",
+    "Folk"
+  ],
+  "provenance": {
+    "source": "Traditional American play-party song. “Skip to My Lou” was circulating in the 1840s and appears in 19th-century printed collections. Melody and words are public domain in the United States.",
+    "publicationYear": 1844,
+    "publicDomain": true,
+    "arrangement": "Original simple arrangement written for MeetPiano. Not copied from a copyrighted method book."
+  },
+  "phrases": [
+    {
+      "id": "skip",
+      "label": "Skip to my Lou",
+      "start": 0,
+      "end": 16
+    },
+    {
+      "id": "lou",
+      "label": "Lou, Lou",
+      "start": 16,
+      "end": 32
+    }
+  ],
+  "lyrics": [
+    {
+      "beat": 0,
+      "text": "Skip, skip, skip to my Lou"
+    },
+    {
+      "beat": 8,
+      "text": "Skip to my Lou, my darling"
+    },
+    {
+      "beat": 16,
+      "text": "Lost my partner, what’ll I do"
+    },
+    {
+      "beat": 24,
+      "text": "Skip to my Lou, my darling"
+    }
+  ],
+  "notes": [
+    {
+      "pitch": 60,
+      "beat": 0,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 1,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 2,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 72,
+      "beat": 3,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 4,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 5,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 60,
+      "beat": 6,
+      "dur": 2,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 8,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 69,
+      "beat": 9,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 10,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 11,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 62,
+      "beat": 12,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 60,
+      "beat": 13,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 60,
+      "beat": 14,
+      "dur": 2,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 60,
+      "beat": 16,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 17,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 18,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 72,
+      "beat": 19,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 69,
+      "beat": 20,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 21,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 22,
+      "dur": 2,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 24,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 25,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 62,
+      "beat": 26,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 60,
+      "beat": 27,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 60,
+      "beat": 28,
+      "dur": 4,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 60,
+      "beat": 0,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 60,
+      "beat": 4,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 60,
+      "beat": 8,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 60,
+      "beat": 12,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 60,
+      "beat": 16,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 60,
+      "beat": 20,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 60,
+      "beat": 24,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 60,
+      "beat": 28,
+      "dur": 4,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 64,
+      "beat": 0,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 67,
+      "beat": 2,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 64,
+      "beat": 4,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 67,
+      "beat": 6,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 64,
+      "beat": 8,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 67,
+      "beat": 10,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 64,
+      "beat": 12,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 67,
+      "beat": 14,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 64,
+      "beat": 16,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 67,
+      "beat": 18,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 64,
+      "beat": 20,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 67,
+      "beat": 22,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 64,
+      "beat": 24,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 67,
+      "beat": 26,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 64,
+      "beat": 28,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 67,
+      "beat": 30,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    }
+  ]
+}

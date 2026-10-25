@@ -4,7 +4,10 @@ const PARTIAL_GAINS = [1, 0.27, 0.11, 0.045];
 export function createAudio() {
   let audioContext = null;
   let master = null;
+  let clickGain = null;
   let muted = false;
+  let clickMuted = false;
+  let clickLevel = 0.8;
   let unlocked = false;
   const voices = new Map();
 
@@ -20,6 +23,9 @@ export function createAudio() {
         compressor.threshold.value = -12;
         compressor.ratio.value = 4;
         master.connect(compressor);
+        clickGain = audioContext.createGain();
+        clickGain.gain.value = clickMuted ? 0 : clickLevel;
+        clickGain.connect(compressor);
         compressor.connect(audioContext.destination);
       } catch (_) {
         return false;
@@ -95,16 +101,32 @@ export function createAudio() {
     const start = Math.max(when, audioContext.currentTime);
     const osc = audioContext.createOscillator();
     const gain = audioContext.createGain();
+    const downbeat = kind === 'downbeat';
     osc.type = 'sine';
-    osc.frequency.value = kind === 'count' ? 880 : 1320;
+    osc.frequency.value = downbeat ? 1760 : kind === 'count' ? 988 : 1320;
+    const peak = downbeat ? 0.9 : kind === 'count' ? 0.7 : 0.62;
     gain.gain.setValueAtTime(0.0001, start);
-    gain.gain.exponentialRampToValueAtTime(kind === 'count' ? 0.18 : 0.28, start + 0.005);
-    gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.08);
+    gain.gain.exponentialRampToValueAtTime(peak, start + 0.004);
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + (downbeat ? 0.11 : 0.07));
     osc.connect(gain);
-    gain.connect(master);
+    gain.connect(clickGain);
     osc.start(start);
-    osc.stop(start + 0.1);
+    osc.stop(start + 0.14);
     return true;
+  }
+
+  function setClickLevel(level) {
+    clickLevel = Math.max(0, Math.min(1, Number(level) || 0));
+    if (clickGain && audioContext && !clickMuted) {
+      clickGain.gain.setTargetAtTime(clickLevel, audioContext.currentTime, 0.02);
+    }
+  }
+
+  function setClickMuted(next) {
+    clickMuted = Boolean(next);
+    if (clickGain && audioContext) {
+      clickGain.gain.setTargetAtTime(clickMuted ? 0 : clickLevel, audioContext.currentTime, 0.02);
+    }
   }
 
   function release(note) {
@@ -135,6 +157,9 @@ export function createAudio() {
     play,
     playAt,
     clickAt,
+    setClickLevel,
+    setClickMuted,
+    clickMuted: () => clickMuted,
     currentTime,
     release,
     releaseAll,
