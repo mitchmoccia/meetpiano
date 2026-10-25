@@ -16,6 +16,7 @@ const checks = [
   'song-score-check.mjs',
   'song-notation-check.mjs',
   'song-results-check.mjs',
+  'song-note-inspect-check.mjs',
   'csp-static-check.mjs'
 ];
 

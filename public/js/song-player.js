@@ -28,10 +28,12 @@ import {
   rememberBest,
   rewindLoop,
   scoreLength,
+  songTitle,
   stepTake,
   validateScore,
   windowsFor
 } from './song-score.js';
+import { chordMates, createNotePopover, miniKeyboard, moveNoteFocus, plainName, playedWith, scientificName } from './song-note.js';
 import { createResultsDialog } from './song-results.js';
 import { createStaffView } from './song-staff.js';
 
@@ -94,13 +96,29 @@ const ui = {
   drawer: document.querySelector('#song-drawer'),
   drawerClose: document.querySelector('#song-drawer-close'),
   search: document.querySelector('#song-search'),
-  list: document.querySelector('#song-list')
+  list: document.querySelector('#song-list'),
+  notePopover: document.querySelector('#note-popover'),
+  noteClose: document.querySelector('#note-popover-close'),
+  noteTitle: document.querySelector('#note-popover-title'),
+  notePlain: document.querySelector('#note-popover-plain'),
+  noteMeta: document.querySelector('#note-popover-meta'),
+  noteChord: document.querySelector('#note-chord'),
+  noteMini: document.querySelector('#note-mini'),
+  notePlay: document.querySelector('#note-play')
 };
 
 const resultsDialog = createResultsDialog({
   root: ui.results,
   onClose: () => hideResults({ restoreFocus: true }),
   getFocusables: () => [...ui.results.querySelectorAll('button, a[href]')].filter((el) => !el.disabled)
+});
+const notePopover = createNotePopover({
+  root: ui.notePopover,
+  onClose: () => {
+    ui.notePopover.hidden = true;
+    sheetMount.querySelectorAll('.note-hit.is-open').forEach((el) => el.classList.remove('is-open'));
+    inspectHit = null;
+  }
 });
 
 let songs = [];
@@ -143,6 +161,7 @@ let lastLyric = '';
 let lastFollow = '';
 let lastBpm = '';
 let nowKey = '';
+let inspectHit = null;
 const scheduledClicks = new Set();
 
 const inputs = bindInputs({
@@ -255,6 +274,32 @@ ui.resultsClose.addEventListener('click', () => resultsDialog.close());
 ui.resultsDismiss.addEventListener('click', () => resultsDialog.close());
 ui.resultsLoop.addEventListener('click', () => tryResultsLoop());
 ui.results.addEventListener('click', (event) => resultsDialog.onPointer(event));
+ui.noteClose.addEventListener('click', () => notePopover.close());
+ui.notePlay.addEventListener('click', () => {
+  const pitch = Number(ui.notePopover.dataset.pitch);
+  if (Number.isFinite(pitch)) playInspected(pitch);
+});
+sheetMount.addEventListener('click', (event) => {
+  const hit = noteHitAt(event.clientX, event.clientY);
+  if (!hit) return;
+  event.preventDefault();
+  openNoteInspect(hit);
+});
+sheetMount.addEventListener('keydown', (event) => {
+  const hit = event.target?.closest?.('.note-hit');
+  if (!hit || !sheetMount.contains(hit)) return;
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    openNoteInspect(hit);
+    return;
+  }
+  const next = moveNoteFocus(orderedHits(), hit, event.key);
+  if (!next || next === hit) return;
+  event.preventDefault();
+  hit.tabIndex = -1;
+  next.tabIndex = 0;
+  next.focus();
+});
 ui.wait.addEventListener('click', () => {
   waitOn = !waitOn;
   ui.wait.setAttribute('aria-pressed', waitOn ? 'true' : 'false');
@@ -307,11 +352,15 @@ ui.list.addEventListener('keydown', (event) => {
     options[options.length - 1].focus();
   }
 });
+document.addEventListener('pointerdown', (event) => {
+  if (!ui.notePopover.hidden) notePopover.onPointer(event);
+});
 document.addEventListener('keydown', (event) => {
   if (!ui.results.hidden) {
     resultsDialog.onKeydown(event);
     return;
   }
+  if (notePopover.onKeydown(event)) return;
   if (event.key === 'Escape' && ui.drawer.hidden && document.querySelector('#practice-panel')?.open) {
     event.preventDefault();
     document.querySelector('#practice-panel').open = false;
@@ -341,6 +390,7 @@ window.addEventListener('resize', () => {
   if (octaveChoice == null || octaveChoice === 0) applyRange();
   else layoutDirty = true;
   paintAt(displayCursor());
+  if (!ui.notePopover.hidden && inspectHit?.isConnected) placeNotePopover(inspectHit);
 });
 
 /* Legend and the practice panel change the staff height after the first
@@ -359,7 +409,23 @@ window.addEventListener('resize', () => {
 
 applyRange();
 paintClick();
+applyInitialTitle();
 loadSongs();
+
+function requestedSongId() {
+  const requested = new URLSearchParams(location.search).get('song');
+  if (songTitle(requested)) return requested;
+  const prefs = readPrefs();
+  if (songTitle(prefs?.songId)) return prefs.songId;
+  return SONG_CATALOG[0].id;
+}
+
+function applyInitialTitle() {
+  const title = songTitle(requestedSongId());
+  if (!title || !ui.title) return;
+  ui.title.textContent = title;
+  document.title = `${title} · Songs · MeetPiano`;
+}
 
 async function loadSongs() {
   try {
@@ -521,6 +587,10 @@ function applyRange() {
 }
 
 function rebuildTake(cursor) {
+  if (!ui.notePopover.hidden) {
+    ui.notePopover.hidden = true;
+    inspectHit = null;
+  }
   take = createTake(notesForDifficulty(score, difficulty), scoreLength(score.notes), cursor);
   staffView.render({
     notes: take.notes,
@@ -656,6 +726,138 @@ function startRunning() {
   setPlayState(true);
   lastTs = performance.now();
   wasWaiting = Boolean(take.waiting);
+}
+
+function orderedHits() {
+  return [...sheetMount.querySelectorAll('.note-hit')].sort((a, b) => {
+    return Number(a.getAttribute('data-x')) - Number(b.getAttribute('data-x'))
+      || Number(a.getAttribute('data-y')) - Number(b.getAttribute('data-y'));
+  });
+}
+
+function noteHitAt(clientX, clientY) {
+  const stack = typeof document.elementsFromPoint === 'function'
+    ? document.elementsFromPoint(clientX, clientY)
+    : [document.elementFromPoint(clientX, clientY)].filter(Boolean);
+  const hits = stack.filter((el) => el.classList?.contains('note-hit'));
+  if (!hits.length) return null;
+  let best = hits[0];
+  let bestDist = Infinity;
+  for (const hit of hits) {
+    const box = hit.getBoundingClientRect();
+    const dx = clientX - (box.left + box.width / 2);
+    const dy = clientY - (box.top + box.height / 2);
+    const dist = dx * dx + dy * dy;
+    if (dist < bestDist) {
+      best = hit;
+      bestDist = dist;
+    }
+  }
+  return best;
+}
+
+function playInspected(pitch) {
+  if (audio.isMuted()) return;
+  audio.resume();
+  audio.play(pitch);
+}
+
+function keyMark(key) {
+  const text = key.active ? (key.cLabel || key.letter) : key.cLabel;
+  if (!text) return null;
+  const mark = document.createElement('span');
+  mark.textContent = text;
+  if (key.middle) mark.title = 'Middle C';
+  return mark;
+}
+
+function renderMiniKeyboard(pitch, chord, hand) {
+  const model = miniKeyboard(pitch, chord);
+  ui.noteMini.replaceChildren();
+  const whites = document.createElement('div');
+  whites.className = 'note-mini-whites';
+  const whiteKeys = model.keys.filter((key) => key.white);
+  for (const key of whiteKeys) {
+    const el = document.createElement('div');
+    el.className = 'note-mini-white';
+    el.dataset.pitch = String(key.pitch);
+    if (key.active) el.classList.add('is-on', hand === 'lh' ? 'is-lh' : 'is-rh');
+    else if (key.chord) el.classList.add('is-chord', hand === 'lh' ? 'is-lh' : 'is-rh');
+    const mark = keyMark(key);
+    if (mark) el.append(mark);
+    whites.append(el);
+  }
+  const blacks = document.createElement('div');
+  blacks.className = 'note-mini-blacks';
+  for (const key of model.keys) {
+    if (key.white) continue;
+    const el = document.createElement('div');
+    el.className = 'note-mini-black';
+    el.dataset.pitch = String(key.pitch);
+    const before = whiteKeys.filter((item) => item.pitch < key.pitch).length;
+    el.style.left = `${(before / whiteKeys.length) * 100}%`;
+    if (key.active) el.classList.add('is-on', hand === 'lh' ? 'is-lh' : 'is-rh');
+    else if (key.chord) el.classList.add('is-chord', hand === 'lh' ? 'is-lh' : 'is-rh');
+    const mark = keyMark(key);
+    if (mark) el.append(mark);
+    blacks.append(el);
+  }
+  ui.noteMini.append(whites, blacks);
+}
+
+function placeNotePopover(hit) {
+  const pop = ui.notePopover;
+  const margin = 8;
+  if (window.matchMedia('(max-width: 720px)').matches) {
+    pop.style.left = '0px';
+    pop.style.right = '0px';
+    pop.style.top = 'auto';
+    pop.style.bottom = '0px';
+    pop.style.width = 'auto';
+    return;
+  }
+  pop.style.right = 'auto';
+  pop.style.bottom = 'auto';
+  const width = Math.min(280, window.innerWidth - margin * 2);
+  pop.style.width = `${width}px`;
+  const anchor = hit.getBoundingClientRect();
+  const height = pop.offsetHeight || 220;
+  let top = anchor.bottom + margin;
+  if (top + height > window.innerHeight - margin) top = anchor.top - height - margin;
+  if (top < margin) top = margin;
+  if (top + height > window.innerHeight - margin) top = Math.max(margin, window.innerHeight - height - margin);
+  let left = anchor.left + anchor.width / 2 - width / 2;
+  left = Math.max(margin, Math.min(left, window.innerWidth - width - margin));
+  pop.style.left = `${Math.round(left)}px`;
+  pop.style.top = `${Math.round(top)}px`;
+}
+
+function openNoteInspect(hit) {
+  if (!hit || !ui.results.hidden) return;
+  if (mode !== 'idle') pauseTransport();
+  const pitch = Number(hit.getAttribute('data-pitch'));
+  const hand = hit.getAttribute('data-hand') === 'lh' ? 'lh' : 'rh';
+  const clef = hit.getAttribute('data-clef') === 'bass' ? 'bass' : 'treble';
+  const id = hit.getAttribute('data-note-id');
+  const note = take.notes.find((item) => item.id === id);
+  const chord = note ? chordMates(take.notes, note) : [pitch];
+  const withLine = playedWith(pitch, chord);
+  sheetMount.querySelectorAll('.note-hit.is-open').forEach((el) => el.classList.remove('is-open'));
+  hit.classList.add('is-open');
+  inspectHit = hit;
+  notePopover.remember(hit);
+  ui.notePopover.dataset.pitch = String(pitch);
+  ui.notePopover.dataset.hand = hand;
+  ui.noteTitle.textContent = scientificName(pitch);
+  ui.notePlain.textContent = plainName(pitch);
+  ui.noteMeta.textContent = `${hand === 'lh' ? 'Left hand' : 'Right hand'} · ${clef === 'bass' ? 'Bass staff' : 'Treble staff'}`;
+  ui.noteChord.textContent = withLine;
+  ui.noteChord.hidden = !withLine;
+  renderMiniKeyboard(pitch, chord, hand);
+  ui.notePopover.hidden = false;
+  placeNotePopover(hit);
+  ui.noteClose.focus();
+  playInspected(pitch);
 }
 
 function pauseTransport() {
@@ -928,6 +1130,10 @@ function showResults() {
   if (!score) return;
   const live = take.ended || judgedNotes();
   if (!live && !lastSnapshot) return;
+  if (!ui.notePopover.hidden) {
+    ui.notePopover.hidden = true;
+    inspectHit = null;
+  }
   if (live) {
     const grade = gradeTake(take, difficulty, loop);
     rememberBest(take, grade);
@@ -1117,7 +1323,9 @@ function paintClick() {
   ui.click.value = String(clickVolume);
   ui.clickReadout.textContent = String(clickVolume);
   ui.clickMute.setAttribute('aria-pressed', clickIsMuted ? 'true' : 'false');
-  ui.clickMute.textContent = clickIsMuted ? 'Click muted' : 'Click on';
+  ui.clickMute.setAttribute('aria-label', clickIsMuted ? 'Turn the click track on' : 'Mute the click track');
+  const clickLabel = ui.clickMute.querySelector('span');
+  if (clickLabel) clickLabel.textContent = clickIsMuted ? 'Click off' : 'Click on';
   audio.setClickLevel(clickVolume / 100);
   audio.setClickMuted(clickIsMuted);
 }

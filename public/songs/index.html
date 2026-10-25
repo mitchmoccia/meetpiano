@@ -20,6 +20,7 @@
     <symbol id="arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
     <symbol id="keyboard" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 4v16m5-16v16m5-16v16M5 4v8h4V4m6 0v8h4V4"/></symbol>
     <symbol id="volume" viewBox="0 0 24 24"><path d="m11 5-6 4H2v6h3l6 4zm4 3a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></symbol>
+    <symbol id="icon-click" viewBox="0 0 24 24"><path d="M12 3.2 7.2 20.2h9.6z"/><path d="M12 18.4 16.6 7.2"/><circle cx="17" cy="6.4" r="1.45"/></symbol>
     <symbol id="icon-play" viewBox="0 0 24 24"><path d="M8 5.2v13.6L19 12 8 5.2z"/></symbol>
     <symbol id="icon-pause" viewBox="0 0 24 24"><path d="M6 5h4.2v14H6zm7.8 0H18v14h-4.2z"/></symbol>
     <symbol id="icon-restart" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
@@ -47,7 +48,8 @@
   <main id="main" class="song-main">
     <div class="wrap song-setup">
       <p class="song-kicker">Song player · this device only</p>
-      <h1 id="song-title">Mary Had a Little Lamb</h1>
+      <h1 id="song-title">Song</h1>
+      <script src="/js/song-title.js"></script>
       <p class="song-privacy">Practice stays on this device. Not a school grade.</p>
 
       <div class="song-current">
@@ -183,7 +185,7 @@
                 <input id="click-volume" type="range" min="0" max="100" step="5" value="80">
                 <span id="click-readout">80</span>
               </label>
-              <button type="button" id="click-mute" aria-pressed="false" aria-label="Mute the click track">Click on</button>
+              <button type="button" id="click-mute" aria-pressed="false" aria-label="Mute the click track"><svg class="icon" aria-hidden="true"><use href="#icon-click"/></svg> <span>Click on</span></button>
             </div>
             <p id="midi-status" role="status">On-screen keys and computer keys work if no keyboard is connected.</p>
             <ul id="midi-devices" class="midi-devices" hidden></ul>
@@ -224,6 +226,15 @@
       </div>
     </div>
   </main>
+  <div class="note-popover" id="note-popover" hidden role="dialog" aria-labelledby="note-popover-title">
+    <button type="button" class="note-popover-close" id="note-popover-close" aria-label="Close">×</button>
+    <p class="note-popover-name" id="note-popover-title">C4</p>
+    <p class="note-popover-plain" id="note-popover-plain"></p>
+    <p class="note-popover-meta" id="note-popover-meta"></p>
+    <p class="note-popover-chord" id="note-chord" hidden></p>
+    <div class="note-mini" id="note-mini" aria-hidden="true"></div>
+    <button type="button" class="note-play" id="note-play">Play</button>
+  </div>
   <footer>
     <div class="wrap footer-main">
       <a href="/" class="brand"><span class="brand-keys" aria-hidden="true"><i></i><i></i><i></i></span>meetpiano<span class="brand-period">.</span></a>
