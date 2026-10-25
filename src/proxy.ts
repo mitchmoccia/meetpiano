@@ -48,8 +48,10 @@ export function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     {
+      // Home, Learn, and Songs are static files with no nonce. Excluding them
+      // leaves next.config.ts to send script-src 'self'. strict-dynamic would ignore 'self' and block those scripts.
       source:
-        '/((?!api/|_next/static|_next/image|assets/|js/|learn|index\\.html|app\\.js|styles\\.css|llms\\.txt|robots\\.txt|sitemap\\.xml|favicon).+)',
+        '/((?!api/|_next/static|_next/image|assets/|js/|learn|songs|index\\.html|app\\.js|styles\\.css|llms\\.txt|robots\\.txt|sitemap\\.xml|favicon).+)',
       missing: [
         { type: 'header', key: 'next-router-prefetch' },
         { type: 'header', key: 'purpose', value: 'prefetch' }
