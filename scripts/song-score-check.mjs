@@ -192,6 +192,7 @@ assert(hub.includes('L01–L24') || hub.includes('twenty-four'), 'the hub still 
 assert(read('next.config.ts').includes("destination: '/songs/index.html'"), 'Next serves the song page');
 assert(read('scripts/static-checks.mjs').includes('song-score-check.mjs'), 'static checks run this script');
 assert(read('scripts/static-checks.mjs').includes('song-notation-check.mjs'), 'static checks run the notation audit');
+assert(read('scripts/static-checks.mjs').includes('song-results-check.mjs'), 'static checks run the results dialog audit');
 
 const banned = ['skibidi', 'rizz', 'gyatt', 'brainrot', 'stupid', 'dumb', 'hate'];
 for (const word of banned) assert(!surface.toLowerCase().includes(word), `copy avoids ${word}`);

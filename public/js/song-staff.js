@@ -1,13 +1,16 @@
 import { bassDegree, letterForMidi, staffY, trebleDegree, BASS_CLEF, TREBLE_CLEF } from './staff.js';
 
 const NS = 'http://www.w3.org/2000/svg';
-const PLAYHEAD = 168;
+const PLAYHEAD = 220;
 const PIXELS_PER_BEAT = 54;
 /* Halfway between beat centers, so the line sits in the gap instead of on the note. */
 const BARLINE_INSET = PIXELS_PER_BEAT / 2;
-const BASS_OFFSET = 92;
-const STAFF_PAD = 16;
 const SPACE = 14;
+const STAFF_PAD = 28;
+/* Nine staff spaces from the treble's bottom line to the bass's top line. */
+const BASS_OFFSET = 4 * SPACE + 9 * SPACE;
+const STEM = 3.5 * SPACE;
+const VOICE_NUDGE = 22;
 const INK = '#29251f';
 /* One em is four staff spaces, the SMuFL staff size. Glyphs are a subset of
    Bravura (Steinberg), renamed MeetPiano Music under the SIL Open Font License. */
@@ -19,7 +22,7 @@ const CLEF_X = 32;
 const TIME_X = 84;
 const SYSTEM_X = 16;
 /* Covers the clef and time signature so scrolled notes never draw through them. */
-const PRELUDE = 128;
+const PRELUDE = 176;
 const HEADS = {
   whole: { char: '\uE0A2', width: 1.688 },
   half: { char: '\uE0A3', width: 1.18, stemUp: [1.18, 0.168], stemDown: [0, -0.168] },
@@ -121,9 +124,10 @@ export function createStaffView(root) {
   }
 
   function render(model) {
-    const { notes, lyrics = [], beatsPerBar, length, grand, showLetters, label } = model;
+    const { notes, lyrics = [], beatsPerBar, grand, showLetters, label } = model;
     pixelsPerBeat = PIXELS_PER_BEAT;
-    const height = grand ? 268 : 188;
+    const layout = engrave(notes, { beatsPerBar, grand, pixelsPerBeat, lyrics });
+    const height = layout.metrics.height;
     const width = 1100;
     root.replaceChildren();
     const svg = svgEl('svg', { viewBox: `0 0 ${width} ${height}`, role: 'img' });
@@ -143,7 +147,6 @@ export function createStaffView(root) {
     svg.append(paper);
 
     scoreGroup = svgEl('g');
-    const layout = engrave(notes, { beatsPerBar, grand, pixelsPerBeat });
     for (const line of layout.barlines) {
       scoreGroup.append(svgEl('line', {
         x1: line.x,
@@ -172,7 +175,7 @@ export function createStaffView(root) {
     }
     heads = [];
     for (const chord of layout.chords) {
-      for (const note of chord.notes) heads.push(drawNote(scoreGroup, note, showLetters));
+      for (const note of chord.notes) heads.push(drawNote(scoreGroup, note, showLetters, layout.metrics.lyricY));
       drawStem(scoreGroup, chord);
     }
     for (const beam of layout.beams) {
@@ -186,10 +189,10 @@ export function createStaffView(root) {
         'stroke-linecap': 'butt'
       }));
     }
-    for (const line of lyrics) {
+    for (const line of layout.lyrics) {
       const text = svgEl('text', {
-        x: PLAYHEAD + line.beat * pixelsPerBeat,
-        y: height - 12,
+        x: line.x,
+        y: line.y,
         'font-size': 13,
         'font-weight': 700,
         fill: '#29251f'
@@ -231,7 +234,7 @@ export function createStaffView(root) {
     if (!scoreGroup) return;
     const svg = root.querySelector('svg');
     const windowW = Number(svg?.dataset.windowW) || 1100;
-    const playheadX = Math.max(PRELUDE + 48, Math.round(windowW * 0.3));
+    const playheadX = Math.max(PRELUDE + 72, Math.round(windowW * 0.3));
     const x = String(playheadX);
     if (playhead && x !== lastPlayhead) {
       lastPlayhead = x;
@@ -280,10 +283,12 @@ function ledgerDegrees(degree) {
 
 /**
  * Staff positions for one take. Left hand uses the bass staff whenever the
- * grand staff is showing; pitch does not choose the clef. Eighths that share
- * a beat and a staff share one beam. Barlines sit in the gap between noteheads.
+ * grand staff is showing; pitch does not choose the clef. A single voice stems
+ * up below the middle line and down on or above it. Two rhythms at once keep
+ * opposite stems. Eighths that share a beat and a staff share one beam.
+ * Barlines sit closer to the previous note so the next note has air.
  */
-export function engrave(notes, { beatsPerBar = 4, grand = false, pixelsPerBeat = PIXELS_PER_BEAT } = {}) {
+export function engrave(notes, { beatsPerBar = 4, grand = false, pixelsPerBeat = PIXELS_PER_BEAT, lyrics = [] } = {}) {
   const prepared = (notes || []).map((note) => {
     const clef = grand && note.hand === 'lh' ? BASS_CLEF : TREBLE_CLEF;
     const degree = clef === BASS_CLEF ? bassDegree(note.pitch) : trebleDegree(note.pitch);
@@ -296,6 +301,7 @@ export function engrave(notes, { beatsPerBar = 4, grand = false, pixelsPerBeat =
       ledgerCount: ledgerDegrees(degree).length,
       half: (HEADS[kind].width * SPACE) / 2,
       shift: 0,
+      voiceNudge: 0,
       beam: null
     };
   });
@@ -323,9 +329,13 @@ export function engrave(notes, { beatsPerBar = 4, grand = false, pixelsPerBeat =
         dur: group[0].dur,
         notes: group,
         stemUp: null,
+        voice: 1,
+        hasStem: group.some((note) => note.kind !== 'whole'),
         beam: null,
         beamY: null,
-        stemX: 0
+        stemX: 0,
+        stemEnd: 0,
+        stemLength: 0
       };
       chords.push(chord);
       for (const note of group) note.chord = chord;
@@ -345,12 +355,11 @@ export function engrave(notes, { beatsPerBar = 4, grand = false, pixelsPerBeat =
     if (group.length < 2) continue;
     const id = `beam-${beamSerial}`;
     beamSerial += 1;
-    const degrees = group.flatMap((chord) => chord.notes.map((note) => note.degree));
-    const mid = degrees.reduce((sum, degree) => sum + degree, 0) / degrees.length;
-    const stemUp = mid < 4;
+    const stemUp = stemUpFor(group.flatMap((chord) => chord.notes));
     for (const chord of group) {
       chord.beam = id;
       chord.stemUp = stemUp;
+      chord.voice = 1;
       for (const note of chord.notes) {
         note.beam = id;
         note.stemUp = stemUp;
@@ -358,34 +367,47 @@ export function engrave(notes, { beatsPerBar = 4, grand = false, pixelsPerBeat =
     }
     beams.push({ id, chords: group, stemUp });
   }
+  const beatGroups = new Map();
   for (const chord of chords) {
-    if (chord.stemUp == null) {
-      const degrees = chord.notes.map((note) => note.degree);
-      const mid = degrees.reduce((sum, degree) => sum + degree, 0) / degrees.length;
-      chord.stemUp = mid < 4;
-      for (const note of chord.notes) note.stemUp = chord.stemUp;
-    }
+    const key = `${chord.clef}:${Math.round(chord.beat * 1000)}`;
+    if (!beatGroups.has(key)) beatGroups.set(key, []);
+    beatGroups.get(key).push(chord);
   }
-  for (const cluster of clusters) separateSeconds(cluster);
+  for (const group of beatGroups.values()) {
+    const ranked = [...group].sort((a, b) => averageDegree(b.notes) - averageDegree(a.notes) || a.dur - b.dur);
+    const multi = ranked.length > 1;
+    ranked.forEach((chord, index) => {
+      chord.voice = index + 1;
+      if (chord.beam) return;
+      chord.stemUp = multi ? index === 0 : stemUpFor(chord.notes);
+      for (const note of chord.notes) note.stemUp = chord.stemUp;
+      if (multi && index === 0) {
+        for (const note of chord.notes) note.voiceNudge = VOICE_NUDGE;
+      }
+    });
+  }
+  for (const chord of chords) separateSeconds(chord.notes, chord.stemUp !== false);
   for (const note of prepared) {
-    note.x = PLAYHEAD + note.beat * pixelsPerBeat + note.shift;
+    note.x = PLAYHEAD + note.beat * pixelsPerBeat + note.shift + note.voiceNudge;
     const offset = (note.clef === BASS_CLEF ? BASS_OFFSET : 0) + STAFF_PAD;
     note.y = staffY(note.pitch, note.clef, offset);
   }
   for (const chord of chords) {
     const voiced = chord.notes.filter((note) => note.kind !== 'whole');
-    const anchor = voiced.find((note) => note.shift === 0) || voiced[0] || chord.notes.find((note) => note.shift === 0) || chord.notes[0];
+    chord.hasStem = voiced.length > 0;
+    if (!chord.hasStem) {
+      chord.stemLength = 0;
+      chord.stemEnd = 0;
+      continue;
+    }
+    const anchor = voiced.find((note) => note.shift === 0) || voiced[0];
     chord.stemX = chord.stemUp ? anchor.x + anchor.half : anchor.x - anchor.half;
   }
   for (const beam of beams) {
     const { stemUp, chords: group } = beam;
-    const ends = group.map((chord) => {
-      const values = chord.notes.map((note) => note.y);
-      return stemUp ? Math.min(...values) : Math.max(...values);
-    });
-    const minStem = 3.25 * SPACE;
-    let y1 = stemUp ? ends[0] - minStem : ends[0] + minStem;
-    let y2 = stemUp ? ends[ends.length - 1] - minStem : ends[ends.length - 1] + minStem;
+    const ends = group.map((chord) => outerY(chord, stemUp));
+    let y1 = stemUp ? ends[0] - STEM : ends[0] + STEM;
+    let y2 = stemUp ? ends[ends.length - 1] - STEM : ends[ends.length - 1] + STEM;
     const maxSlant = SPACE * 1.25;
     if (y2 - y1 > maxSlant) y2 = y1 + maxSlant;
     if (y1 - y2 > maxSlant) y2 = y1 - maxSlant;
@@ -393,13 +415,13 @@ export function engrave(notes, { beatsPerBar = 4, grand = false, pixelsPerBeat =
       const t = group.length === 1 ? 0 : i / (group.length - 1);
       const beamY = y1 + (y2 - y1) * t;
       const end = ends[i];
-      if (stemUp && end - beamY < minStem) {
-        const delta = minStem - (end - beamY);
+      if (stemUp && end - beamY < STEM) {
+        const delta = STEM - (end - beamY);
         y1 -= delta;
         y2 -= delta;
       }
-      if (!stemUp && beamY - end < minStem) {
-        const delta = minStem - (beamY - end);
+      if (!stemUp && beamY - end < STEM) {
+        const delta = STEM - (beamY - end);
         y1 += delta;
         y2 += delta;
       }
@@ -411,8 +433,33 @@ export function engrave(notes, { beatsPerBar = 4, grand = false, pixelsPerBeat =
     group.forEach((chord, index) => {
       const t = group.length === 1 ? 0 : index / (group.length - 1);
       chord.beamY = y1 + (y2 - y1) * t;
+      chord.stemEnd = chord.beamY;
+      chord.stemLength = Math.abs(chord.stemEnd - outerY(chord, chord.stemUp)) / SPACE;
     });
   }
+  for (const chord of chords) {
+    if (!chord.hasStem || chord.beamY != null) continue;
+    const edge = outerY(chord, chord.stemUp);
+    chord.stemEnd = chord.stemUp ? edge - STEM : edge + STEM;
+    chord.stemLength = 3.5;
+  }
+  const trebleBottom = STAFF_PAD + 86;
+  const trebleTop = trebleBottom - 4 * SPACE;
+  const bassBottom = grand ? STAFF_PAD + BASS_OFFSET + 86 : null;
+  const bassTop = grand ? bassBottom - 4 * SPACE : null;
+  const staffBottom = grand ? bassBottom : trebleBottom;
+  let lowest = staffBottom;
+  for (const note of prepared) lowest = Math.max(lowest, note.y + 0.55 * SPACE);
+  for (const chord of chords) {
+    if (chord.hasStem && !chord.stemUp) lowest = Math.max(lowest, chord.stemEnd);
+  }
+  const lyricY = Math.ceil(lowest + 22);
+  const lyricLayouts = (lyrics || []).map((line) => ({
+    beat: line.beat,
+    text: line.text,
+    x: PLAYHEAD + line.beat * pixelsPerBeat,
+    y: lyricY
+  }));
   const length = prepared.reduce((max, note) => Math.max(max, note.beat + note.dur), 0);
   const bars = Math.max(1, Math.ceil(length / beatsPerBar));
   const barlines = [];
@@ -424,29 +471,76 @@ export function engrave(notes, { beatsPerBar = 4, grand = false, pixelsPerBeat =
     if (before.length && after.length) {
       const right = Math.max(...before.map((note) => note.x + note.half));
       const left = Math.min(...after.map((note) => note.x - note.half));
-      if (left > right + 2) x = (right + left) / 2;
+      const gap = left - right;
+      if (gap > 12) {
+        const afterRoom = Math.max(6, Math.min(gap - 6, gap * 0.62));
+        x = left - afterRoom;
+      } else if (gap > 2) {
+        x = (right + left) / 2;
+      }
     }
     barlines.push({ beat: boundary, x, final: bar === bars });
   }
-  return { notes: prepared, chords, barlines, beams, bars };
+  return {
+    notes: prepared,
+    chords,
+    barlines,
+    beams,
+    bars,
+    lyrics: lyricLayouts,
+    metrics: {
+      space: SPACE,
+      playhead: PLAYHEAD,
+      gap: grand ? bassTop - trebleBottom : null,
+      trebleTop,
+      trebleBottom,
+      bassTop,
+      bassBottom,
+      lyricY,
+      height: lyricY + 18
+    }
+  };
 }
 
-function separateSeconds(cluster) {
-  const notes = [...cluster.notes].sort((a, b) => a.degree - b.degree);
-  const voiced = notes.filter((note) => note.kind !== 'whole');
-  const stemUp = (voiced[0] || notes[0]).stemUp !== false;
+function averageDegree(notes) {
+  return notes.reduce((sum, note) => sum + note.degree, 0) / notes.length;
+}
+
+/** Below the middle line stems up. On or above it, and equidistant chords, stem down. */
+function stemUpFor(notes) {
+  let bestAbs = -1;
+  let bestDist = 0;
+  for (const note of notes) {
+    const dist = note.degree - 4;
+    const abs = Math.abs(dist);
+    if (abs > bestAbs || (abs === bestAbs && dist > bestDist)) {
+      bestAbs = abs;
+      bestDist = dist;
+    }
+  }
+  return bestDist < 0;
+}
+
+function outerY(chord, stemUp) {
+  const voiced = chord.notes.filter((note) => note.kind !== 'whole');
+  const values = voiced.map((note) => note.y);
+  return stemUp ? Math.min(...values) : Math.max(...values);
+}
+
+function separateSeconds(notes, stemUp) {
+  const ordered = [...notes].sort((a, b) => a.degree - b.degree);
   if (stemUp) {
-    for (let i = 1; i < notes.length; i += 1) {
-      if (notes[i].degree - notes[i - 1].degree <= 1 && notes[i - 1].shift === 0) notes[i].shift = 12;
+    for (let i = 1; i < ordered.length; i += 1) {
+      if (ordered[i].degree - ordered[i - 1].degree <= 1 && ordered[i - 1].shift === 0) ordered[i].shift = 12;
     }
   } else {
-    for (let i = notes.length - 2; i >= 0; i -= 1) {
-      if (notes[i + 1].degree - notes[i].degree <= 1 && notes[i + 1].shift === 0) notes[i].shift = 12;
+    for (let i = ordered.length - 2; i >= 0; i -= 1) {
+      if (ordered[i + 1].degree - ordered[i].degree <= 1 && ordered[i + 1].shift === 0) ordered[i].shift = 12;
     }
   }
 }
 
-function drawNote(parent, note, showLetters) {
+function drawNote(parent, note, showLetters, lyricY) {
   const offset = (note.clef === BASS_CLEF ? BASS_OFFSET : 0) + STAFF_PAD;
   const { x, y } = note;
   const spec = HEADS[note.kind];
@@ -482,21 +576,20 @@ function drawNote(parent, note, showLetters) {
       fill: '#71695f'
     });
     label.textContent = letterForMidi(note.pitch);
+    label.setAttribute('y', String(Math.min(offset + 128, (lyricY || offset + 150) - 16)));
     parent.append(label);
   }
   return { id: note.id, node: head };
 }
 
 function drawStem(parent, chord) {
+  if (!chord.hasStem) return;
   const voiced = chord.notes.filter((note) => note.kind !== 'whole');
-  if (!voiced.length) return;
   const stemUp = chord.stemUp;
   const low = Math.max(...voiced.map((note) => note.y));
   const high = Math.min(...voiced.map((note) => note.y));
-  const yStart = stemUp ? low - 0.15 * SPACE : high + 0.15 * SPACE;
-  const yEnd = chord.beamY != null
-    ? chord.beamY
-    : (stemUp ? high - 3.5 * SPACE : low + 3.5 * SPACE);
+  const yStart = stemUp ? low - 0.12 * SPACE : high + 0.12 * SPACE;
+  const yEnd = chord.stemEnd;
   parent.append(svgEl('line', {
     x1: chord.stemX,
     y1: yStart,

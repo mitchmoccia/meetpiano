@@ -32,6 +32,7 @@ import {
   validateScore,
   windowsFor
 } from './song-score.js';
+import { createResultsDialog } from './song-results.js';
 import { createStaffView } from './song-staff.js';
 
 const PREFS = 'meetpiano:song-player';
@@ -85,12 +86,22 @@ const ui = {
   resultsStats: document.querySelector('#results-stats'),
   resultsBars: document.querySelector('#results-bars'),
   resultsAgain: document.querySelector('#results-again'),
+  resultsClose: document.querySelector('#results-close'),
+  resultsDismiss: document.querySelector('#results-dismiss'),
+  resultsLoop: document.querySelector('#results-loop'),
+  practice: document.querySelector('#practice-panel'),
   songChange: document.querySelector('#song-change'),
   drawer: document.querySelector('#song-drawer'),
   drawerClose: document.querySelector('#song-drawer-close'),
   search: document.querySelector('#song-search'),
   list: document.querySelector('#song-list')
 };
+
+const resultsDialog = createResultsDialog({
+  root: ui.results,
+  onClose: () => hideResults({ restoreFocus: true }),
+  getFocusables: () => [...ui.results.querySelectorAll('button, a[href]')].filter((el) => !el.disabled)
+});
 
 let songs = [];
 let score = null;
@@ -237,9 +248,13 @@ ui.finish.addEventListener('click', () => {
   showResults();
 });
 ui.resultsAgain.addEventListener('click', () => {
-  hideResults();
+  hideResults({ restoreFocus: true });
   restartTake();
 });
+ui.resultsClose.addEventListener('click', () => resultsDialog.close());
+ui.resultsDismiss.addEventListener('click', () => resultsDialog.close());
+ui.resultsLoop.addEventListener('click', () => tryResultsLoop());
+ui.results.addEventListener('click', (event) => resultsDialog.onPointer(event));
 ui.wait.addEventListener('click', () => {
   waitOn = !waitOn;
   ui.wait.setAttribute('aria-pressed', waitOn ? 'true' : 'false');
@@ -293,6 +308,10 @@ ui.list.addEventListener('keydown', (event) => {
   }
 });
 document.addEventListener('keydown', (event) => {
+  if (!ui.results.hidden) {
+    resultsDialog.onKeydown(event);
+    return;
+  }
   if (event.key === 'Escape' && ui.drawer.hidden && document.querySelector('#practice-panel')?.open) {
     event.preventDefault();
     document.querySelector('#practice-panel').open = false;
@@ -923,21 +942,62 @@ function showResults() {
   const accuracy = Math.round(grade.accuracy * 100);
   const found = `${grade.hits} ${grade.hits === 1 ? 'note' : 'notes'} found`;
   ui.resultsStats.textContent = `${accuracy}% landed. Streak ${grade.maxCombo}. ${found}. Extra tries: ${grade.wrong}.`;
-  const bars = lastSnapshot.bars || [];
-  ui.resultsBars.replaceChildren(...(bars.length ? bars.map((row) => {
+  const missMap = new Map((lastSnapshot.bars || []).map((row) => [row.bar, row.count]));
+  const totalBars = Math.max(1, Math.ceil(scoreLength(score.notes) / beatsPerBarOf(score)));
+  const chips = [];
+  for (let bar = 1; bar <= totalBars; bar += 1) {
+    const count = missMap.get(bar) || 0;
     const item = document.createElement('li');
-    item.textContent = `Bar ${row.bar}: ${row.count} ${row.count === 1 ? 'miss' : 'misses'}`;
-    return item;
-  }) : [Object.assign(document.createElement('li'), { textContent: 'No missed notes in this run.' })]));
-  stage.hidden = true;
+    item.className = count >= 3 ? 'is-hot' : count > 0 ? 'is-miss' : 'is-clear';
+    const name = document.createElement('span');
+    name.textContent = `Bar ${bar}`;
+    const detail = document.createElement('span');
+    detail.textContent = count ? `${count} ${count === 1 ? 'miss' : 'misses'}` : 'Clear';
+    item.append(name, detail);
+    item.setAttribute('aria-label', count ? `Bar ${bar}, ${count} ${count === 1 ? 'miss' : 'misses'}` : `Bar ${bar}, clear`);
+    chips.push(item);
+  }
+  ui.resultsBars.replaceChildren(...chips);
   ui.results.hidden = false;
-  ui.resultsTitle.focus();
+  ui.resultsClose.focus();
   if (!ui.drawer.hidden) renderSongList();
 }
 
-function hideResults() {
+function hideResults({ restoreFocus = false } = {}) {
+  if (ui.results.hidden) return;
   ui.results.hidden = true;
-  stage.hidden = false;
+  if (restoreFocus) ui.finish.focus();
+}
+
+function tryResultsLoop() {
+  if (!score || !lastSnapshot) {
+    hideResults({ restoreFocus: true });
+    return;
+  }
+  const beats = beatsPerBarOf(score);
+  const misses = lastSnapshot.bars || [];
+  let startBar = 1;
+  let endBar = 1;
+  if (misses.length) {
+    const worst = misses.reduce((best, row) => (row.count > best.count ? row : best));
+    startBar = worst.bar;
+    endBar = worst.bar;
+  } else if (score.phrases?.length) {
+    startBar = Math.floor(score.phrases[0].start / beats) + 1;
+    endBar = Math.max(startBar, Math.ceil(score.phrases[0].end / beats));
+  }
+  const result = loopFromBars(startBar, endBar, beats, scoreLength(score.notes));
+  hideResults({ restoreFocus: false });
+  if (result.error) {
+    announce(result.error);
+    ui.finish.focus();
+    return;
+  }
+  if (ui.practice) ui.practice.open = true;
+  ui.barFrom.value = String(startBar);
+  ui.barTo.value = String(endBar);
+  setLoop(result.loop);
+  document.querySelector('#loop-bars')?.focus();
 }
 
 function openDrawer() {

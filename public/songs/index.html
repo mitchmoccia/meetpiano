@@ -195,18 +195,33 @@
         </div>
       </section>
 
-      <section class="results-screen" id="results" hidden aria-labelledby="results-title">
-        <p class="song-kicker">Practice feedback · not a school grade</p>
-        <p class="results-letter" id="results-letter" aria-hidden="true">S</p>
-        <h2 id="results-title" tabindex="-1">S rank</h2>
-        <p id="results-copy"></p>
-        <p class="results-stats" id="results-stats"></p>
-        <ul class="results-bars" id="results-bars"></ul>
-        <div class="results-actions">
-          <button type="button" class="button button-dark" id="results-again">Play again</button>
-          <a class="button button-outline" href="/learn/">Back to the journey</a>
+      <div class="results-screen" id="results" hidden role="dialog" aria-modal="true" aria-labelledby="results-title">
+        <div class="results-panel">
+          <div class="results-head">
+            <div class="results-toolbar">
+              <p class="results-kicker">Practice feedback · not a school grade</p>
+              <button type="button" class="results-close" id="results-close" aria-label="Close">×</button>
+            </div>
+            <div class="results-grade">
+              <p class="results-letter" id="results-letter" aria-hidden="true">S</p>
+              <div>
+                <h2 id="results-title" tabindex="-1">S rank</h2>
+                <p id="results-copy"></p>
+                <p class="results-stats" id="results-stats"></p>
+              </div>
+            </div>
+            <div class="results-actions">
+              <button type="button" class="button button-dark" id="results-again">Play again</button>
+              <button type="button" class="button button-outline" id="results-loop">Try a loop</button>
+              <button type="button" class="button button-outline" id="results-dismiss">Close</button>
+            </div>
+          </div>
+          <div class="results-body">
+            <ul class="results-bars" id="results-bars"></ul>
+            <a class="results-journey" href="/learn/">Back to the journey</a>
+          </div>
         </div>
-      </section>
+      </div>
     </div>
   </main>
   <footer>
