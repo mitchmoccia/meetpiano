@@ -326,15 +326,28 @@
 .learn-footnote {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 9px;
-  margin: 26px auto 0;
-  max-width: 720px;
-  font-size: 13px;
+  justify-content: flex-end;
+  gap: 8px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.35;
   color: var(--muted);
-  text-align: center;
+  text-align: right;
 }
 .learn-footnote .icon { width: 17px; height: 17px; flex-shrink: 0; }
+@media (min-width: 1000px) {
+  .learn-page .game-bottomline > .learn-footnote { flex-shrink: 0; }
+}
+@media (max-width: 999px) {
+  .learn-page .game-bottomline { flex-wrap: wrap; }
+  .learn-page .game-bottomline > .midi-setup { flex: 1 1 100%; }
+  .learn-footnote {
+    flex: 1 1 100%;
+    justify-content: flex-start;
+    margin-top: 8px;
+    text-align: left;
+  }
+}
 
 @media (min-width: 801px) {
   .learn-page .learn-instrument {

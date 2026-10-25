@@ -73,7 +73,9 @@ for (const phrase of bannedLearnCopy) {
   assert(!learnSurface.includes(phrase), `/learn must not claim ${phrase}`);
 }
 
-assert(learnHtml.includes('Not a teacher. Not a grade.'), 'learn footer rejects teacher/grade claims');
+assert(learnHtml.includes('Not a teacher or grade program.'), 'learn page rejects teacher/grade claims');
+assert(!learnHtml.includes('id="preview-label"'), 'orphaned lesson disclaimer stays off the footer');
+assert(learnHtml.includes('Headphones help. Mute stays available. MIDI depends on your browser and instrument.'), 'headphones note stays one short line');
 assert(learnHtml.includes('Physical MIDI hardware is not claimed as verified'), 'learn MIDI honesty stays');
 assert(learnHtml.includes('id="grownup-shell"'), 'grown-up view shell stays');
 assert(learnHtml.includes('id="kid-target"'), 'kid job stays');
