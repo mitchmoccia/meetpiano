@@ -65,6 +65,9 @@ assert(chordKeys.keys.some((key) => key.pitch === 67) && !chordKeys.keys.find((k
 assert(playedWith(55, [55, 59]) === 'Played with B3', 'the popover names the chord mate');
 assert(css.includes('inset 0 0 0 2px #f1aec0') && !css.includes('.note-mini-black.is-chord.is-lh { background: #f1aec0'), 'chord mates are an outline, not a second solid key');
 assert(staff.includes("note.hand === 'lh' ? '#f1aec0' : '#ffdc63'"), 'the current note uses the hand color');
+assert(page.includes('id="icon-click"') && page.includes('href="#icon-click"') && page.includes('id="click-mute"'), 'the click toggle has a metronome icon');
+assert(css.includes('#sound-toggle,\n#click-mute {\n  padding: 0 14px;\n  background: transparent;\n  color: #fffdf8;'), 'the click toggle uses the sound pill');
+assert(player.includes("clickIsMuted ? 'Click off' : 'Click on'") && player.includes("ui.clickMute.querySelector('span')") && !player.includes('Click muted'), 'the click toggle says on or off and keeps its icon');
 assert(player.includes('chordMates'), 'the player lights same-hand mates only');
 
 const files = readdirSync(join(root, 'public/songs/catalog')).filter((name) => name.endsWith('.json')).sort();

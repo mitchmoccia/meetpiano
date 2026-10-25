@@ -1323,7 +1323,9 @@ function paintClick() {
   ui.click.value = String(clickVolume);
   ui.clickReadout.textContent = String(clickVolume);
   ui.clickMute.setAttribute('aria-pressed', clickIsMuted ? 'true' : 'false');
-  ui.clickMute.textContent = clickIsMuted ? 'Click muted' : 'Click on';
+  ui.clickMute.setAttribute('aria-label', clickIsMuted ? 'Turn the click track on' : 'Mute the click track');
+  const clickLabel = ui.clickMute.querySelector('span');
+  if (clickLabel) clickLabel.textContent = clickIsMuted ? 'Click off' : 'Click on';
   audio.setClickLevel(clickVolume / 100);
   audio.setClickMuted(clickIsMuted);
 }

@@ -490,7 +490,8 @@ html:has(body.song-page) {
 .transport-secondary,
 .transport-finish,
 #midi-button,
-#sound-toggle {
+#sound-toggle,
+#click-mute {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -515,7 +516,8 @@ html:has(body.song-page) {
 .transport-secondary,
 .transport-finish,
 #midi-button,
-#sound-toggle {
+#sound-toggle,
+#click-mute {
   padding: 0 14px;
   background: transparent;
   color: #fffdf8;
@@ -666,7 +668,9 @@ html:has(body.song-page) {
 }
 .song-tools {
   flex: 0 0 auto;
-  max-height: 44px;
+  width: 100%;
+  min-width: 0;
+  max-height: 104px;
   overflow: auto;
   padding: 2px 16px 4px;
   color: #e7e0d4;
@@ -674,6 +678,8 @@ html:has(body.song-page) {
   line-height: 1.3;
 }
 .song-tools .keyboard-help { margin: 0 0 8px; }
+.song-tools .midi-setup,
+.song-tools .midi-setup-row { width: 100%; min-width: 0; max-width: 100%; }
 .song-tools .midi-setup-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .song-tools .midi-help { margin-top: 8px; }
 .song-tools .midi-help summary { cursor: pointer; font-weight: 700; color: #fffdf8; }
@@ -799,7 +805,7 @@ html:has(body.song-page) {
   .song-page .footer-bottom { display: none; }
   .song-page .footer-main { padding-top: 2px; padding-bottom: 2px; }
   .octave-row { padding-top: 0; }
-  .song-tools { max-height: 36px; }
+  .song-tools { max-height: 104px; }
   .lyric-line { font-size: 16px; line-height: 1.1; }
   .now-card { font-size: 13px; padding-bottom: 0; }
   .song-stage .piano { height: 96px; }
@@ -851,7 +857,7 @@ html:has(body.song-page) {
   .view-legend .music-well {
     grid-template-rows: minmax(110px, 1.5fr) minmax(36px, 0.5fr) auto;
   }
-  .song-tools { max-height: 32px; }
+  .song-tools { max-height: 104px; }
   .octave-switch button { min-height: 26px; }
 }
 
