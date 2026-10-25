@@ -23,7 +23,8 @@
   pointer-events: all;
 }
 @media (hover: hover) and (pointer: fine) {
-  .note-hit:hover { fill: rgba(255, 220, 99, 0.42); }
+  .note-hit[data-hand="rh"]:hover { fill: rgba(255, 220, 99, 0.42); }
+  .note-hit[data-hand="lh"]:hover { fill: rgba(241, 174, 192, 0.5); }
 }
 .note-hit.is-open[data-hand="rh"] { fill: rgba(255, 220, 99, 0.55); }
 .note-hit.is-open[data-hand="lh"] { fill: rgba(241, 174, 192, 0.55); }
@@ -64,6 +65,11 @@
   font-weight: 700;
 }
 .note-popover-meta { color: #71695f; }
+.note-popover-chord {
+  margin: 4px 0 0;
+  font-size: 13px;
+  font-weight: 700;
+}
 .note-mini {
   position: relative;
   height: 74px;
@@ -110,11 +116,13 @@
 .note-mini-black.is-on.is-rh { background: #ffdc63; }
 .note-mini-white.is-on.is-lh,
 .note-mini-black.is-on.is-lh { background: #f1aec0; }
+.note-mini-white.is-on span,
+.note-mini-black.is-on span { color: #29251f; font-size: 12px; }
 .note-mini-black.is-on { box-shadow: inset 0 0 0 1px #29251f; }
-.note-mini-white.is-chord.is-rh { background: #ffe9a3; }
-.note-mini-white.is-chord.is-lh { background: #f7d0dc; }
-.note-mini-black.is-chord.is-rh { background: #ffdc63; }
-.note-mini-black.is-chord.is-lh { background: #f1aec0; }
+.note-mini-white.is-chord.is-rh { background: #fff; box-shadow: inset 0 0 0 2px #c9a227; }
+.note-mini-white.is-chord.is-lh { background: #fff; box-shadow: inset 0 0 0 2px #f1aec0; }
+.note-mini-black.is-chord.is-rh { background: #29251f; outline: 2px solid #c9a227; outline-offset: 1px; }
+.note-mini-black.is-chord.is-lh { background: #29251f; outline: 2px solid #f1aec0; outline-offset: 1px; }
 .note-play {
   margin-top: 10px;
   min-height: 36px;

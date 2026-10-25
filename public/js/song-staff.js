@@ -277,7 +277,8 @@ export function createStaffView(root) {
       const note = notes.find((item) => item.id === head.id);
       if (!note) continue;
       const on = cursor >= note.beat && cursor < note.beat + note.dur;
-      const fill = on ? '#ffdc63' : note.status === 'hit' ? '#f1aec0' : INK;
+      const handColor = note.hand === 'lh' ? '#f1aec0' : '#ffdc63';
+      const fill = on ? handColor : note.status === 'hit' ? '#f1aec0' : INK;
       head.node.setAttribute('fill', fill);
     }
   }

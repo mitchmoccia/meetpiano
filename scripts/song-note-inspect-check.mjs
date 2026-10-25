@@ -2,12 +2,14 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
+  chordMates,
   hitBox,
   keyboardWindow,
   miniKeyboard,
   moveNoteFocus,
   noteInspectLabel,
   plainName,
+  playedWith,
   scientificName,
   createNotePopover
 } from '../public/js/song-note.js';
@@ -50,9 +52,20 @@ const windowed = keyboardWindow(64);
 assert(windowed.low <= 64 && windowed.high >= 64, 'the mini keyboard contains the note');
 assert(windowed.high - windowed.low >= 12 && windowed.high - windowed.low <= 24, 'the mini keyboard is one to two octaves');
 assert(windowed.keys.some((key) => key.labelC), 'the mini keyboard labels a C');
-const chordKeys = miniKeyboard(64, [64, 67]);
-assert(chordKeys.keys.some((key) => key.pitch === 64 && key.active), 'the clicked pitch is the active key');
-assert(chordKeys.keys.some((key) => key.pitch === 67 && key.chord && !key.active), 'the rest of the chord is marked beside the clicked note');
+assert(windowed.keys.find((key) => key.pitch === 60)?.cLabel === 'C4', 'middle C is labeled C4');
+assert(windowed.keys.filter((key) => key.labelC).every((key) => key.cLabel === scientificName(key.pitch)), 'every C keeps its octave');
+const g3 = keyboardWindow(55);
+assert(g3.keys.find((key) => key.pitch === 48)?.cLabel === 'C3' && g3.keys.find((key) => key.pitch === 60)?.cLabel === 'C4', 'G3 sits between a labeled C3 and C4');
+assert(Math.abs((g3.low + g3.high) / 2 - 55) <= 1, 'G3 is centered in the mini keyboard');
+const chordKeys = miniKeyboard(55, [55, 59]);
+const strong = chordKeys.keys.filter((key) => key.active);
+assert(strong.length === 1 && strong[0].pitch === 55, 'only the clicked pitch is the strong key');
+assert(chordKeys.keys.some((key) => key.pitch === 59 && key.chord && !key.active), 'the same-hand mate is secondary');
+assert(chordKeys.keys.some((key) => key.pitch === 67) && !chordKeys.keys.find((key) => key.pitch === 67).active && !chordKeys.keys.find((key) => key.pitch === 67).chord, 'a pitch outside the mate list stays dark');
+assert(playedWith(55, [55, 59]) === 'Played with B3', 'the popover names the chord mate');
+assert(css.includes('inset 0 0 0 2px #f1aec0') && !css.includes('.note-mini-black.is-chord.is-lh { background: #f1aec0'), 'chord mates are an outline, not a second solid key');
+assert(staff.includes("note.hand === 'lh' ? '#f1aec0' : '#ffdc63'"), 'the current note uses the hand color');
+assert(player.includes('chordMates'), 'the player lights same-hand mates only');
 
 const files = readdirSync(join(root, 'public/songs/catalog')).filter((name) => name.endsWith('.json')).sort();
 assert(files.length === 20, 'all twenty songs are checked');
@@ -85,6 +98,21 @@ for (const file of files) {
       assert(touch.width >= 44 && touch.height >= 44, `${score.id} touch target is at least 44px`);
       const keys = keyboardWindow(note.pitch);
       assert(keys.keys.some((key) => key.pitch === note.pitch) && keys.keys.some((key) => key.labelC), `${score.id} ${label} has a keyboard with C`);
+      const mates = chordMates(layout.notes, note);
+      const board = miniKeyboard(note.pitch, mates);
+      const litStrong = board.keys.filter((key) => key.active);
+      assert(litStrong.length === 1 && litStrong[0].pitch === note.pitch, `${score.id} ${label} strong key is that pitch`);
+      const allowed = new Set(mates);
+      for (const key of board.keys) {
+        if (key.active || key.chord) assert(allowed.has(key.pitch), `${score.id} ${label} lights ${key.name}, which is not in the chord`);
+      }
+      for (const mate of mates) {
+        const key = board.keys.find((item) => item.pitch === mate);
+        if (!key) continue;
+        assert(key.active || key.chord, `${score.id} ${label} leaves chord pitch ${mate} dark`);
+      }
+      const at = board.keys.findIndex((key) => key.pitch === note.pitch);
+      assert(at >= 4 && at <= board.keys.length - 5, `${score.id} ${label} is centered, not on the rim`);
       targets += 1;
     }
   }

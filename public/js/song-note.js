@@ -41,38 +41,63 @@ export function noteInspectLabel({ pitch, hand, clef }) {
   return `${scientificName(pitch)}, ${handLabel(hand)}, ${staffLabel(clef)}`;
 }
 
-function cAtOrBelow(value) {
-  const note = Math.floor(value);
-  return note - ((note % 12) + 12) % 12;
+export function noteLetter(pitch) {
+  const n = Math.round(Number(pitch));
+  const pc = ((n % 12) + 12) % 12;
+  return `${LETTERS[pc]}${BLACK.has(pc) ? '♯' : ''}`;
+}
+
+/** Other notes in the same hand that sound with this one. The other hand stays dark. */
+export function chordMates(notes, note) {
+  if (!note) return [];
+  const hand = note.hand === 'lh' ? 'lh' : 'rh';
+  const beat = Number(note.beat);
+  return (notes || [])
+    .filter((item) => (item.hand === 'lh' ? 'lh' : 'rh') === hand && Math.abs(Number(item.beat) - beat) < 0.03)
+    .map((item) => Math.round(Number(item.pitch)));
+}
+
+/** "Played with B3" for the notes that share the hand and the beat. */
+export function playedWith(pitch, mates) {
+  const active = Math.round(Number(pitch));
+  const names = [...new Set((mates || []).map((item) => Math.round(Number(item))))]
+    .filter((item) => item !== active)
+    .sort((a, b) => a - b)
+    .map((item) => scientificName(item));
+  if (!names.length) return '';
+  if (names.length === 1) return `Played with ${names[0]}`;
+  return `Played with ${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`;
 }
 
 /**
- * About two octaves centered on the pitch, always starting and ending on C
- * so the mini keyboard has a labeled C and the note sits in the middle.
+ * Two octaves with the pitch in the middle, so the highlighted key is not
+ * parked on the rim. Every C in the window keeps its octave name.
  */
 export function keyboardWindow(pitch) {
   const n = Math.round(Number(pitch));
-  let low = cAtOrBelow(n - 6);
-  let high = cAtOrBelow(n + 6) + 12;
-  if (high < n) high += 12;
-  if (low > n) low -= 12;
-  while (high - low < 12) high += 12;
-  while (high - low > 24) {
-    if (n - low >= high - n) low += 12;
-    else high -= 12;
+  let low = n - 12;
+  let high = n + 12;
+  if (low < 0) {
+    high -= low;
+    low = 0;
   }
-  low = Math.max(0, low);
-  high = Math.min(127, high);
-  if (low > n) low = cAtOrBelow(n);
-  if (high < n) high = Math.min(127, cAtOrBelow(n) + 12);
+  if (high > 127) {
+    low -= high - 127;
+    high = 127;
+    low = Math.max(0, low);
+  }
   const keys = [];
   for (let value = low; value <= high; value += 1) {
     const pc = ((value % 12) + 12) % 12;
+    const isC = pc === 0;
     keys.push({
       pitch: value,
       white: !BLACK.has(pc),
       name: scientificName(value),
-      labelC: pc === 0
+      letter: noteLetter(value),
+      labelC: isC,
+      cLabel: isC ? scientificName(value) : '',
+      middle: value === 60
     });
   }
   return { low, high, keys };

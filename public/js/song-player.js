@@ -33,7 +33,7 @@ import {
   validateScore,
   windowsFor
 } from './song-score.js';
-import { createNotePopover, miniKeyboard, moveNoteFocus, plainName, scientificName } from './song-note.js';
+import { chordMates, createNotePopover, miniKeyboard, moveNoteFocus, plainName, playedWith, scientificName } from './song-note.js';
 import { createResultsDialog } from './song-results.js';
 import { createStaffView } from './song-staff.js';
 
@@ -102,6 +102,7 @@ const ui = {
   noteTitle: document.querySelector('#note-popover-title'),
   notePlain: document.querySelector('#note-popover-plain'),
   noteMeta: document.querySelector('#note-popover-meta'),
+  noteChord: document.querySelector('#note-chord'),
   noteMini: document.querySelector('#note-mini'),
   notePlay: document.querySelector('#note-play')
 };
@@ -761,6 +762,15 @@ function playInspected(pitch) {
   audio.play(pitch);
 }
 
+function keyMark(key) {
+  const text = key.active ? (key.cLabel || key.letter) : key.cLabel;
+  if (!text) return null;
+  const mark = document.createElement('span');
+  mark.textContent = text;
+  if (key.middle) mark.title = 'Middle C';
+  return mark;
+}
+
 function renderMiniKeyboard(pitch, chord, hand) {
   const model = miniKeyboard(pitch, chord);
   ui.noteMini.replaceChildren();
@@ -770,13 +780,11 @@ function renderMiniKeyboard(pitch, chord, hand) {
   for (const key of whiteKeys) {
     const el = document.createElement('div');
     el.className = 'note-mini-white';
+    el.dataset.pitch = String(key.pitch);
     if (key.active) el.classList.add('is-on', hand === 'lh' ? 'is-lh' : 'is-rh');
     else if (key.chord) el.classList.add('is-chord', hand === 'lh' ? 'is-lh' : 'is-rh');
-    if (key.labelC) {
-      const mark = document.createElement('span');
-      mark.textContent = 'C';
-      el.append(mark);
-    }
+    const mark = keyMark(key);
+    if (mark) el.append(mark);
     whites.append(el);
   }
   const blacks = document.createElement('div');
@@ -785,10 +793,13 @@ function renderMiniKeyboard(pitch, chord, hand) {
     if (key.white) continue;
     const el = document.createElement('div');
     el.className = 'note-mini-black';
+    el.dataset.pitch = String(key.pitch);
     const before = whiteKeys.filter((item) => item.pitch < key.pitch).length;
     el.style.left = `${(before / whiteKeys.length) * 100}%`;
     if (key.active) el.classList.add('is-on', hand === 'lh' ? 'is-lh' : 'is-rh');
     else if (key.chord) el.classList.add('is-chord', hand === 'lh' ? 'is-lh' : 'is-rh');
+    const mark = keyMark(key);
+    if (mark) el.append(mark);
     blacks.append(el);
   }
   ui.noteMini.append(whites, blacks);
@@ -829,9 +840,8 @@ function openNoteInspect(hit) {
   const clef = hit.getAttribute('data-clef') === 'bass' ? 'bass' : 'treble';
   const id = hit.getAttribute('data-note-id');
   const note = take.notes.find((item) => item.id === id);
-  const chord = note
-    ? take.notes.filter((item) => Math.abs(item.beat - note.beat) < 0.03).map((item) => item.pitch)
-    : [pitch];
+  const chord = note ? chordMates(take.notes, note) : [pitch];
+  const withLine = playedWith(pitch, chord);
   sheetMount.querySelectorAll('.note-hit.is-open').forEach((el) => el.classList.remove('is-open'));
   hit.classList.add('is-open');
   inspectHit = hit;
@@ -841,6 +851,8 @@ function openNoteInspect(hit) {
   ui.noteTitle.textContent = scientificName(pitch);
   ui.notePlain.textContent = plainName(pitch);
   ui.noteMeta.textContent = `${hand === 'lh' ? 'Left hand' : 'Right hand'} · ${clef === 'bass' ? 'Bass staff' : 'Treble staff'}`;
+  ui.noteChord.textContent = withLine;
+  ui.noteChord.hidden = !withLine;
   renderMiniKeyboard(pitch, chord, hand);
   ui.notePopover.hidden = false;
   placeNotePopover(hit);
