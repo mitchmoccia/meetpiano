@@ -25,7 +25,7 @@ const baseHeaders = [
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), midi=(self)' }
 ];
 
-const staticPages = ['/', '/index.html', '/learn', '/learn/', '/learn/index.html'];
+const staticPages = ['/', '/index.html', '/learn', '/learn/', '/learn/index.html', '/songs', '/songs/', '/songs/index.html'];
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
@@ -37,7 +37,9 @@ const nextConfig: NextConfig = {
       beforeFiles: [
         { source: '/', destination: '/index.html' },
         { source: '/learn', destination: '/learn/index.html' },
-        { source: '/learn/', destination: '/learn/index.html' }
+        { source: '/learn/', destination: '/learn/index.html' },
+        { source: '/songs', destination: '/songs/index.html' },
+        { source: '/songs/', destination: '/songs/index.html' }
       ],
       afterFiles: [],
       fallback: []

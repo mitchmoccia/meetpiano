@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffdc63">
+  <title>Song player · MeetPiano</title>
+  <meta name="description" content="Play three public-domain songs on MeetPiano. Keys, falling notes, sheet music, and Legend mode. Practice stays on this device. Not a school grade.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/songs/songs.css">
+  <script src="/js/nav-menu.js" defer></script>
+  <script type="module" src="/js/song-player.js"></script>
+  <script type="module" src="/js/copyright.js"></script>
+</head>
+<body class="song-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <svg xmlns="http://www.w3.org/2000/svg" class="icon-defs" aria-hidden="true"><defs>
+    <symbol id="arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="keyboard" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 4v16m5-16v16m5-16v16M5 4v8h4V4m6 0v8h4V4"/></symbol>
+    <symbol id="volume" viewBox="0 0 24 24"><path d="m11 5-6 4H2v6h3l6 4zm4 3a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></symbol>
+  </defs></svg>
+  <header class="site-header song-header">
+    <div class="nav-wrap wrap">
+      <a href="/" class="brand" aria-label="MeetPiano home"><span class="brand-keys" aria-hidden="true"><i></i><i></i><i></i></span>meetpiano<span class="brand-period">.</span></a>
+      <nav id="site-nav" aria-label="Main navigation">
+        <a href="/learn">Learn</a>
+        <a href="/songs/" aria-current="page">Songs</a>
+        <a href="/family">Family profiles</a>
+      </nav>
+      <div class="nav-actions">
+        <a href="/signin" class="button button-small button-outline nav-signin" data-account-link>Sign in</a>
+        <button type="button" class="button button-small button-outline nav-menu" aria-expanded="false" aria-controls="site-nav">Menu</button>
+      </div>
+    </div>
+  </header>
+  <main id="main" class="song-main wrap">
+    <p class="song-kicker">SONG PLAYER · THIS DEVICE ONLY</p>
+    <h1>Play a whole tune</h1>
+    <p class="song-intro">Three familiar songs. Switch the picture whenever you want — your place in the song stays. First Piano Journey lessons are still on Learn. S, A, B, and C here are practice feedback, not a school grade.</p>
+    <p class="song-privacy">This page does not ask who is playing. A tempo choice can stay in this browser. Scores are not saved, and nothing about the song is sent away.</p>
+
+    <div class="song-picker" id="song-picker" role="radiogroup" aria-label="Song">
+      <button type="button" class="button button-outline song-pick" data-song="mary-had-a-little-lamb" aria-pressed="true">Mary Had a Little Lamb</button>
+      <button type="button" class="button button-outline song-pick" data-song="ode-to-joy" aria-pressed="false">Ode to Joy</button>
+      <button type="button" class="button button-outline song-pick" data-song="twinkle-twinkle" aria-pressed="false">Twinkle Twinkle Little Star</button>
+    </div>
+    <p class="song-meta" id="song-meta">C major · 4/4</p>
+    <details class="provenance" id="provenance">
+      <summary>Where this tune comes from</summary>
+      <p id="provenance-body"></p>
+    </details>
+
+    <div class="difficulty-row" id="difficulty-row" role="radiogroup" aria-label="Difficulty">
+      <button type="button" class="button button-small button-outline" role="radio" data-difficulty="noob" aria-checked="true">Noob</button>
+      <button type="button" class="button button-small button-outline" role="radio" data-difficulty="pro" aria-checked="false">Pro</button>
+      <button type="button" class="button button-small button-outline" role="radio" data-difficulty="expert" aria-checked="false">Expert</button>
+    </div>
+    <p class="song-help" id="difficulty-copy"></p>
+
+    <div class="view-row" id="view-row" role="tablist" aria-label="Song view">
+      <button type="button" class="button button-small button-outline" role="tab" id="tab-keys" data-view="keys" aria-selected="true" aria-controls="stage">Keys</button>
+      <button type="button" class="button button-small button-outline" role="tab" id="tab-drop" data-view="drop" aria-selected="false" aria-controls="stage">Drop</button>
+      <button type="button" class="button button-small button-outline" role="tab" id="tab-sheet" data-view="sheet" aria-selected="false" aria-controls="stage">Sheet</button>
+      <button type="button" class="button button-small button-outline" role="tab" id="tab-legend" data-view="legend" aria-selected="false" aria-controls="stage">Legend mode</button>
+    </div>
+    <p class="song-help" id="view-copy"></p>
+
+    <section class="practice-card" aria-label="Practice tools">
+      <div class="transport-row">
+        <button type="button" class="button button-dark" id="play-button">Play</button>
+        <button type="button" class="button button-outline" id="hear-button">Hear the tune</button>
+        <button type="button" class="button button-outline" id="restart-button">Start again</button>
+        <button type="button" class="button button-outline" id="finish-button" disabled>See my results</button>
+      </div>
+      <div class="practice-row">
+        <button type="button" class="button button-small button-outline" id="wait-button" aria-pressed="true">Wait for me</button>
+        <label class="tempo-label" for="tempo">Tempo <span id="tempo-readout">96 BPM</span>
+          <input id="tempo" type="range" min="50" max="120" step="5" value="100">
+        </label>
+        <label class="ramp-label"><input id="ramp" type="checkbox"> Ease in</label>
+      </div>
+      <div class="phrase-row" id="phrase-row" role="group" aria-label="Loop a phrase"></div>
+      <div class="practice-row">
+        <div class="bar-loop">
+          <label for="bar-from">Loop bars</label>
+          <input id="bar-from" type="number" min="1" step="1" value="1" inputmode="numeric">
+          <label for="bar-to">to</label>
+          <input id="bar-to" type="number" min="1" step="1" value="2" inputmode="numeric">
+        </div>
+        <button type="button" class="button button-small button-outline" id="loop-bars">Loop these bars</button>
+        <button type="button" class="button button-small button-outline" id="loop-clear">Whole song</button>
+      </div>
+    </section>
+
+    <p class="song-feedback" id="feedback" role="status" aria-live="polite">Pick a song, then play.</p>
+
+    <section class="song-stage view-keys" id="stage" data-view="keys" role="tabpanel" aria-labelledby="tab-keys">
+      <div class="game-topline song-topline">
+        <span class="game-label" id="position"><span class="game-live-dot"></span> Bar 1, beat 1</span>
+        <span class="song-streak" id="streak">Streak 0</span>
+      </div>
+      <p class="lyric-line" id="lyric"></p>
+      <div class="now-card" id="now-card" aria-live="polite"></div>
+      <div class="sheet-mount" id="sheet" hidden></div>
+      <div class="kb-scroll">
+        <div class="kb-stack">
+          <canvas class="roll-canvas" id="roll" hidden aria-hidden="true"></canvas>
+          <div class="piano" id="piano" aria-label="On-screen piano stand-in"></div>
+        </div>
+      </div>
+      <div class="song-tools">
+        <p class="keyboard-help" id="key-help"></p>
+        <div class="midi-setup">
+          <div class="midi-setup-row">
+            <button type="button" id="midi-button"><svg class="icon"><use href="#keyboard"/></svg> <span id="midi-button-label">Try a compatible keyboard</span></button>
+            <button type="button" id="sound-toggle" aria-pressed="false" aria-label="Mute sound"><svg class="icon"><use href="#volume"/></svg> <span>Sound on</span></button>
+          </div>
+          <p id="midi-status" role="status">Optional. On-screen keys and computer keys work if no keyboard is connected. This page does not verify a physical instrument.</p>
+          <ul id="midi-devices" class="midi-devices" hidden></ul>
+          <details class="midi-help">
+            <summary>How playing is counted</summary>
+            <p>A held key counts once until you let go. Wait for me pauses on the next note until the right pitch sounds. Extra notes lower the result. Leaving this tab quiets the sound. Demo playback does not count. Physical MIDI hardware is not claimed as verified from this page.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="results-screen practice-card" id="results" hidden aria-labelledby="results-title">
+      <p class="song-kicker">PRACTICE FEEDBACK · NOT A SCHOOL GRADE</p>
+      <p class="results-letter" id="results-letter" aria-hidden="true">S</p>
+      <h2 id="results-title" tabindex="-1">S rank</h2>
+      <p id="results-copy"></p>
+      <p class="results-stats" id="results-stats"></p>
+      <div class="results-actions">
+        <button type="button" class="button button-dark" id="results-again">Play again</button>
+        <a class="button button-outline" href="/learn/">Back to the journey</a>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="wrap footer-main">
+      <a href="/" class="brand"><span class="brand-keys" aria-hidden="true"><i></i><i></i><i></i></span>meetpiano<span class="brand-period">.</span></a>
+      <p>Song player prototype · public-domain tunes · this device only</p>
+      <a href="/learn/">Back to First Piano Journey</a>
+    </div>
+    <div class="wrap footer-bottom">
+      <span class="site-copyright">© <span data-copyright-year></span> Xpancom, LLC</span>
+      <span>Our arrangements. The tunes are public domain. Scores are not saved.</span>
+      <a href="/songs/">Songs ↑</a>
+    </div>
+  </footer>
+</body>
+</html>

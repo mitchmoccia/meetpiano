@@ -560,6 +560,7 @@ export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit, onEx
       )
       : null,
     nextSessionCard(rec, continueCard, hasJourneyProgress(store), onContinue, onEnough),
+    songEntryCard(),
     extraRecAction(rec, continueCard, hasJourneyProgress(store), onContinue),
     ...view.units.map((unit) => unitSection(unit, onOpen, focusUnit)),
     portabilityCard(onExport, onImport, onReset),
@@ -568,6 +569,15 @@ export function renderUnitHub(root, store, { onOpen, onContinue, focusUnit, onEx
     ),
     el('p', { className: 'unit-limit' }, 'Playable lessons are L01–L24 when earlier activities on this device are ready. On-screen keys are an exploration stand-in, not proof of hand coordination or quiet-versus-strong. MIDI reports pitch, time, and velocity if the keyboard sent it — never technique. A grown-up marks listening for a recital. Guest records stay on the browsers you control; a grown-up can sign in to save to a family profile instead.')
   ].filter(Boolean));
+}
+
+function songEntryCard() {
+  return el('section', { className: 'next-session', id: 'song-player-entry' },
+    el('p', { className: 'mission-eyebrow' }, 'SONGS · PUBLIC DOMAIN'),
+    el('h2', {}, 'Play a whole tune'),
+    el('p', {}, 'Three familiar songs with Keys, falling notes, sheet music, and Legend mode. The twenty-four lessons on this page stay the same. Nothing here is saved to an account.'),
+    el('a', { className: 'button button-outline', href: '/songs/' }, 'Open the song player')
+  );
 }
 
 function hasJourneyProgress(store) {

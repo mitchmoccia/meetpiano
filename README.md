@@ -83,7 +83,7 @@ pnpm build
 pnpm test:e2e      # Playwright, desktop Chrome and Pixel 7 profiles
 ```
 
-`pnpm check:static` runs `node --check` on the player modules, then `scripts/mp-01-check.mjs` through `scripts/mp-11-check.mjs`, `scripts/copyright-check.mjs`, `scripts/aeo-check.mjs`, and `scripts/pilot-cta-check.mjs`.
+`pnpm check:static` runs `node --check` on the player modules, then `scripts/mp-01-check.mjs` through `scripts/mp-11-check.mjs`, `scripts/copyright-check.mjs`, `scripts/aeo-check.mjs`, `scripts/pilot-cta-check.mjs`, and `scripts/song-score-check.mjs`.
 
 `pnpm test:e2e` uses `pnpm start` on port 3100, so run `pnpm build` first. It reads `.env.local`, refuses any database not marked `development`, and leaves synthetic `@e2e.meetpiano.test` accounts on that branch. Set `E2E_BROWSER_CHANNEL=chrome` to use an installed Chrome, or run `pnpm exec playwright install chromium`. MIDI tests drive a simulated Web MIDI input. Physical MIDI hardware is not verified, and no automated check listens to audio: the tests confirm that notes are scheduled at the expected pitches.
 

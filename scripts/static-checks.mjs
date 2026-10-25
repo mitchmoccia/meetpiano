@@ -12,7 +12,8 @@ const checks = [
   ...readdirSync('scripts').filter((name) => /^mp-\d{2}-check\.mjs$/.test(name)).sort(),
   'copyright-check.mjs',
   'aeo-check.mjs',
-  'pilot-cta-check.mjs'
+  'pilot-cta-check.mjs',
+  'song-score-check.mjs'
 ];
 
 for (const file of jsFiles) execFileSync(process.execPath, ['--check', file], { stdio: 'inherit' });
