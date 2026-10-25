@@ -1,8 +1,10 @@
 import { bassDegree, letterForMidi, staffY, trebleDegree, BASS_CLEF, TREBLE_CLEF } from './staff.js';
 
 const NS = 'http://www.w3.org/2000/svg';
-const PLAYHEAD = 118;
+const PLAYHEAD = 168;
 const PIXELS_PER_BEAT = 54;
+/* Halfway between beat centers, so the line sits in the gap instead of on the note. */
+const BARLINE_INSET = PIXELS_PER_BEAT / 2;
 const BASS_OFFSET = 92;
 const STAFF_PAD = 16;
 const SPACE = 14;
@@ -12,8 +14,12 @@ const INK = '#29251f';
 const MUSIC_EM = SPACE * 4;
 const G_CLEF = '\uE050';
 const F_CLEF = '\uE062';
-const CLEF_X = 10;
-const TIME_X = 58;
+const BRACE = '\uE000';
+const CLEF_X = 32;
+const TIME_X = 84;
+const SYSTEM_X = 16;
+/* Covers the clef and time signature so scrolled notes never draw through them. */
+const PRELUDE = 128;
 const HEADS = {
   whole: { char: '\uE0A2', width: 1.688 },
   half: { char: '\uE0A3', width: 1.18, stemUp: [1.18, 0.168], stemDown: [0, -0.168] },
@@ -26,12 +32,12 @@ function svgEl(name, attrs = {}) {
   return node;
 }
 
-function musicText(parent, char, x, y) {
+function musicText(parent, char, x, y, fontSize = MUSIC_EM) {
   const node = svgEl('text', {
     x,
     y,
     class: 'music-glyph',
-    'font-size': MUSIC_EM,
+    'font-size': fontSize,
     fill: INK
   });
   node.setAttribute('aria-hidden', 'true');
@@ -53,11 +59,26 @@ export function createStaffView(root) {
   let lastKey = '';
   let pixelsPerBeat = PIXELS_PER_BEAT;
 
-  function staffLines(parent, offset, width) {
+  function staffLines(parent, offset, x1, x2) {
     for (let i = 0; i < 5; i += 1) {
       const y = offset + 86 - i * SPACE;
-      parent.append(svgEl('line', { x1: 8, y1: y, x2: width - 8, y2: y, stroke: INK, 'stroke-width': 1.6 }));
+      parent.append(svgEl('line', { x1, y1: y, x2, y2: y, stroke: INK, 'stroke-width': 1.6 }));
     }
+  }
+
+  function systemBrace(parent) {
+    const top = STAFF_PAD + 30;
+    const bottom = STAFF_PAD + BASS_OFFSET + 86;
+    const brace = musicText(parent, BRACE, 1, bottom, bottom - top);
+    brace.setAttribute('text-rendering', 'geometricPrecision');
+    parent.append(svgEl('line', {
+      x1: SYSTEM_X,
+      y1: top,
+      x2: SYSTEM_X,
+      y2: bottom,
+      stroke: INK,
+      'stroke-width': 1.6
+    }));
   }
 
   function clef(parent, kind, offset) {
@@ -87,29 +108,38 @@ export function createStaffView(root) {
     title.textContent = label || 'Sheet music with a moving cursor';
     svg.append(title);
     const paper = svgEl('g');
-    staffLines(paper, STAFF_PAD, width);
-    if (grand) staffLines(paper, STAFF_PAD + BASS_OFFSET, width);
+    const staffStart = grand ? SYSTEM_X : 18;
+    const yTop = STAFF_PAD + 30;
+    const yBot = grand ? STAFF_PAD + BASS_OFFSET + 86 : STAFF_PAD + 86;
+    staffLines(paper, STAFF_PAD, staffStart, width - 8);
+    if (grand) staffLines(paper, STAFF_PAD + BASS_OFFSET, staffStart, width - 8);
     svg.append(paper);
 
     scoreGroup = svgEl('g');
     const bars = Math.ceil(length / beatsPerBar);
-    for (let bar = 0; bar <= bars; bar += 1) {
-      const beat = bar * beatsPerBar;
-      const x = PLAYHEAD + beat * pixelsPerBeat;
-      const y2 = grand ? STAFF_PAD + BASS_OFFSET + 86 : STAFF_PAD + 86;
+    for (let bar = 1; bar <= bars; bar += 1) {
+      const x = PLAYHEAD + bar * beatsPerBar * pixelsPerBeat - BARLINE_INSET;
       scoreGroup.append(svgEl('line', {
         x1: x,
-        y1: STAFF_PAD + 30,
+        y1: yTop,
         x2: x,
-        y2,
-        stroke: '#29251f',
-        'stroke-width': bar === bars ? 3 : 1.4
+        y2: yBot,
+        stroke: INK,
+        'stroke-width': bar === bars ? 3.2 : 1.6
       }));
-      if (bar < bars) {
-        const num = svgEl('text', { x, y: 18, 'font-size': 11, 'font-weight': 700, fill: '#71695f' });
-        num.textContent = String(bar + 1);
-        scoreGroup.append(num);
-      }
+    }
+    for (let bar = 0; bar < bars; bar += 1) {
+      const x = PLAYHEAD + bar * beatsPerBar * pixelsPerBeat - BARLINE_INSET;
+      const num = svgEl('text', {
+        x,
+        y: 18,
+        'text-anchor': 'middle',
+        'font-size': 11,
+        'font-weight': 700,
+        fill: '#71695f'
+      });
+      num.textContent = String(bar + 1);
+      scoreGroup.append(num);
     }
     heads = layoutNotes(notes, grand).map((note) => drawNote(scoreGroup, note, showLetters));
     for (const line of lyrics) {
@@ -125,21 +155,15 @@ export function createStaffView(root) {
     }
     svg.append(scoreGroup);
     const mask = svgEl('g');
-    mask.append(svgEl('rect', { x: 0, y: 0, width: PLAYHEAD - 20, height, fill: '#fffdf8' }));
-    staffLines(mask, STAFF_PAD, PLAYHEAD - 6);
+    mask.append(svgEl('rect', { x: 0, y: 0, width: PRELUDE, height, fill: '#fffdf8' }));
+    staffLines(mask, STAFF_PAD, staffStart, PRELUDE);
     clef(mask, 'treble', STAFF_PAD);
     timeSig(mask, beatsPerBar, STAFF_PAD);
     if (grand) {
-      staffLines(mask, STAFF_PAD + BASS_OFFSET, PLAYHEAD - 6);
+      staffLines(mask, STAFF_PAD + BASS_OFFSET, staffStart, PRELUDE);
       clef(mask, 'bass', STAFF_PAD + BASS_OFFSET);
       timeSig(mask, beatsPerBar, STAFF_PAD + BASS_OFFSET);
-      mask.append(svgEl('path', {
-        d: `M14 ${STAFF_PAD + 30} C 2 ${STAFF_PAD + 58}, 2 ${STAFF_PAD + BASS_OFFSET + 30}, 14 ${STAFF_PAD + BASS_OFFSET + 86}`,
-        fill: 'none',
-        stroke: '#29251f',
-        'stroke-width': 2.4,
-        'stroke-linecap': 'round'
-      }));
+      systemBrace(mask);
     }
     svg.append(mask);
     playhead = svgEl('line', {

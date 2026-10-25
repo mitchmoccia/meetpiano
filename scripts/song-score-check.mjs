@@ -147,7 +147,9 @@ assert(css.includes('prefers-reduced-motion') && css.includes('max-width: 720px'
 const staff = read('public/js/song-staff.js');
 assert(staff.includes('\\uE050') && staff.includes('MeetPiano Music'), 'the treble clef is the self-hosted SMuFL G clef');
 assert(staff.includes('\\uE062'), 'the bass clef is the SMuFL F clef');
+assert(staff.includes('BARLINE_INSET') && staff.includes('\\uE000'), 'barlines sit before the downbeat and the grand staff uses a brace');
 assert(!staff.includes('M40 ${98'), 'the hand-drawn treble clef is gone');
+assert(css.includes('U+E000'), 'the music font includes the system brace');
 assert(css.includes('meetpiano-music.woff2') && css.includes('OFL'), 'the music font is self-hosted under the OFL');
 assert(player.includes('Right hand') && !player.includes('· key'), 'the note label names the hand and the pitch');
 assert(player.includes('function paintAt(cursor)'), 'one cursor paints the views');
