@@ -206,11 +206,14 @@ loadSongs();
 
 async function loadSongs() {
   try {
-    const loaded = await Promise.all(SONG_CATALOG.map(async (item) => {
-      const response = await fetch(`/songs/catalog/${item.file}`);
-      if (!response.ok) throw new Error(item.id);
-      return response.json();
-    }));
+    const [loaded] = await Promise.all([
+      Promise.all(SONG_CATALOG.map(async (item) => {
+        const response = await fetch(`/songs/catalog/${item.file}`);
+        if (!response.ok) throw new Error(item.id);
+        return response.json();
+      })),
+      document.fonts.load('56px "MeetPiano Music"').catch(() => [])
+    ]);
     const problems = loaded.flatMap((item) => validateScore(item).map((error) => `${item.title}: ${error}`));
     if (problems.length) {
       announce('A song file needs a fix before it can play.');
@@ -555,9 +558,8 @@ function renderReadout(cursor) {
 
 function describeNote(note) {
   const span = document.createElement('span');
-  const hand = note.hand === 'lh' ? 'Left' : 'Right';
-  const key = computerLabel(note.pitch);
-  span.textContent = key ? `${hand} ${pitchName(note.pitch)} · key ${key}` : `${hand} ${pitchName(note.pitch)}`;
+  const hand = note.hand === 'lh' ? 'Left hand' : 'Right hand';
+  span.textContent = `${hand} · ${pitchName(note.pitch)}`;
   return span;
 }
 
@@ -652,8 +654,3 @@ function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
 }
 
-function computerLabel(pitch) {
-  const found = Object.entries(COMPUTER).find(([, note]) => note === pitch);
-  if (!found) return '';
-  return found[0] === ',' ? 'Comma' : found[0].toUpperCase();
-}

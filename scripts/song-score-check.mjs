@@ -144,6 +144,12 @@ assert(page.includes('>Noob<') && page.includes('>Pro<') && page.includes('>Expe
 assert(page.includes('role="radiogroup"') && page.includes('role="tablist"'), 'song and view controls are keyboard groups');
 assert(page.includes('id="piano"') && page.includes('Wait for me'), 'keyboard and wait mode are present');
 assert(css.includes('prefers-reduced-motion') && css.includes('max-width: 720px'), 'motion and narrow screens are covered');
+const staff = read('public/js/song-staff.js');
+assert(staff.includes('\\uE050') && staff.includes('MeetPiano Music'), 'the treble clef is the self-hosted SMuFL G clef');
+assert(staff.includes('\\uE062'), 'the bass clef is the SMuFL F clef');
+assert(!staff.includes('M40 ${98'), 'the hand-drawn treble clef is gone');
+assert(css.includes('meetpiano-music.woff2') && css.includes('OFL'), 'the music font is self-hosted under the OFL');
+assert(player.includes('Right hand') && !player.includes('· key'), 'the note label names the hand and the pitch');
 assert(player.includes('function paintAt(cursor)'), 'one cursor paints the views');
 const paint = player.slice(player.indexOf('function paintAt(cursor)'), player.indexOf('function paintAt(cursor)') + 400);
 assert(paint.includes('staffView.sync(cursor') && paint.includes('rollView.sync(cursor') && paint.includes('lightKeyboard(cursor'), 'sheet, falling notes, and keys share that cursor');

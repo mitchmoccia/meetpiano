@@ -4,10 +4,39 @@ const NS = 'http://www.w3.org/2000/svg';
 const PLAYHEAD = 118;
 const PIXELS_PER_BEAT = 54;
 const BASS_OFFSET = 92;
+const STAFF_PAD = 16;
+const SPACE = 14;
+const INK = '#29251f';
+/* One em is four staff spaces, the SMuFL staff size. Glyphs are a subset of
+   Bravura (Steinberg), renamed MeetPiano Music under the SIL Open Font License. */
+const MUSIC_EM = SPACE * 4;
+const G_CLEF = '\uE050';
+const F_CLEF = '\uE062';
+const CLEF_X = 10;
+const TIME_X = 58;
+const HEADS = {
+  whole: { char: '\uE0A2', width: 1.688 },
+  half: { char: '\uE0A3', width: 1.18, stemUp: [1.18, 0.168], stemDown: [0, -0.168] },
+  quarter: { char: '\uE0A4', width: 1.18, stemUp: [1.18, 0.168], stemDown: [0, -0.168] }
+};
 
 function svgEl(name, attrs = {}) {
   const node = document.createElementNS(NS, name);
   for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, String(value));
+  return node;
+}
+
+function musicText(parent, char, x, y) {
+  const node = svgEl('text', {
+    x,
+    y,
+    class: 'music-glyph',
+    'font-size': MUSIC_EM,
+    fill: INK
+  });
+  node.setAttribute('aria-hidden', 'true');
+  node.textContent = char;
+  parent.append(node);
   return node;
 }
 
@@ -26,58 +55,40 @@ export function createStaffView(root) {
 
   function staffLines(parent, offset, width) {
     for (let i = 0; i < 5; i += 1) {
-      const y = offset + 86 - i * 14;
-      parent.append(svgEl('line', { x1: 8, y1: y, x2: width - 8, y2: y, stroke: '#29251f', 'stroke-width': 1.6 }));
+      const y = offset + 86 - i * SPACE;
+      parent.append(svgEl('line', { x1: 8, y1: y, x2: width - 8, y2: y, stroke: INK, 'stroke-width': 1.6 }));
     }
   }
 
   function clef(parent, kind, offset) {
     if (kind === 'bass') {
-      const group = svgEl('g');
-      const fY = staffY(53, BASS_CLEF, offset);
-      group.append(svgEl('path', {
-        d: `M28 ${fY + 18} C 28 ${fY - 8}, 54 ${fY - 16}, 54 ${fY + 2} C 54 ${fY + 16}, 36 ${fY + 20}, 32 ${fY + 8}`,
-        fill: 'none',
-        stroke: '#de4936',
-        'stroke-width': 3,
-        'stroke-linecap': 'round'
-      }));
-      group.append(svgEl('circle', { cx: 62, cy: fY - 6, r: 2.6, fill: '#de4936' }));
-      group.append(svgEl('circle', { cx: 62, cy: fY + 6, r: 2.6, fill: '#de4936' }));
-      parent.append(group);
+      musicText(parent, F_CLEF, CLEF_X, staffY(53, BASS_CLEF, offset));
       return;
     }
-    parent.append(svgEl('path', {
-      d: `M40 ${98 + offset} C 28 ${88 + offset}, 28 ${64 + offset}, 42 ${58 + offset} C 58 ${52 + offset}, 62 ${72 + offset}, 48 ${78 + offset} C 36 ${84 + offset}, 40 ${54 + offset}, 52 ${36 + offset} C 58 ${26 + offset}, 56 ${16 + offset}, 50 ${14 + offset} C 46 ${22 + offset}, 52 ${34 + offset}, 44 ${48 + offset} C 34 ${64 + offset}, 38 ${92 + offset}, 50 ${100 + offset} C 56 ${104 + offset}, 54 ${110 + offset}, 48 ${110 + offset} C 42 ${110 + offset}, 40 ${104 + offset}, 44 ${100 + offset}`,
-      fill: 'none',
-      stroke: '#de4936',
-      'stroke-width': 3,
-      'stroke-linecap': 'round'
-    }));
+    musicText(parent, G_CLEF, CLEF_X, staffY(67, TREBLE_CLEF, offset));
   }
 
   function timeSig(parent, beats, offset) {
-    const top = svgEl('text', { x: 84, y: offset + 62, 'text-anchor': 'middle', 'font-size': 22, 'font-weight': 800, fill: '#29251f' });
-    top.textContent = String(beats);
-    const bottom = svgEl('text', { x: 84, y: offset + 84, 'text-anchor': 'middle', 'font-size': 22, 'font-weight': 800, fill: '#29251f' });
-    bottom.textContent = '4';
-    parent.append(top, bottom);
+    const numeral = beats >= 0 && beats <= 9 ? String.fromCodePoint(0xE080 + beats) : String(beats);
+    musicText(parent, numeral, TIME_X, offset + 44);
+    musicText(parent, '\uE084', TIME_X, offset + 72);
   }
 
   function render(model) {
     const { notes, lyrics = [], beatsPerBar, length, grand, showLetters, label } = model;
     pixelsPerBeat = PIXELS_PER_BEAT;
-    const height = grand ? 250 : 160;
+    const height = grand ? 268 : 188;
     const width = 900;
     root.replaceChildren();
     const svg = svgEl('svg', { viewBox: `0 0 ${width} ${height}`, role: 'img' });
-    svg.setAttribute('aria-label', label || 'Sheet music');
+    const clefLabel = grand ? 'Treble and bass clefs' : 'Treble clef';
+    svg.setAttribute('aria-label', `${label || 'Sheet music'}. ${clefLabel}, ${beatsPerBar}/4.`);
     const title = svgEl('title');
     title.textContent = label || 'Sheet music with a moving cursor';
     svg.append(title);
     const paper = svgEl('g');
-    staffLines(paper, 0, width);
-    if (grand) staffLines(paper, BASS_OFFSET, width);
+    staffLines(paper, STAFF_PAD, width);
+    if (grand) staffLines(paper, STAFF_PAD + BASS_OFFSET, width);
     svg.append(paper);
 
     scoreGroup = svgEl('g');
@@ -85,10 +96,10 @@ export function createStaffView(root) {
     for (let bar = 0; bar <= bars; bar += 1) {
       const beat = bar * beatsPerBar;
       const x = PLAYHEAD + beat * pixelsPerBeat;
-      const y2 = grand ? BASS_OFFSET + 86 : 86;
+      const y2 = grand ? STAFF_PAD + BASS_OFFSET + 86 : STAFF_PAD + 86;
       scoreGroup.append(svgEl('line', {
         x1: x,
-        y1: 30,
+        y1: STAFF_PAD + 30,
         x2: x,
         y2,
         stroke: '#29251f',
@@ -115,15 +126,15 @@ export function createStaffView(root) {
     svg.append(scoreGroup);
     const mask = svgEl('g');
     mask.append(svgEl('rect', { x: 0, y: 0, width: PLAYHEAD - 20, height, fill: '#fffdf8' }));
-    staffLines(mask, 0, PLAYHEAD - 6);
-    clef(mask, 'treble', 0);
-    timeSig(mask, beatsPerBar, 0);
+    staffLines(mask, STAFF_PAD, PLAYHEAD - 6);
+    clef(mask, 'treble', STAFF_PAD);
+    timeSig(mask, beatsPerBar, STAFF_PAD);
     if (grand) {
-      staffLines(mask, BASS_OFFSET, PLAYHEAD - 6);
-      clef(mask, 'bass', BASS_OFFSET);
-      timeSig(mask, beatsPerBar, BASS_OFFSET);
+      staffLines(mask, STAFF_PAD + BASS_OFFSET, PLAYHEAD - 6);
+      clef(mask, 'bass', STAFF_PAD + BASS_OFFSET);
+      timeSig(mask, beatsPerBar, STAFF_PAD + BASS_OFFSET);
       mask.append(svgEl('path', {
-        d: `M14 30 C 2 58, 2 ${BASS_OFFSET + 30}, 14 ${BASS_OFFSET + 86}`,
+        d: `M14 ${STAFF_PAD + 30} C 2 ${STAFF_PAD + 58}, 2 ${STAFF_PAD + BASS_OFFSET + 30}, 14 ${STAFF_PAD + BASS_OFFSET + 86}`,
         fill: 'none',
         stroke: '#29251f',
         'stroke-width': 2.4,
@@ -133,9 +144,9 @@ export function createStaffView(root) {
     svg.append(mask);
     playhead = svgEl('line', {
       x1: PLAYHEAD,
-      y1: 24,
+      y1: STAFF_PAD + 22,
       x2: PLAYHEAD,
-      y2: grand ? BASS_OFFSET + 96 : 96,
+      y2: grand ? STAFF_PAD + BASS_OFFSET + 96 : STAFF_PAD + 96,
       stroke: '#de4936',
       'stroke-width': 3
     });
@@ -158,7 +169,7 @@ export function createStaffView(root) {
       const note = notes.find((item) => item.id === head.id);
       if (!note) continue;
       const on = cursor >= note.beat && cursor < note.beat + note.dur;
-      const fill = on ? '#ffdc63' : note.status === 'hit' ? '#f1aec0' : head.hollow ? '#fffdf6' : '#29251f';
+      const fill = on ? '#ffdc63' : note.status === 'hit' ? '#f1aec0' : INK;
       head.node.setAttribute('fill', fill);
     }
   }
@@ -187,41 +198,46 @@ function layoutNotes(notes, grand) {
 }
 
 function drawNote(parent, note, showLetters) {
-  const offset = note.clef === BASS_CLEF ? BASS_OFFSET : 0;
+  const offset = (note.clef === BASS_CLEF ? BASS_OFFSET : 0) + STAFF_PAD;
   const x = PLAYHEAD + note.beat * PIXELS_PER_BEAT + note.shift;
   const y = staffY(note.pitch, note.clef, offset);
-  for (const degree of ledgerDegrees(note.degree)) {
-    const ledgerY = y + (note.degree - degree) * 7;
-    parent.append(svgEl('line', { x1: x - 12, y1: ledgerY, x2: x + 12, y2: ledgerY, stroke: '#29251f', 'stroke-width': 1.6 }));
-  }
   const kind = glyphFor(note.dur);
-  const hollow = kind !== 'quarter';
-  const head = svgEl('ellipse', {
-    cx: x,
-    cy: y,
-    rx: 8,
-    ry: 6,
-    fill: hollow ? '#fffdf6' : '#29251f',
-    stroke: '#29251f',
-    'stroke-width': 2
-  });
-  parent.append(head);
+  const spec = HEADS[kind];
+  const half = (spec.width * SPACE) / 2;
+  const ledgerExtend = half + 0.4 * SPACE;
+  for (const degree of ledgerDegrees(note.degree)) {
+    const ledgerY = y + (note.degree - degree) * (SPACE / 2);
+    parent.append(svgEl('line', {
+      x1: x - ledgerExtend,
+      y1: ledgerY,
+      x2: x + ledgerExtend,
+      y2: ledgerY,
+      stroke: INK,
+      'stroke-width': 1.6
+    }));
+  }
+  const originX = x - half;
+  const head = musicText(parent, spec.char, originX, y);
   if (kind !== 'whole') {
     const stemUp = note.degree < 4;
-    const stemX = stemUp ? x + 7 : x - 7;
+    const [ax, ay] = stemUp ? spec.stemUp : spec.stemDown;
+    const sx = originX + ax * SPACE;
+    const sy = y - ay * SPACE;
+    const tip = stemUp ? y - 3.5 * SPACE : y + 3.5 * SPACE;
     parent.append(svgEl('line', {
-      x1: stemX,
-      y1: y,
-      x2: stemX,
-      y2: stemUp ? y - 32 : y + 32,
-      stroke: '#29251f',
-      'stroke-width': 2
+      x1: sx,
+      y1: sy,
+      x2: sx,
+      y2: tip,
+      stroke: INK,
+      'stroke-width': 1.7,
+      'stroke-linecap': 'butt'
     }));
   }
   if (showLetters) {
     const label = svgEl('text', {
       x,
-      y: offset + 108,
+      y: offset + 128,
       'text-anchor': 'middle',
       'font-size': 11,
       'font-weight': 800,
@@ -230,7 +246,7 @@ function drawNote(parent, note, showLetters) {
     label.textContent = letterForMidi(note.pitch);
     parent.append(label);
   }
-  return { id: note.id, node: head, hollow };
+  return { id: note.id, node: head };
 }
 
 function ledgerDegrees(degree) {

@@ -1,3 +1,18 @@
+/* MeetPiano Music is a renamed subset of Bravura (Steinberg Media Technologies).
+   Bravura is a Reserved Font Name. SIL Open Font License 1.1: public/songs/fonts/OFL.txt */
+@font-face {
+  font-family: "MeetPiano Music";
+  src: url("/songs/fonts/meetpiano-music.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+  unicode-range: U+E050, U+E062, U+E082-E084, U+E086, U+E0A2-E0A4;
+}
+.sheet-mount .music-glyph {
+  font-family: "MeetPiano Music", serif;
+  font-weight: normal;
+  font-style: normal;
+}
 .song-page { background: var(--paper); }
 .song-header { height: auto; }
 .song-header .nav-wrap { min-height: 76px; padding-block: 12px; }
