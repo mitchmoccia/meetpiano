@@ -1044,17 +1044,32 @@ html:has(body.song-page) {
   .song-page .footer-main {
     display: flex;
     flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0 10px;
-    padding-top: 1px;
-    padding-bottom: 1px;
+    align-items: center;
+    gap: 4px 10px;
+    padding-top: 4px;
+    padding-bottom: 4px;
   }
   .song-page .footer-main .brand { font-size: 16px; line-height: 1; }
-  .song-page .footer-main .brand-keys { height: 14px; }
+  .song-page .footer-main .brand-keys {
+    height: 18px;
+    padding: 1px 2px;
+    transform: none;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+  .song-page .footer-main .brand-keys i,
+  .song-page .footer-main .brand-keys i:nth-child(2),
+  .song-page .footer-main .brand-keys i:last-child {
+    width: 4px;
+    height: 12px;
+  }
+  .song-page .footer-main .brand-keys i:nth-child(2) { height: 16px; }
+  .song-page .footer-main .brand-keys i:last-child { height: 14px; }
   .song-page .footer-main p,
   .song-page .footer-main a { font-size: 11px; line-height: 1.15; }
   .song-page .footer-main p {
     flex: 1 1 100%;
+    margin: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
