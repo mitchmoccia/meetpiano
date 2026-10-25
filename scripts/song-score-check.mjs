@@ -140,6 +140,8 @@ const hub = read('public/js/learn-view.js');
 const surface = [page, css, player, learn, hub, read('public/js/song-score.js'), read('public/js/song-staff.js'), read('public/js/song-roll.js')].join('\n');
 assert(!/\bgod\s*mode\b/i.test(surface), 'the player never says God mode');
 assert(page.includes('Legend mode'), 'the song page names Legend mode');
+assert(page.includes('Connect a MIDI keyboard'), 'the song page offers a neutral MIDI connection');
+assert(!page.includes('not claimed as verified') && !player.includes('not claimed as verified'), 'the song page does not deny a tested keyboard');
 assert(page.includes('>Noob<') && page.includes('>Pro<') && page.includes('>Expert<'), 'all three difficulties are on the page');
 assert(page.includes('role="radiogroup"') && page.includes('role="tablist"'), 'song and view controls are keyboard groups');
 assert(page.includes('id="piano"') && page.includes('Wait for me'), 'keyboard and wait mode are present');

@@ -21,16 +21,16 @@ export const VIEW_LABELS = {
 };
 
 export const DIFFICULTY_COPY = {
-  noob: 'Right-hand melody. The song waits until you play the note.',
-  pro: 'Adds a simple left hand, and the song keeps the full tempo.',
-  expert: 'Full arrangement. Timing counts toward the result.'
+  noob: 'Noob: right hand only, and the song waits for you.',
+  pro: 'Pro: adds a simple left hand at full tempo.',
+  expert: 'Expert: the full arrangement, and timing counts.'
 };
 
 export const VIEW_COPY = {
-  keys: 'The next keys light up on the keyboard.',
-  drop: 'Notes fall and land on the matching keys.',
-  sheet: 'Staff notation with a moving cursor.',
-  legend: 'Legend mode puts the staff above the falling notes. Both stay on the same beat and land on the keyboard together.'
+  keys: 'Keys: the next notes light up on the keyboard.',
+  drop: 'Drop: notes fall onto the matching keys.',
+  sheet: 'Sheet: the staff moves with a cursor.',
+  legend: 'Legend mode: the staff sits above the falling notes, on the same beat.'
 };
 
 export const RESULT_COPY = {
