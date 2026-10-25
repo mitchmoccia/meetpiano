@@ -999,16 +999,17 @@ html:has(body.song-page) {
   .now-card { font-size: 12px; line-height: 1.1; padding: 0 8px; }
   .octave-row { padding: 0 8px; gap: 4px; }
   .octave-switch button { min-width: 26px; min-height: 24px; padding: 0 6px; }
-  .song-tools { max-height: none; overflow: hidden; padding: 0 8px 2px; }
+  .song-tools { max-height: none; overflow: visible; padding: 0 8px 6px; }
   .song-tools .keyboard-help,
   .song-tools .midi-help,
   #midi-status { display: none; }
-  .song-tools .midi-setup-row { flex-wrap: nowrap; overflow-x: auto; gap: 6px; }
+  .song-tools .midi-setup-row { flex-wrap: wrap; overflow: visible; gap: 6px 8px; }
   #midi-button,
   #sound-toggle,
   #click-mute,
-  .click-control { min-height: 32px; font-size: 12px; white-space: nowrap; }
-  .click-control input { width: 72px; }
+  .click-control { min-height: 36px; font-size: 12px; white-space: nowrap; }
+  .click-control { flex: 1 1 148px; min-width: 0; max-width: 100%; }
+  .click-control input { width: 72px; max-width: 100%; height: 28px; }
   .view-legend .music-well {
     grid-template-rows: minmax(110px, 1.7fr) minmax(24px, 0.35fr) auto;
   }
