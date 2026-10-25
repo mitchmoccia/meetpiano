@@ -43,8 +43,95 @@ export const RESULT_COPY = {
 export const SONG_CATALOG = [
   { id: 'mary-had-a-little-lamb', file: 'mary-had-a-little-lamb.json' },
   { id: 'ode-to-joy', file: 'ode-to-joy.json' },
-  { id: 'twinkle-twinkle', file: 'twinkle-twinkle.json' }
+  { id: 'twinkle-twinkle', file: 'twinkle-twinkle.json' },
+  { id: 'hot-cross-buns', file: 'hot-cross-buns.json' },
+  { id: 'row-row-row-your-boat', file: 'row-row-row-your-boat.json' },
+  { id: 'jingle-bells', file: 'jingle-bells.json' },
+  { id: 'london-bridge', file: 'london-bridge.json' },
+  { id: 'old-macdonald', file: 'old-macdonald.json' },
+  { id: 'happy-birthday', file: 'happy-birthday.json' },
+  { id: 'frere-jacques', file: 'frere-jacques.json' },
+  { id: 'itsy-bitsy-spider', file: 'itsy-bitsy-spider.json' },
+  { id: 'baa-baa-black-sheep', file: 'baa-baa-black-sheep.json' },
+  { id: 'yankee-doodle', file: 'yankee-doodle.json' },
+  { id: 'amazing-grace', file: 'amazing-grace.json' },
+  { id: 'when-the-saints', file: 'when-the-saints.json' },
+  { id: 'brahms-lullaby', file: 'brahms-lullaby.json' },
+  { id: 'minuet-in-g', file: 'minuet-in-g.json' },
+  { id: 'camptown-races', file: 'camptown-races.json' },
+  { id: 'oh-susanna', file: 'oh-susanna.json' },
+  { id: 'skip-to-my-lou', file: 'skip-to-my-lou.json' }
 ];
+
+const BLACK_PCS = new Set([1, 3, 6, 8, 10]);
+
+function whiteAtOrBelow(pitch) {
+  let note = Math.floor(pitch);
+  while (BLACK_PCS.has(((note % 12) + 12) % 12)) note -= 1;
+  return note;
+}
+
+function whiteAtOrAbove(pitch) {
+  let note = Math.ceil(pitch);
+  while (BLACK_PCS.has(((note % 12) + 12) % 12)) note += 1;
+  return note;
+}
+
+/**
+ * Narrow Fit prefers the right hand. Noob does not show the low left-hand
+ * octave, because that hand is not in the part. Pro and Expert keep it so
+ * the keyboard can scroll to those notes.
+ */
+export function pitchesForKeyboard(notes, { difficulty = 'pro', narrow = false, fit = true } = {}) {
+  const list = Array.isArray(notes) ? notes : [];
+  const pitches = list.map((note) => Number(note.pitch)).filter(Number.isFinite);
+  if (!narrow || !fit || difficulty !== 'noob') return pitches;
+  const right = list
+    .filter((note) => note.hand === 'rh' || note.part === 'melody')
+    .map((note) => Number(note.pitch))
+    .filter(Number.isFinite);
+  return right.length ? right : pitches;
+}
+
+/** Fit the on-screen keyboard around the song. octaves 0 keeps the tight span. */
+export function rangeCovering(pitches, octaves = 0) {
+  const list = (pitches || []).map(Number).filter(Number.isFinite);
+  if (!list.length) {
+    const span = octaves > 0 ? octaves : 2;
+    return { from: 60, to: 60 + span * 12 };
+  }
+  const min = Math.min(...list);
+  const max = Math.max(...list);
+  let from = whiteAtOrBelow(min);
+  let to = whiteAtOrAbove(max);
+  if (!(octaves > 0)) {
+    if (to <= from) to = from + 12;
+    return { from, to };
+  }
+  from -= ((from % 12) + 12) % 12;
+  let span = octaves;
+  while (from + span * 12 < max) span += 1;
+  return { from, to: from + span * 12 };
+}
+
+/** Wide screens show more octaves. Narrow screens fit the song so the keys stay playable. */
+export function autoOctaves(width) {
+  if (width >= 1200) return 4;
+  if (width >= 900) return 3;
+  return 0;
+}
+
+export function missesByBar(notes, beatsPerBar) {
+  const counts = new Map();
+  for (const note of notes || []) {
+    if (note.status !== 'missed') continue;
+    const bar = Math.floor(note.beat / beatsPerBar) + 1;
+    counts.set(bar, (counts.get(bar) || 0) + 1);
+  }
+  return [...counts.entries()]
+    .sort((a, b) => a[0] - b[0])
+    .map(([bar, count]) => ({ bar, count }));
+}
 
 const NAMES = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
 const DIATONIC_C = new Set([0, 2, 4, 5, 7, 9, 11]);

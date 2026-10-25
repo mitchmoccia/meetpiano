@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ffdc63">
   <title>Song player · MeetPiano</title>
-  <meta name="description" content="Play three public-domain songs on MeetPiano. Keys, falling notes, sheet music, and Legend mode. Practice stays on this device. Not a school grade.">
+  <meta name="description" content="Play twenty public-domain songs on MeetPiano. Keys, falling notes, sheet music, and Legend mode. Practice stays on this device. Not a school grade.">
   <meta name="robots" content="noindex">
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/styles.css">
@@ -50,33 +50,13 @@
       <h1 id="song-title">Mary Had a Little Lamb</h1>
       <p class="song-privacy">Practice stays on this device. Not a school grade.</p>
 
-      <div class="song-picker" id="song-picker" role="radiogroup" aria-label="Song">
-        <button type="button" class="song-card" role="radio" data-song="mary-had-a-little-lamb" aria-checked="true" aria-pressed="true">
-          <svg class="glyph" aria-hidden="true"><use href="#icon-note"/></svg>
-          <span class="song-card-copy">
-            <span class="song-card-title">Mary Had a Little Lamb</span>
-            <span class="song-card-meta">C major</span>
-          </span>
-        </button>
-        <button type="button" class="song-card" role="radio" data-song="ode-to-joy" aria-checked="false" aria-pressed="false">
-          <svg class="glyph" aria-hidden="true"><use href="#icon-note"/></svg>
-          <span class="song-card-copy">
-            <span class="song-card-title">Ode to Joy</span>
-            <span class="song-card-meta">C major</span>
-          </span>
-        </button>
-        <button type="button" class="song-card" role="radio" data-song="twinkle-twinkle" aria-checked="false" aria-pressed="false">
-          <svg class="glyph" aria-hidden="true"><use href="#icon-note"/></svg>
-          <span class="song-card-copy">
-            <span class="song-card-title">Twinkle Twinkle Little Star</span>
-            <span class="song-card-meta">C major</span>
-          </span>
-        </button>
+      <div class="song-current">
+        <p class="song-meta" id="song-meta">C major · 4/4</p>
+        <button type="button" class="song-change" id="song-change" aria-haspopup="dialog" aria-controls="song-drawer" aria-expanded="false">Change song</button>
       </div>
       <div class="song-meta-row">
-        <span class="song-meta" id="song-meta">C major · 4/4</span>
         <details class="provenance" id="provenance">
-          <summary>Where this tune comes from</summary>
+          <summary><span class="provenance-long">Where this tune comes from</span><span class="provenance-short">Source</span></summary>
           <p id="provenance-body"></p>
         </details>
       </div>
@@ -97,9 +77,10 @@
               <svg class="glyph" aria-hidden="true"><use href="#icon-staff"/></svg>
               <span>Sheet</span>
             </button>
-            <button type="button" role="tab" id="tab-legend" data-view="legend" aria-selected="false" aria-controls="stage" tabindex="-1">
+            <button type="button" role="tab" id="tab-legend" data-view="legend" aria-selected="false" aria-controls="stage" tabindex="-1" aria-label="Legend mode">
               <svg class="glyph" aria-hidden="true"><use href="#icon-legend"/></svg>
-              <span>Legend mode</span>
+              <span class="view-name-long">Legend mode</span>
+              <span class="view-name-short">Legend</span>
             </button>
           </div>
         </div>
@@ -155,22 +136,34 @@
           </button>
           <button type="button" class="transport-secondary" id="hear-button" aria-pressed="false" aria-label="Hear the tune" title="Hear the tune">
             <svg class="glyph" aria-hidden="true"><use href="#icon-hear"/></svg>
-            <span class="transport-label">Hear the tune</span>
+            <span class="transport-label transport-label-long">Hear the tune</span>
+            <span class="transport-label transport-label-short">Hear</span>
           </button>
           <button type="button" class="transport-secondary" id="restart-button" aria-label="Start again" title="Start again">
             <svg class="glyph" aria-hidden="true"><use href="#icon-restart"/></svg>
-            <span class="transport-label">Start again</span>
+            <span class="transport-label transport-label-long">Start again</span>
+            <span class="transport-label transport-label-short">Again</span>
           </button>
           <p class="song-feedback" id="feedback" role="status" aria-live="polite">Pick a song, then play.</p>
         </div>
         <p class="wait-banner" id="wait-banner" hidden aria-hidden="true"></p>
         <div class="game-topline song-topline">
-          <span class="game-label" id="position"><span class="game-live-dot"></span> Bar 1, beat 1</span>
-          <button type="button" class="transport-finish" id="finish-button" disabled>See my results</button>
+          <span class="game-label" id="position"><span class="game-live-dot"></span> <span id="position-text">Bar 1, beat 1</span></span>
+          <button type="button" class="transport-finish is-disabled" id="finish-button" aria-disabled="true" title="Play the song first. Results appear after a run.">See my results</button>
           <span class="song-streak" id="streak">Streak 0</span>
         </div>
         <p class="lyric-line" id="lyric"></p>
         <div class="now-card" id="now-card" aria-live="polite"></div>
+        <div class="octave-row">
+          <span class="octave-label" id="octave-label">Octaves</span>
+          <div class="octave-switch" role="radiogroup" aria-labelledby="octave-label">
+            <button type="button" role="radio" data-octaves="0" aria-checked="false">Fit</button>
+            <button type="button" role="radio" data-octaves="2" aria-checked="false">2</button>
+            <button type="button" role="radio" data-octaves="3" aria-checked="false">3</button>
+            <button type="button" role="radio" data-octaves="4" aria-checked="true">4</button>
+            <button type="button" role="radio" data-octaves="5" aria-checked="false">5</button>
+          </div>
+        </div>
         <div class="music-well">
           <div class="sheet-mount" id="sheet" hidden></div>
           <div class="kb-scroll">
@@ -186,6 +179,11 @@
             <div class="midi-setup-row">
               <button type="button" id="midi-button"><svg class="icon" aria-hidden="true"><use href="#keyboard"/></svg> <span id="midi-button-label">Connect a MIDI keyboard</span></button>
               <button type="button" id="sound-toggle" aria-pressed="false" aria-label="Mute sound"><svg class="icon" aria-hidden="true"><use href="#volume"/></svg> <span>Sound on</span></button>
+              <label class="click-control" for="click-volume">Click
+                <input id="click-volume" type="range" min="0" max="100" step="5" value="80">
+                <span id="click-readout">80</span>
+              </label>
+              <button type="button" id="click-mute" aria-pressed="false" aria-label="Mute the click track">Click on</button>
             </div>
             <p id="midi-status" role="status">On-screen keys and computer keys work if no keyboard is connected.</p>
             <ul id="midi-devices" class="midi-devices" hidden></ul>
@@ -203,6 +201,7 @@
         <h2 id="results-title" tabindex="-1">S rank</h2>
         <p id="results-copy"></p>
         <p class="results-stats" id="results-stats"></p>
+        <ul class="results-bars" id="results-bars"></ul>
         <div class="results-actions">
           <button type="button" class="button button-dark" id="results-again">Play again</button>
           <a class="button button-outline" href="/learn/">Back to the journey</a>
@@ -222,5 +221,34 @@
       <a href="/songs/">Songs ↑</a>
     </div>
   </footer>
+  <div class="song-drawer" id="song-drawer" role="dialog" aria-modal="true" aria-labelledby="song-drawer-title" hidden>
+    <div class="song-drawer-panel">
+      <div class="song-drawer-head">
+        <h2 id="song-drawer-title">Songs</h2>
+        <button type="button" class="song-drawer-close" id="song-drawer-close">Close</button>
+      </div>
+      <label class="song-search-label" for="song-search">Search songs</label>
+      <input id="song-search" type="search" placeholder="Search by title" autocomplete="off">
+      <div class="song-filter-block">
+        <p class="control-label" id="style-filter-label">Style</p>
+        <div class="song-filters" role="group" aria-labelledby="style-filter-label">
+          <button type="button" data-tag="all" aria-pressed="true">All</button>
+          <button type="button" data-tag="Kids" aria-pressed="false">Kids</button>
+          <button type="button" data-tag="Holiday" aria-pressed="false">Holiday</button>
+          <button type="button" data-tag="Classical" aria-pressed="false">Classical</button>
+          <button type="button" data-tag="Folk" aria-pressed="false">Folk</button>
+        </div>
+      </div>
+      <div class="song-filter-block">
+        <p class="control-label" id="level-filter-label">Difficulty</p>
+        <div class="song-filters" role="group" aria-labelledby="level-filter-label">
+          <button type="button" data-song-level="all" aria-pressed="true">All</button>
+          <button type="button" data-song-level="Beginner" aria-pressed="false">Beginner</button>
+          <button type="button" data-song-level="Step-up" aria-pressed="false">Step-up</button>
+        </div>
+      </div>
+      <div id="song-list" class="song-list" role="listbox" aria-label="Songs" tabindex="0"></div>
+    </div>
+  </div>
 </body>
 </html>

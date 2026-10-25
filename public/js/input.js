@@ -33,8 +33,19 @@ export function bindInputs({ pianoRoot, audio, onUserNote, onUserRelease, isDemo
     emitUserRelease(note, source, stamp());
   }
 
-  function onPointerDown(event) {
-    const key = event.currentTarget;
+  function keyFromEvent(event) {
+    const target = event.target;
+    if (!target || typeof target.closest !== 'function') return null;
+    const key = target.closest('.piano-key');
+    if (!key || !pianoRoot.contains(key)) return null;
+    return key;
+  }
+
+  /* Listen on the piano, not each key. The song page rebuilds the keys
+     when the octave range changes, and those new buttons must still play. */
+  pianoRoot.addEventListener('pointerdown', (event) => {
+    const key = keyFromEvent(event);
+    if (!key) return;
     const note = Number(key.dataset.note);
     if (!Number.isFinite(note)) return;
     if (event.button !== 0 && event.pointerType === 'mouse') return;
@@ -44,46 +55,57 @@ export function bindInputs({ pianoRoot, audio, onUserNote, onUserRelease, isDemo
     const press = heldNotes.press('pointer', note);
     if (!press.accepted) return;
     noteOn(note, 'touch');
-  }
+  });
 
   function onPointerEnd(event) {
-    const note = Number(event.currentTarget.dataset.note);
+    const key = keyFromEvent(event);
+    if (!key) return;
+    const note = Number(key.dataset.note);
     if (!Number.isFinite(note)) return;
     if (!heldNotes.release('pointer', note).accepted) return;
     noteOff(note, 'touch');
   }
 
-  pianoRoot.querySelectorAll('.piano-key').forEach((key) => {
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((type) => {
+    pianoRoot.addEventListener(type, onPointerEnd);
+  });
+
+  pianoRoot.addEventListener('keydown', (event) => {
+    const key = keyFromEvent(event);
+    if (!key) return;
     const note = Number(key.dataset.note);
-    key.addEventListener('pointerdown', onPointerDown);
-    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((type) => {
-      key.addEventListener(type, onPointerEnd);
-    });
-    key.addEventListener('keydown', (event) => {
-      if ((event.key === ' ' || event.key === 'Enter') && !event.repeat) {
-        event.preventDefault();
-        const press = heldNotes.press('pointer', note);
-        if (!press.accepted) return;
-        noteOn(note, 'touch');
-      }
-    });
-    key.addEventListener('keyup', (event) => {
-      if (event.key === ' ' || event.key === 'Enter') {
-        event.preventDefault();
-        if (!heldNotes.release('pointer', note).accepted) return;
-        noteOff(note, 'touch');
-      }
-    });
-    key.addEventListener('click', (event) => {
-      if (event.detail === 0) {
-        const press = heldNotes.press('pointer', note);
-        if (!press.accepted) return;
-        noteOn(note, 'touch');
-        window.setTimeout(() => {
-          if (heldNotes.release('pointer', note).accepted) noteOff(note, 'touch');
-        }, 300);
-      }
-    });
+    if (!Number.isFinite(note)) return;
+    if ((event.key === ' ' || event.key === 'Enter') && !event.repeat) {
+      event.preventDefault();
+      const press = heldNotes.press('pointer', note);
+      if (!press.accepted) return;
+      noteOn(note, 'touch');
+    }
+  });
+
+  pianoRoot.addEventListener('keyup', (event) => {
+    const key = keyFromEvent(event);
+    if (!key) return;
+    if (event.key === ' ' || event.key === 'Enter') {
+      event.preventDefault();
+      const note = Number(key.dataset.note);
+      if (!heldNotes.release('pointer', note).accepted) return;
+      noteOff(note, 'touch');
+    }
+  });
+
+  pianoRoot.addEventListener('click', (event) => {
+    if (event.detail !== 0) return;
+    const key = keyFromEvent(event);
+    if (!key) return;
+    const note = Number(key.dataset.note);
+    if (!Number.isFinite(note)) return;
+    const press = heldNotes.press('pointer', note);
+    if (!press.accepted) return;
+    noteOn(note, 'touch');
+    window.setTimeout(() => {
+      if (heldNotes.release('pointer', note).accepted) noteOff(note, 'touch');
+    }, 300);
   });
 
   function onWindowKeyDown(event) {

@@ -13,8 +13,12 @@ import {
   defaultsFor,
   gradeTake,
   judgePitch,
+  autoOctaves,
+  pitchesForKeyboard,
   loopFromBars,
+  missesByBar,
   notesForDifficulty,
+  rangeCovering,
   rampedBpm,
   rememberBest,
   rewindLoop,
@@ -60,7 +64,13 @@ const scores = files.map((file) => {
   return score;
 });
 
-assert(scores.map((score) => score.title).join('|') === 'Mary Had a Little Lamb|Ode to Joy|Twinkle Twinkle Little Star', 'the three prototype tunes are present');
+assert(scores.length === 20, 'twenty public-domain songs are in the catalog');
+const titles = new Set(scores.map((score) => score.title));
+assert(titles.has('Mary Had a Little Lamb') && titles.has('Ode to Joy') && titles.has('Twinkle Twinkle Little Star'), 'the three prototype tunes are present');
+for (const score of scores) {
+  assert(Array.isArray(score.tags) && score.tags.length > 0, `${score.id} has a style tag`);
+  assert(score.provenance.publicDomain === true, `${score.id} is marked public domain`);
+}
 
 const session = changeView({ view: 'keys', cursor: 3.5 }, 'legend');
 assert(session.view === 'legend' && session.cursor === 3.5, 'changing view keeps the beat');
@@ -130,6 +140,22 @@ assert(rampedBpm(100, 0, { ramp: true, rampBeats: 8 }) === 75, 'ease-in starts a
 assert(rampedBpm(100, 8, { ramp: true, rampBeats: 8 }) === 100, 'ease-in reaches the chosen tempo');
 assert(rollLandingY(4, 4, 200, 80) === 200, 'a note lands on the keyboard line at its beat');
 assert(sheetCursorX(4, 4, 118, 54) === 118, 'the staff cursor meets the note at the same beat');
+assert(autoOctaves(1440) === 4 && autoOctaves(1000) === 3 && autoOctaves(390) === 0, 'wide screens default to more octaves');
+const phoneNotes = [{ pitch: 48, hand: 'lh', part: 'bass' }, { pitch: 60, hand: 'rh', part: 'melody' }, { pitch: 64, hand: 'rh', part: 'melody' }];
+const phoneNoob = pitchesForKeyboard(phoneNotes, { difficulty: 'noob', narrow: true, fit: true });
+assert(!phoneNoob.includes(48) && phoneNoob.includes(60), 'narrow Noob fit hides the low left-hand octave');
+const phonePro = pitchesForKeyboard(phoneNotes, { difficulty: 'pro', narrow: true, fit: true });
+assert(phonePro.includes(48) && phonePro.includes(60), 'narrow Pro fit keeps the left hand so the keyboard can scroll to it');
+const deskNoob = pitchesForKeyboard(phoneNotes, { difficulty: 'noob', narrow: false, fit: true });
+assert(deskNoob.includes(48), 'a wide Noob keyboard still includes the whole song');
+const fitted = rangeCovering([64, 67, 60], 0);
+assert(fitted.from <= 60 && fitted.to >= 67, 'fit covers the song');
+const wide = rangeCovering([60, 64], 4);
+assert(wide.to - wide.from >= 48 && wide.from <= 60 && wide.to >= 64, 'four octaves still cover the song');
+const extended = rangeCovering([48, 84], 2);
+assert(extended.from <= 48 && extended.to >= 84, 'the song range extends the window');
+const missed = missesByBar([{ beat: 0, status: 'missed' }, { beat: 4, status: 'missed' }, { beat: 5, status: 'hit' }], 4);
+assert(missed.length === 2 && missed[0].bar === 1 && missed[1].count === 1, 'misses group by bar');
 assert(RESULT_COPY.S && RESULT_COPY.A && RESULT_COPY.B && RESULT_COPY.C, 'results have S A B C copy');
 
 const page = read('public/songs/index.html');

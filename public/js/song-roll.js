@@ -4,23 +4,29 @@ const PIXELS_PER_BEAT = 86;
 
 export function createRollView(canvas) {
   let pixelsPerBeat = PIXELS_PER_BEAT;
+  let ctx = null;
+  let bitmapW = 0;
+  let bitmapH = 0;
 
   function sync(cursor, notes, centers) {
     const width = canvas.clientWidth || 640;
-    const height = canvas.clientHeight || 220;
+    const height = canvas.clientHeight || 160;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    if (canvas.width !== Math.floor(width * dpr) || canvas.height !== Math.floor(height * dpr)) {
-      canvas.width = Math.floor(width * dpr);
-      canvas.height = Math.floor(height * dpr);
+    const nextW = Math.floor(width * dpr);
+    const nextH = Math.floor(height * dpr);
+    if (!ctx) ctx = canvas.getContext('2d', { alpha: false });
+    if (bitmapW !== nextW || bitmapH !== nextH) {
+      bitmapW = nextW;
+      bitmapH = nextH;
+      canvas.width = nextW;
+      canvas.height = nextH;
     }
-    const ctx = canvas.getContext('2d');
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, width, height);
     ctx.fillStyle = '#1b1814';
     ctx.fillRect(0, 0, width, height);
     const hitY = height - 8;
-    ctx.fillStyle = 'rgba(255, 220, 99, 0.18)';
-    ctx.fillRect(0, hitY - 16, width, 16);
+    ctx.fillStyle = 'rgba(255, 220, 99, 0.22)';
+    ctx.fillRect(0, hitY - 14, width, 14);
     ctx.strokeStyle = '#de4936';
     ctx.lineWidth = 3;
     ctx.beginPath();
@@ -29,6 +35,10 @@ export function createRollView(canvas) {
     ctx.stroke();
     if (!centers?.map?.size) return;
     const white = centers.whiteWidth || 28;
+    ctx.lineWidth = 1.5;
+    ctx.font = '700 12px "DM Sans", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.shadowBlur = 0;
     for (const note of notes) {
       const center = centers.map.get(note.pitch);
       if (!Number.isFinite(center)) continue;
@@ -40,21 +50,14 @@ export function createRollView(canvas) {
       const w = narrow ? white * 0.55 : white * 0.72;
       const x = center - w / 2;
       ctx.globalAlpha = note.status === 'hit' && cursor > note.beat + 0.2 ? 0.4 : 1;
-      ctx.fillStyle = note.hand === 'lh' ? '#f1aec0' : '#ffdc63';
-      if (note.status === 'missed') ctx.fillStyle = '#6f675c';
-      ctx.shadowColor = ctx.fillStyle;
-      ctx.shadowBlur = note.status === 'missed' ? 0 : 14;
+      ctx.fillStyle = note.status === 'missed' ? '#6f675c' : note.hand === 'lh' ? '#f1aec0' : '#ffdc63';
       roundRect(ctx, x, top, w, noteHeight, 6);
       ctx.fill();
-      ctx.shadowBlur = 0;
       ctx.globalAlpha = 1;
       ctx.strokeStyle = '#29251f';
-      ctx.lineWidth = 1.5;
       ctx.stroke();
-      if (noteHeight > 18) {
+      if (noteHeight > 18 && bottom > hitY - pixelsPerBeat * 1.5 && top < hitY) {
         ctx.fillStyle = '#29251f';
-        ctx.font = '700 12px "DM Sans", sans-serif';
-        ctx.textAlign = 'center';
         ctx.fillText(pitchName(note.pitch), center, Math.min(bottom - 6, top + 16));
       }
     }

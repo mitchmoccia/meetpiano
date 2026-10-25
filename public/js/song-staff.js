@@ -57,6 +57,8 @@ export function createStaffView(root) {
   let playhead = null;
   let heads = [];
   let lastKey = '';
+  let lastTransform = '';
+  let lastPlayhead = '';
   let pixelsPerBeat = PIXELS_PER_BEAT;
 
   function staffLines(parent, offset, x1, x2, span) {
@@ -70,17 +72,23 @@ export function createStaffView(root) {
 
   function fitWindow() {
     const svg = root.querySelector('svg');
-    if (!svg || root.hidden) return;
+    if (!svg || root.hidden) return true;
     const cssW = root.clientWidth;
     const cssH = root.clientHeight;
-    if (cssW < 40 || cssH < 40) return;
+    if (cssW < 40 || cssH < 8) return false;
     const userH = Number(svg.dataset.userH);
-    const scale = Math.min(1.2, Math.max(0.78, cssH / userH));
-    const next = Math.round(Math.min(2200, Math.max(640, cssW / scale)));
-    if (svg.dataset.windowW === String(next)) return;
+    if (!userH) return false;
+    /* Scale to the mount. A 0.78 floor made a short stage letterbox the
+       engraving on the left, so the 30% playhead landed near 16%. */
+    const scale = Math.min(1.2, cssH / userH);
+    const next = Math.round(Math.min(16000, Math.max(320, cssW / scale)));
+    if (svg.dataset.windowW === String(next)) return true;
     svg.dataset.windowW = String(next);
     svg.setAttribute('viewBox', `0 0 ${next} ${userH}`);
     root.querySelectorAll('[data-span="paper"]').forEach((line) => line.setAttribute('x2', String(next - 8)));
+    lastPlayhead = '';
+    lastTransform = '';
+    return true;
   }
 
   function systemBrace(parent) {
@@ -174,7 +182,7 @@ export function createStaffView(root) {
     }
     svg.append(scoreGroup);
     const mask = svgEl('g');
-    mask.append(svgEl('rect', { x: 0, y: 0, width: PRELUDE, height, fill: '#fffdf8' }));
+    mask.append(svgEl('rect', { x: 0, y: 0, width: PRELUDE, height: Math.max(40, height - 36), fill: '#fffdf8' }));
     staffLines(mask, STAFF_PAD, staffStart, PRELUDE);
     clef(mask, 'treble', STAFF_PAD);
     timeSig(mask, beatsPerBar, STAFF_PAD);
@@ -197,13 +205,27 @@ export function createStaffView(root) {
     svg.append(playhead);
     root.append(svg);
     lastKey = '';
+    lastTransform = '';
+    lastPlayhead = '';
     fitWindow();
   }
 
   function sync(cursor, notes) {
     if (!scoreGroup) return;
-    fitWindow();
-    scoreGroup.setAttribute('transform', `translate(${-cursor * pixelsPerBeat} 0)`);
+    const svg = root.querySelector('svg');
+    const windowW = Number(svg?.dataset.windowW) || 1100;
+    const playheadX = Math.max(PRELUDE + 48, Math.round(windowW * 0.3));
+    const x = String(playheadX);
+    if (playhead && x !== lastPlayhead) {
+      lastPlayhead = x;
+      playhead.setAttribute('x1', x);
+      playhead.setAttribute('x2', x);
+    }
+    const transform = `translate(${playheadX - PLAYHEAD - cursor * pixelsPerBeat} 0)`;
+    if (transform !== lastTransform) {
+      lastTransform = transform;
+      scoreGroup.setAttribute('transform', transform);
+    }
     const key = notes.map((note) => {
       const on = cursor >= note.beat && cursor < note.beat + note.dur;
       return `${note.id}:${note.status}:${on ? 1 : 0}`;
@@ -222,6 +244,7 @@ export function createStaffView(root) {
   return {
     render,
     sync,
+    refit: fitWindow,
     playhead: PLAYHEAD,
     pixelsPerBeat: PIXELS_PER_BEAT
   };

@@ -1,0 +1,438 @@
+{
+  "id": "minuet-in-g",
+  "title": "Minuet in G",
+  "key": "C",
+  "tempo": 88,
+  "timeSignature": [
+    3,
+    4
+  ],
+  "level": "Step-up",
+  "tags": [
+    "Classical"
+  ],
+  "provenance": {
+    "source": "Christian Petzold, Minuet in G major, from the Notebook for Anna Magdalena Bach (1725), long attributed to Johann Sebastian Bach. Public domain. This beginner setting is transposed to C major, simplified, and kept on the white keys.",
+    "publicationYear": 1725,
+    "publicDomain": true,
+    "arrangement": "Original simple arrangement written for MeetPiano. Not copied from a copyrighted method book."
+  },
+  "phrases": [
+    {
+      "id": "minuet",
+      "label": "Minuet",
+      "start": 0,
+      "end": 15
+    },
+    {
+      "id": "close",
+      "label": "Closing phrase",
+      "start": 15,
+      "end": 30
+    }
+  ],
+  "lyrics": [
+    {
+      "beat": 0,
+      "text": "Minuet"
+    },
+    {
+      "beat": 15,
+      "text": "Gracefully home"
+    }
+  ],
+  "notes": [
+    {
+      "pitch": 67,
+      "beat": 0,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 72,
+      "beat": 1,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 74,
+      "beat": 2,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 76,
+      "beat": 3,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 77,
+      "beat": 4,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 79,
+      "beat": 5,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 76,
+      "beat": 6,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 72,
+      "beat": 7,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 74,
+      "beat": 8,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 9,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 69,
+      "beat": 10,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 71,
+      "beat": 11,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 72,
+      "beat": 12,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 74,
+      "beat": 13,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 76,
+      "beat": 14,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 72,
+      "beat": 15,
+      "dur": 3,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 18,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 72,
+      "beat": 19,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 74,
+      "beat": 20,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 76,
+      "beat": 21,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 72,
+      "beat": 22,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 23,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 65,
+      "beat": 24,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 64,
+      "beat": 25,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 62,
+      "beat": 26,
+      "dur": 1,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 60,
+      "beat": 27,
+      "dur": 3,
+      "hand": "rh",
+      "part": "melody"
+    },
+    {
+      "pitch": 67,
+      "beat": 0,
+      "dur": 3,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 67,
+      "beat": 3,
+      "dur": 3,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 67,
+      "beat": 6,
+      "dur": 3,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 67,
+      "beat": 9,
+      "dur": 3,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 67,
+      "beat": 12,
+      "dur": 3,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 67,
+      "beat": 15,
+      "dur": 3,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 67,
+      "beat": 18,
+      "dur": 3,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 67,
+      "beat": 21,
+      "dur": 3,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 67,
+      "beat": 24,
+      "dur": 3,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 67,
+      "beat": 27,
+      "dur": 3,
+      "hand": "lh",
+      "part": "bass"
+    },
+    {
+      "pitch": 71,
+      "beat": 0,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 74,
+      "beat": 2,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 71,
+      "beat": 3,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 74,
+      "beat": 5,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 71,
+      "beat": 6,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 74,
+      "beat": 8,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 71,
+      "beat": 9,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 74,
+      "beat": 11,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 71,
+      "beat": 12,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 74,
+      "beat": 14,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 71,
+      "beat": 15,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 74,
+      "beat": 17,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 71,
+      "beat": 18,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 74,
+      "beat": 20,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 71,
+      "beat": 21,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 74,
+      "beat": 23,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 71,
+      "beat": 24,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 74,
+      "beat": 26,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 71,
+      "beat": 27,
+      "dur": 2,
+      "hand": "lh",
+      "part": "color"
+    },
+    {
+      "pitch": 74,
+      "beat": 29,
+      "dur": 1,
+      "hand": "lh",
+      "part": "color"
+    }
+  ]
+}
