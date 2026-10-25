@@ -316,6 +316,20 @@ window.addEventListener('resize', () => {
   paintAt(displayCursor());
 });
 
+/* Legend and the practice panel change the staff height after the first
+   paint. Refit once the mount has its real size, not on every frame. */
+{
+  let seenSheetSize = '';
+  const sheetObserver = new ResizeObserver(() => {
+    const next = `${sheetMount.clientWidth}x${sheetMount.clientHeight}`;
+    if (next === seenSheetSize) return;
+    seenSheetSize = next;
+    layoutDirty = true;
+    paintAt(displayCursor());
+  });
+  sheetObserver.observe(sheetMount);
+}
+
 applyRange();
 paintClick();
 loadSongs();
@@ -434,7 +448,10 @@ function selectView(view) {
   layoutDirty = true;
   savePrefs();
   paintAt(displayCursor());
-  requestAnimationFrame(() => paintAt(displayCursor()));
+  requestAnimationFrame(() => {
+    layoutDirty = true;
+    paintAt(displayCursor());
+  });
 }
 
 function applyDifficultyChrome() {
@@ -711,8 +728,7 @@ function paintAt(cursor) {
   if (layoutDirty) {
     if (piano.offsetWidth) roll.style.width = `${piano.offsetWidth}px`;
     keyCenters = measureKeyCenters(piano);
-    staffView.refit();
-    layoutDirty = false;
+    if (staffView.refit()) layoutDirty = false;
   }
   staffView.sync(cursor, take.notes);
   rollView.sync(cursor, take.notes, keyCenters);

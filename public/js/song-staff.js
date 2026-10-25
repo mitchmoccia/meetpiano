@@ -72,17 +72,23 @@ export function createStaffView(root) {
 
   function fitWindow() {
     const svg = root.querySelector('svg');
-    if (!svg || root.hidden) return;
+    if (!svg || root.hidden) return true;
     const cssW = root.clientWidth;
     const cssH = root.clientHeight;
-    if (cssW < 40 || cssH < 40) return;
+    if (cssW < 40 || cssH < 8) return false;
     const userH = Number(svg.dataset.userH);
-    const scale = Math.min(1.2, Math.max(0.78, cssH / userH));
-    const next = Math.round(Math.min(2200, Math.max(640, cssW / scale)));
-    if (svg.dataset.windowW === String(next)) return;
+    if (!userH) return false;
+    /* Scale to the mount. A 0.78 floor made a short stage letterbox the
+       engraving on the left, so the 30% playhead landed near 16%. */
+    const scale = Math.min(1.2, cssH / userH);
+    const next = Math.round(Math.min(16000, Math.max(320, cssW / scale)));
+    if (svg.dataset.windowW === String(next)) return true;
     svg.dataset.windowW = String(next);
     svg.setAttribute('viewBox', `0 0 ${next} ${userH}`);
     root.querySelectorAll('[data-span="paper"]').forEach((line) => line.setAttribute('x2', String(next - 8)));
+    lastPlayhead = '';
+    lastTransform = '';
+    return true;
   }
 
   function systemBrace(parent) {
