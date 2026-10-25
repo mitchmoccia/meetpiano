@@ -56,7 +56,7 @@
       </div>
       <div class="song-meta-row">
         <details class="provenance" id="provenance">
-          <summary>Where this tune comes from</summary>
+          <summary><span class="provenance-long">Where this tune comes from</span><span class="provenance-short">Source</span></summary>
           <p id="provenance-body"></p>
         </details>
       </div>
@@ -77,9 +77,10 @@
               <svg class="glyph" aria-hidden="true"><use href="#icon-staff"/></svg>
               <span>Sheet</span>
             </button>
-            <button type="button" role="tab" id="tab-legend" data-view="legend" aria-selected="false" aria-controls="stage" tabindex="-1">
+            <button type="button" role="tab" id="tab-legend" data-view="legend" aria-selected="false" aria-controls="stage" tabindex="-1" aria-label="Legend mode">
               <svg class="glyph" aria-hidden="true"><use href="#icon-legend"/></svg>
-              <span>Legend mode</span>
+              <span class="view-name-long">Legend mode</span>
+              <span class="view-name-short">Legend</span>
             </button>
           </div>
         </div>
@@ -135,11 +136,13 @@
           </button>
           <button type="button" class="transport-secondary" id="hear-button" aria-pressed="false" aria-label="Hear the tune" title="Hear the tune">
             <svg class="glyph" aria-hidden="true"><use href="#icon-hear"/></svg>
-            <span class="transport-label">Hear the tune</span>
+            <span class="transport-label transport-label-long">Hear the tune</span>
+            <span class="transport-label transport-label-short">Hear</span>
           </button>
           <button type="button" class="transport-secondary" id="restart-button" aria-label="Start again" title="Start again">
             <svg class="glyph" aria-hidden="true"><use href="#icon-restart"/></svg>
-            <span class="transport-label">Start again</span>
+            <span class="transport-label transport-label-long">Start again</span>
+            <span class="transport-label transport-label-short">Again</span>
           </button>
           <p class="song-feedback" id="feedback" role="status" aria-live="polite">Pick a song, then play.</p>
         </div>
