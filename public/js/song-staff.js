@@ -59,11 +59,28 @@ export function createStaffView(root) {
   let lastKey = '';
   let pixelsPerBeat = PIXELS_PER_BEAT;
 
-  function staffLines(parent, offset, x1, x2) {
+  function staffLines(parent, offset, x1, x2, span) {
     for (let i = 0; i < 5; i += 1) {
       const y = offset + 86 - i * SPACE;
-      parent.append(svgEl('line', { x1, y1: y, x2, y2: y, stroke: INK, 'stroke-width': 1.6 }));
+      const line = svgEl('line', { x1, y1: y, x2, y2: y, stroke: INK, 'stroke-width': 1.6 });
+      if (span) line.setAttribute('data-span', span);
+      parent.append(line);
     }
+  }
+
+  function fitWindow() {
+    const svg = root.querySelector('svg');
+    if (!svg || root.hidden) return;
+    const cssW = root.clientWidth;
+    const cssH = root.clientHeight;
+    if (cssW < 40 || cssH < 40) return;
+    const userH = Number(svg.dataset.userH);
+    const scale = Math.min(1.2, Math.max(0.78, cssH / userH));
+    const next = Math.round(Math.min(2200, Math.max(640, cssW / scale)));
+    if (svg.dataset.windowW === String(next)) return;
+    svg.dataset.windowW = String(next);
+    svg.setAttribute('viewBox', `0 0 ${next} ${userH}`);
+    root.querySelectorAll('[data-span="paper"]').forEach((line) => line.setAttribute('x2', String(next - 8)));
   }
 
   function systemBrace(parent) {
@@ -99,9 +116,11 @@ export function createStaffView(root) {
     const { notes, lyrics = [], beatsPerBar, length, grand, showLetters, label } = model;
     pixelsPerBeat = PIXELS_PER_BEAT;
     const height = grand ? 268 : 188;
-    const width = 900;
+    const width = 1100;
     root.replaceChildren();
     const svg = svgEl('svg', { viewBox: `0 0 ${width} ${height}`, role: 'img' });
+    svg.dataset.userH = String(height);
+    svg.setAttribute('preserveAspectRatio', 'xMinYMid meet');
     const clefLabel = grand ? 'Treble and bass clefs' : 'Treble clef';
     svg.setAttribute('aria-label', `${label || 'Sheet music'}. ${clefLabel}, ${beatsPerBar}/4.`);
     const title = svgEl('title');
@@ -111,8 +130,8 @@ export function createStaffView(root) {
     const staffStart = grand ? SYSTEM_X : 18;
     const yTop = STAFF_PAD + 30;
     const yBot = grand ? STAFF_PAD + BASS_OFFSET + 86 : STAFF_PAD + 86;
-    staffLines(paper, STAFF_PAD, staffStart, width - 8);
-    if (grand) staffLines(paper, STAFF_PAD + BASS_OFFSET, staffStart, width - 8);
+    staffLines(paper, STAFF_PAD, staffStart, width - 8, 'paper');
+    if (grand) staffLines(paper, STAFF_PAD + BASS_OFFSET, staffStart, width - 8, 'paper');
     svg.append(paper);
 
     scoreGroup = svgEl('g');
@@ -178,10 +197,12 @@ export function createStaffView(root) {
     svg.append(playhead);
     root.append(svg);
     lastKey = '';
+    fitWindow();
   }
 
   function sync(cursor, notes) {
     if (!scoreGroup) return;
+    fitWindow();
     scoreGroup.setAttribute('transform', `translate(${-cursor * pixelsPerBeat} 0)`);
     const key = notes.map((note) => {
       const on = cursor >= note.beat && cursor < note.beat + note.dur;

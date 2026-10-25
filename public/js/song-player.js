@@ -55,6 +55,8 @@ const ui = {
   phrases: document.querySelector('#phrase-row'),
   barFrom: document.querySelector('#bar-from'),
   barTo: document.querySelector('#bar-to'),
+  title: document.querySelector('#song-title'),
+  waitBanner: document.querySelector('#wait-banner'),
   meta: document.querySelector('#song-meta'),
   provenance: document.querySelector('#provenance-body'),
   difficultyCopy: document.querySelector('#difficulty-copy'),
@@ -120,8 +122,10 @@ const inputs = bindInputs({
     paintAt(displayCursor());
   },
   onMidiStatus(view) {
-    if (ui.midiStatus && view?.status) ui.midiStatus.textContent = `${view.status} Physical MIDI hardware is not claimed as verified from this page.`;
-    if (ui.midiLabel && view?.buttonLabel) ui.midiLabel.textContent = view.buttonLabel;
+    if (ui.midiStatus && view?.status) ui.midiStatus.textContent = view.status;
+    if (ui.midiLabel && view?.buttonLabel) {
+      ui.midiLabel.textContent = view.kind === 'idle' ? 'Connect a MIDI keyboard' : view.buttonLabel;
+    }
     if (!ui.midiDevices || !view) return;
     ui.midiDevices.replaceChildren();
     ui.midiDevices.hidden = !view.devices?.length;
@@ -143,12 +147,8 @@ ui.sound.addEventListener('click', () => {
   ui.sound.querySelector('span').textContent = muted ? 'Sound off' : 'Sound on';
 });
 
-document.querySelectorAll('[data-song]').forEach((button) => {
-  button.addEventListener('click', () => selectSong(button.dataset.song));
-});
-document.querySelectorAll('[data-difficulty]').forEach((button) => {
-  button.addEventListener('click', () => selectDifficulty(button.dataset.difficulty));
-});
+bindChoice('[data-song]', (button) => selectSong(button.dataset.song));
+bindChoice('[data-difficulty]', (button) => selectDifficulty(button.dataset.difficulty));
 document.querySelectorAll('[data-view]').forEach((button, index, list) => {
   button.addEventListener('click', () => selectView(button.dataset.view));
   button.addEventListener('keydown', (event) => {
@@ -245,9 +245,12 @@ function selectSong(id, { keepPractice = false } = {}) {
     ui.wait.setAttribute('aria-pressed', waitOn ? 'true' : 'false');
   }
   document.querySelectorAll('[data-song]').forEach((button) => {
-    button.setAttribute('aria-pressed', button.dataset.song === id ? 'true' : 'false');
+    const on = button.dataset.song === id;
+    button.setAttribute('aria-checked', on ? 'true' : 'false');
+    button.setAttribute('aria-pressed', on ? 'true' : 'false');
   });
-  ui.meta.textContent = `${score.key} major · ${score.timeSignature[0]}/${score.timeSignature[1]} · ${score.title}`;
+  if (ui.title) ui.title.textContent = score.title;
+  ui.meta.textContent = `${score.key} major · ${score.timeSignature[0]}/${score.timeSignature[1]}`;
   const years = score.provenance.lyricPublicationYear
     ? `${score.provenance.publicationYear} (words ${score.provenance.lyricPublicationYear})`
     : String(score.provenance.publicationYear);
@@ -314,7 +317,8 @@ function rebuildTake(cursor) {
 
 function applyViewChrome() {
   stage.dataset.view = session.view;
-  stage.className = `song-stage view-${session.view}`;
+  stage.classList.remove('view-keys', 'view-drop', 'view-sheet', 'view-legend');
+  stage.classList.add('song-stage', `view-${session.view}`);
   const showSheet = session.view === 'sheet' || session.view === 'legend';
   const showRoll = session.view === 'drop' || session.view === 'legend';
   sheetMount.hidden = !showSheet;
@@ -361,7 +365,7 @@ function startPlay() {
     mode = 'play';
     take.running = true;
     armWait(take, true);
-    ui.play.textContent = 'Pause';
+    setPlayState(true);
     lastTs = performance.now();
     announce(waitMessage());
     paintAt(take.cursor);
@@ -381,8 +385,8 @@ function startAudition() {
   inputs.silence();
   if (waitOn) {
     mode = 'audition';
-    ui.play.textContent = 'Pause';
-    ui.hear.textContent = 'Stop hearing';
+    setPlayState(true);
+    setHearState(true);
     lastTs = performance.now();
     audio.resume();
     raf = requestAnimationFrame(frame);
@@ -396,7 +400,7 @@ function beginCount(nextMode) {
   mode = 'countin';
   countBeats = beatsPerBarOf(score);
   countStarted = performance.now();
-  ui.play.textContent = 'Pause';
+  setPlayState(true);
   audio.resume().then(() => {
     const t0 = audio.currentTime();
     const beatSec = 60 / currentBpm();
@@ -413,7 +417,7 @@ function startRunning() {
   mode = 'play';
   take.running = true;
   armWait(take, waitOn);
-  ui.play.textContent = 'Pause';
+  setPlayState(true);
   announce(waitOn ? waitMessage() : 'Here we go.');
   lastTs = performance.now();
 }
@@ -426,8 +430,8 @@ function pauseTransport() {
   raf = 0;
   inputs.silence();
   clearPressed(piano);
-  ui.play.textContent = 'Play';
-  ui.hear.textContent = 'Hear the tune';
+  setPlayState(false);
+  setHearState(false);
   paintAt(take.cursor);
 }
 
@@ -454,7 +458,7 @@ function frame(ts) {
     if (elapsed >= countBeats) {
       if (afterCount === 'audition') {
         mode = 'audition';
-        ui.hear.textContent = 'Stop hearing';
+        setHearState(true);
         if (!audition) {
           audition = {
             from: loop ? loop.start : 0,
@@ -551,6 +555,15 @@ function renderReadout(cursor) {
   ui.position.innerHTML = `<span class="game-live-dot"></span> ${positionLabel(cursor, beatsPerBarOf(score))}`;
   ui.streak.textContent = `Streak ${take.combo}`;
   ui.lyric.textContent = lyricAt(score.lyrics, cursor);
+  const waiting = mode === 'play' && Boolean(take.waiting);
+  stage.classList.toggle('is-waiting', waiting);
+  if (ui.waitBanner) {
+    ui.waitBanner.hidden = !waiting;
+    if (waiting) {
+      const names = nextChord(take.notes, cursor).map((note) => pitchName(note.pitch)).join(' and ');
+      ui.waitBanner.textContent = names ? `Waiting for your key · ${names}` : 'Waiting for your key';
+    }
+  }
   const notes = (take.waiting ? nextChord(take.notes, cursor) : nextChord(take.notes, cursor)).slice(0, 4);
   ui.now.replaceChildren(...(notes.length ? notes.map(describeNote) : [textNode('Listen, then play the lit keys.')]));
   paintTempo();
@@ -617,6 +630,36 @@ function showResults() {
 function hideResults() {
   ui.results.hidden = true;
   stage.hidden = false;
+}
+
+function bindChoice(selector, onPick) {
+  const list = [...document.querySelectorAll(selector)];
+  list.forEach((button, index) => {
+    button.addEventListener('click', () => onPick(button));
+    button.addEventListener('keydown', (event) => {
+      if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+      event.preventDefault();
+      const next = event.key === 'ArrowRight' ? (index + 1) % list.length : (index - 1 + list.length) % list.length;
+      onPick(list[next]);
+      list[next].focus();
+    });
+  });
+}
+
+function setPlayState(running) {
+  ui.play.setAttribute('aria-pressed', running ? 'true' : 'false');
+  ui.play.setAttribute('aria-label', running ? 'Pause' : 'Play');
+  const label = ui.play.querySelector('.transport-label');
+  if (label) label.textContent = running ? 'Pause' : 'Play';
+}
+
+function setHearState(hearing) {
+  const name = hearing ? 'Stop hearing' : 'Hear the tune';
+  ui.hear.setAttribute('aria-pressed', hearing ? 'true' : 'false');
+  ui.hear.setAttribute('aria-label', name);
+  ui.hear.title = name;
+  const label = ui.hear.querySelector('.transport-label');
+  if (label) label.textContent = name;
 }
 
 function announce(message) {
