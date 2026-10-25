@@ -13,7 +13,8 @@ const checks = [
   'copyright-check.mjs',
   'aeo-check.mjs',
   'pilot-cta-check.mjs',
-  'song-score-check.mjs'
+  'song-score-check.mjs',
+  'csp-static-check.mjs'
 ];
 
 for (const file of jsFiles) execFileSync(process.execPath, ['--check', file], { stdio: 'inherit' });
