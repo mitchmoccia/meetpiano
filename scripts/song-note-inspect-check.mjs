@@ -57,10 +57,13 @@ assert(chordKeys.keys.some((key) => key.pitch === 67 && key.chord && !key.active
 const files = readdirSync(join(root, 'public/songs/catalog')).filter((name) => name.endsWith('.json')).sort();
 assert(files.length === 20, 'all twenty songs are checked');
 assert(!page.includes('id="song-title">Mary Had a Little Lamb'), 'the page does not paint Mary before the requested song');
+assert(page.includes('src="/js/song-title.js"'), 'a small script sets the title as the heading is parsed');
 assert(player.includes('function applyInitialTitle()') && player.indexOf('applyInitialTitle();') < player.indexOf('async function loadSongs'), 'the requested title is set before the catalog fetch');
+const titleJs = read('public/js/song-title.js');
 for (const item of SONG_CATALOG) {
   const score = JSON.parse(read(`public/songs/catalog/${item.file}`));
   assert(songTitle(item.id) === score.title, `${item.id} title is ready before the file loads`);
+  assert(titleJs.includes(score.title), `${item.id} title is in the early heading script`);
 }
 assert(songTitle('hot-cross-buns') === 'Hot Cross Buns' && songTitle('nope') === '', 'a deep link resolves only a known song');
 let targets = 0;
