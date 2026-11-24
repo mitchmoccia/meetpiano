@@ -18,6 +18,7 @@ export async function SiteHeader() {
           <ul className="flex flex-wrap items-center gap-1 text-sm font-semibold">
             {session ? (
               <>
+                <li><a className={linkClass} href="/songs/">Songs</a></li>
                 <li><Link className={linkClass} href="/family">Family</Link></li>
                 <li><Link className={linkClass} href="/play">Play</Link></li>
                 <li><Link className={linkClass} href="/family/account">Account</Link></li>
@@ -26,6 +27,7 @@ export async function SiteHeader() {
               </>
             ) : (
               <>
+                <li><a className={linkClass} href="/songs/">Songs</a></li>
                 <li><a className={linkClass} href="/learn/">Play as guest</a></li>
                 <li><Link className={linkClass} href="/signin">Sign in</Link></li>
                 <li><Link className={linkClass} href="/signup">Create account</Link></li>

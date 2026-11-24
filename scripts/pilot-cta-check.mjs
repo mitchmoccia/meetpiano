@@ -221,7 +221,13 @@ assert(home.includes('href="/learn/?view=grown-up"'), 'home links /learn/?view=g
 const membership = home.slice(home.indexOf('id="membership"'), home.indexOf('id="questions"'));
 assert(membership.includes('<h3>Adventure</h3>'), 'Adventure membership card stays');
 assert(membership.includes('<h3>Family</h3>'), 'Family membership card stays');
-assert((membership.match(/In the making/g) || []).length >= 2, 'Adventure and Family stay marked In the making');
+assert((membership.match(/In the making/g) || []).length === 0, 'memberships are not marked In the making');
+for (const phrase of honesty.membershipsMustSay) {
+  assert(membership.includes(phrase), `memberships say ${phrase}`);
+}
+for (const phrase of honesty.membershipsMustNotSay) {
+  assert(!membership.includes(phrase), `memberships must not say ${phrase}`);
+}
 assert(!/featured[\s\S]*<h3>Adventure<\/h3>[\s\S]*A continuing, personal learning path/.test(membership), 'Adventure card does not treat L01–L24 as the unreleased membership path');
 for (const phrase of honesty.membershipNoteMustNotSay) {
   assert(!home.includes(phrase), `memberships must not say ${phrase}`);
@@ -229,8 +235,9 @@ for (const phrase of honesty.membershipNoteMustNotSay) {
 assert(home.includes('class="membership-note"') && /L01|L24|First Piano Journey/.test(home.match(/class="membership-note">([\s\S]*?)<\/p>/)[1]), 'membership note says Journey L01–L24 is already playable');
 
 const parentBlock = home.slice(home.indexOf('id="grown-ups"'), home.indexOf('id="membership"'));
-assert(parentBlock.includes(honesty.parentMustCiteGrownUpView), 'parent section cites /learn/?view=grown-up if cloud progress views stay planned');
-assert(/progress views planned|family profiles planned/i.test(parentBlock), 'parent section still marks cloud family/progress as planned');
+assert(parentBlock.includes(honesty.parentMustCiteGrownUpView), 'parent section cites /learn/?view=grown-up');
+assert(/family accounts are available/i.test(parentBlock), 'parent section says family accounts are available');
+assert(!/in the making|still planned|profiles planned/i.test(parentBlock), 'parent section does not defer family accounts');
 
 assert(home.includes('Play the mini adventure'), 'mini-adventure remains a secondary path');
 assert(home.indexOf('Start First Piano Journey') < home.indexOf('Play the mini adventure'), 'Journey remains the primary hero CTA');
@@ -285,10 +292,17 @@ for (const phrase of n03.bannedPhrases) {
 assert(!grownupLower.includes('lime') && !grownupSurface.includes('vermilion'), 'learn copy does not introduce banned palette names');
 assert(!/#00f|#4f46|#6366|linear-gradient/i.test(read('public/learn/learn.css')), 'learn CSS has no blue/purple gradient restyle');
 assert(home.includes(n03.homeMustKeepParentPointer), 'home keeps the N01 grown-up pointer');
-for (const phrase of n03.homeMustMarkCloudProfilesFuture) {
-  assert(home.includes(phrase), `home still marks cloud family profiles as future (${phrase})`);
+for (const phrase of n03.homeMustSayFamilyAccounts) {
+  assert(home.toLowerCase().includes(phrase.toLowerCase()), `home says ${phrase}`);
 }
-assert(!/cloud family profiles (are ready|are live|already exist)/i.test(home), 'home must not imply cloud family profiles already exist');
+assert(!/cloud family profiles (are ready|are live|already exist)/i.test(home), 'home does not rename the device-local grown-up view into a cloud profile');
+assert(!/paid plan|pricing will be announced/i.test(home), 'home does not promise a paid plan or a price announcement');
+const homeNav = home.slice(home.indexOf('id="site-nav"'), home.indexOf('</nav>'));
+assert(homeNav.includes('href="/songs/"') && homeNav.includes('>Songs<'), 'home header nav includes Songs');
+assert(homeNav.includes('href="/learn"') && homeNav.includes('Family profiles'), 'home header keeps the existing nav items');
+const homeFooter = home.slice(home.indexOf('<footer'));
+assert(homeFooter.includes('href="/songs/"') && homeFooter.includes('>Songs<'), 'home footer includes Songs');
+assert(read('public/js/nav-menu.js').includes("getElementById('site-nav')"), 'phone menu toggles the same site nav as desktop');
 
 const n04 = JSON.parse(read('scripts/fixtures/n04-first-session-setup.json'));
 assert(SETUP_STORAGE_KEY === n04.storageKey, 'setup strip uses the fixture localStorage key');
