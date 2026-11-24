@@ -13,7 +13,7 @@ function assert(condition, message) {
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (rel) => readFileSync(join(root, rel), 'utf8');
 
-const catalogs = ['INSIGHTS_SCRIPT', 'MAX_EVENT_PROPS', 'BLOCKED_HOSTS', 'SONG_SLUGS', 'LESSON_IDS', 'GRADES', 'VIEWS', 'LEVELS', 'PAGE_ROWS', 'EVENT_ROWS'];
+const catalogs = ['INSIGHTS_SCRIPT', 'MAX_EVENT_PROPS', 'BLOCKED_HOSTS', 'LESSON_IDS', 'GRADES', 'VIEWS', 'LEVELS', 'PAGE_ROWS', 'EVENT_ROWS'];
 for (const key of catalogs) {
   assert(JSON.stringify(browser[key]) === JSON.stringify(source[key]), `${key} matches in the browser file and the TypeScript module`);
 }
@@ -36,11 +36,36 @@ const samples = [
   ['free_text', { page: 'hello friend' }]
 ];
 
+const songIds = SONG_CATALOG.map((item) => item.id);
+for (const id of songIds) assert(source.SONG_SLUG_PATTERN.test(id), `${id} is a safe catalog slug`);
+assert(browser.SONG_SLUG_PATTERN.source === source.SONG_SLUG_PATTERN.source, 'the song slug pattern matches');
+assert(JSON.stringify(browser.songIdsFromCatalog()) === JSON.stringify(songIds), 'analytics uses the player catalog');
+assert(JSON.stringify(source.songIdsFromCatalog(SONG_CATALOG)) === JSON.stringify(songIds), 'the catalog filter keeps every current song');
+
+const fresh = 'fresh-daily-song';
+const withFresh = [...songIds, fresh];
+assert(browser.prepareEvent('song_open', { song: fresh }) === null, 'a song missing from the catalog is dropped');
+const opened = source.prepareEvent('song_open', { song: fresh }, withFresh);
+assert(opened && opened.props.song === fresh, 'a song added only to the catalog is accepted');
+assert(
+  JSON.stringify(browser.prepareEvent('song_open', { song: fresh }, withFresh)) === JSON.stringify(opened),
+  'both copies accept the new catalog song without an analytics edit'
+);
+assert(source.prepareEvent('song_open', { song: 'ada@example.com' }, [...withFresh, 'ada@example.com']) === null, 'an email is not a song slug');
+assert(browser.prepareEvent('song_open', { song: 'Child_123' }, [...withFresh, 'Child_123']) === null, 'an id is not a song slug');
+assert(browser.prepareEvent('song_open', { song: 'my diary today' }, withFresh) === null, 'free text is not a song slug');
+const mixed = [{ id: fresh }, { id: 'ada@example.com' }, { id: 'ok-tune' }, { id: 'No Spaces' }];
+assert(
+  JSON.stringify(browser.songIdsFromCatalog(mixed)) === JSON.stringify(source.songIdsFromCatalog(mixed)),
+  'catalog filtering agrees'
+);
+assert(JSON.stringify(source.songIdsFromCatalog(mixed)) === JSON.stringify([fresh, 'ok-tune']), 'unsafe catalog ids are ignored');
+
 for (const [name, props] of samples) {
-  assert(
-    JSON.stringify(browser.prepareEvent(name, props)) === JSON.stringify(source.prepareEvent(name, props)),
-    `prepareEvent agrees for ${name}`
-  );
+  const left = browser.prepareEvent(name, props, songIds);
+  const right = source.prepareEvent(name, props, songIds);
+  assert(JSON.stringify(left) === JSON.stringify(right), `prepareEvent agrees for ${name}`);
+  assert(JSON.stringify(browser.prepareEvent(name, props)) === JSON.stringify(left), `${name} uses the player catalog by default`);
 }
 
 const learnUrl = 'https://meetpiano.app/learn/?lesson=L03&token=secret';
@@ -54,8 +79,9 @@ const redactSamples = [
 ];
 
 for (const [event, href] of redactSamples) {
-  const left = browser.redactAnalyticsEvent(event, href);
-  const right = source.redactAnalyticsEvent(event, href);
+  const left = browser.redactAnalyticsEvent(event, href, songIds);
+  const right = source.redactAnalyticsEvent(event, href, songIds);
+  assert(JSON.stringify(browser.redactAnalyticsEvent(event, href)) === JSON.stringify(left), 'redaction uses the player catalog by default');
   assert(JSON.stringify(left) === JSON.stringify(right), 'redactAnalyticsEvent agrees');
   assert(!JSON.stringify(left).includes('token'), 'a redacted event has no token');
   assert(!JSON.stringify(left).includes('child_1'), 'a redacted event has no child id');
@@ -72,8 +98,6 @@ for (const signals of [
 assert(browser.insightsFetchPlan('/_vercel/insights/event', 'https://meetpiano.app') === 'omit', 'insights posts omit cookies');
 assert(browser.insightsFetchPlan('https://va.vercel-scripts.com/v1/script.js', 'https://meetpiano.app') === 'block', 'the vendor script host is blocked');
 
-const songIds = SONG_CATALOG.map((item) => item.id);
-assert(JSON.stringify(songIds) === JSON.stringify(source.SONG_SLUGS), 'song slugs are exactly the public-domain catalog');
 assert(JSON.stringify([...VIEW_IDS]) === JSON.stringify(source.VIEWS), 'views match the song player');
 assert(JSON.stringify([...DIFFICULTY_IDS]) === JSON.stringify(source.LEVELS), 'levels match Noob, Pro, and Expert');
 const journeyIds = JOURNEY_LESSONS.map((item) => item.lessonId);
@@ -113,6 +137,12 @@ for (const file of files) {
   assert(!text.includes("va('identify'") && !text.includes('enableCookie'), `${rel} must not identify a visitor or enable analytics cookies`);
 }
 
+for (const rel of ['public/js/analytics.js', 'src/lib/analytics/events.ts']) {
+  assert(!read(rel).includes('mary-had-a-little-lamb'), `${rel} does not hardcode song slugs`);
+  assert(!read(rel).includes('SONG_SLUGS'), `${rel} has no copied slug list`);
+}
+assert(read('public/js/analytics.js').includes("from './song-catalog.js'"), 'analytics imports the player catalog');
+assert(read('public/js/song-score.js').includes("from './song-catalog.js'"), 'the song player uses that catalog');
 assert(calls >= 12, 'the funnel call sites are present');
 const trackImports = files.filter((file) => readFileSync(file, 'utf8').includes("from '@vercel/analytics'"));
 assert(trackImports.length === 1 && trackImports[0].endsWith('src/lib/analytics/track.ts'), 'only the signup helper imports @vercel/analytics');

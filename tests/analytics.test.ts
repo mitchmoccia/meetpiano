@@ -5,8 +5,9 @@ import {
   LESSON_IDS,
   LEVELS,
   MAX_EVENT_PROPS,
-  SONG_SLUGS,
+  SONG_SLUG_PATTERN,
   VIEWS,
+  songIdsFromCatalog,
   insightsFetchPlan,
   pageRecord,
   prepareEvent,
@@ -16,6 +17,17 @@ import {
 
 const LEARN = 'https://meetpiano.app/learn/?lesson=L01&token=secret';
 const HOME = 'https://meetpiano.app/';
+
+const PLAYER_SONGS = songIdsFromCatalog([
+  { id: 'ode-to-joy' },
+  { id: 'twinkle-twinkle' },
+  { id: 'jingle-bells' },
+  { id: 'hot-cross-buns' },
+  { id: 'frere-jacques' },
+  { id: 'london-bridge' },
+  { id: 'minuet-in-g' },
+  { id: 'brahms-lullaby' }
+]);
 
 describe('analytics allowlist', () => {
   it('keeps every custom event to two props or fewer', () => {
@@ -40,22 +52,22 @@ describe('analytics allowlist', () => {
   });
 
   it('accepts song, view, level, and grade bucket props', () => {
-    expect(prepareEvent('song_open', { song: 'ode-to-joy' })).toEqual({ name: 'song_open', props: { song: 'ode-to-joy' } });
-    expect(prepareEvent('song_play', { song: 'ode-to-joy', level: 'pro' })).toEqual({
+    expect(prepareEvent('song_open', { song: 'ode-to-joy' }, PLAYER_SONGS)).toEqual({ name: 'song_open', props: { song: 'ode-to-joy' } });
+    expect(prepareEvent('song_play', { song: 'ode-to-joy', level: 'pro' }, PLAYER_SONGS)).toEqual({
       name: 'song_play',
       props: { song: 'ode-to-joy', level: 'pro' }
     });
-    expect(prepareEvent('song_complete', { song: 'twinkle-twinkle', grade: 'A' })).toEqual({
+    expect(prepareEvent('song_complete', { song: 'twinkle-twinkle', grade: 'A' }, PLAYER_SONGS)).toEqual({
       name: 'song_complete',
       props: { song: 'twinkle-twinkle', grade: 'A' }
     });
-    expect(prepareEvent('view_change', { view: 'sheet', song: 'jingle-bells' })?.props.view).toBe('sheet');
-    expect(prepareEvent('level_change', { level: 'expert', song: 'hot-cross-buns' })?.props.level).toBe('expert');
-    expect(prepareEvent('note_inspect_open', { song: 'frere-jacques', view: 'legend' })?.props).toEqual({
+    expect(prepareEvent('view_change', { view: 'sheet', song: 'jingle-bells' }, PLAYER_SONGS)?.props.view).toBe('sheet');
+    expect(prepareEvent('level_change', { level: 'expert', song: 'hot-cross-buns' }, PLAYER_SONGS)?.props.level).toBe('expert');
+    expect(prepareEvent('note_inspect_open', { song: 'frere-jacques', view: 'legend' }, PLAYER_SONGS)?.props).toEqual({
       song: 'frere-jacques',
       view: 'legend'
     });
-    expect(prepareEvent('see_results_open', { song: 'minuet-in-g', grade: 'S' })?.props.grade).toBe('S');
+    expect(prepareEvent('see_results_open', { song: 'minuet-in-g', grade: 'S' }, PLAYER_SONGS)?.props.grade).toBe('S');
     expect(GRADES).toEqual(['S', 'A', 'B', 'C']);
     expect(VIEWS).toEqual(['keys', 'drop', 'sheet', 'legend']);
     expect(LEVELS).toEqual(['noob', 'pro', 'expert']);
@@ -71,7 +83,7 @@ describe('analytics allowlist', () => {
     expect(prepareEvent('lesson_start', { lesson: 'L01', email: 'ada@example.com' })).toBeNull();
     expect(prepareEvent('lesson_start', { lesson: 'L01', child: 'sam' })).toBeNull();
     expect(prepareEvent('lesson_start', { lesson: 'L01', name: 'Ada' })).toBeNull();
-    expect(prepareEvent('song_open', { song: 'my diary today' })).toBeNull();
+    expect(prepareEvent('song_open', { song: 'my diary today' }, PLAYER_SONGS)).toBeNull();
     expect(prepareEvent('page_view', { page: 'home', note: 'hello there' })).toBeNull();
     expect(prepareEvent('signup_start', { email: 'ada@example.com' })).toBeNull();
     expect(prepareEvent('midi_connect_success', { device: 'Yamaha P-45' })).toBeNull();
@@ -82,10 +94,35 @@ describe('analytics allowlist', () => {
     expect(prepareEvent('lesson_start', { lesson: 'L00' })).toBeNull();
     expect(prepareEvent('lesson_start', { lesson: 'L25' })).toBeNull();
     expect(prepareEvent('lesson_start', { lesson: 'l01' })).toBeNull();
-    expect(prepareEvent('song_open', { song: 'happy-birthday-remix' })).toBeNull();
-    expect(prepareEvent('song_complete', { song: 'ode-to-joy', grade: 'A+' })).toBeNull();
-    expect(prepareEvent('level_change', { level: 'Beginner', song: 'ode-to-joy' })).toBeNull();
-    expect(SONG_SLUGS).toHaveLength(20);
+    expect(prepareEvent('song_open', { song: 'happy-birthday-remix' }, PLAYER_SONGS)).toBeNull();
+    expect(prepareEvent('song_complete', { song: 'ode-to-joy', grade: 'A+' }, PLAYER_SONGS)).toBeNull();
+    expect(prepareEvent('level_change', { level: 'Beginner', song: 'ode-to-joy' }, PLAYER_SONGS)).toBeNull();
+    expect(prepareEvent('song_open', { song: 'ode-to-joy' })).toBeNull();
+  });
+
+  it('accepts a song that was added only to the catalog', () => {
+    const songs = songIdsFromCatalog([
+      { id: 'ode-to-joy' },
+      { id: 'fresh-daily-song' },
+      { id: 'ada@example.com' },
+      { id: 'Child_123' },
+      { id: 'my diary' }
+    ]);
+    expect(SONG_SLUG_PATTERN.source).toBe('^[a-z0-9-]{1,64}$');
+    expect(songs).toEqual(['ode-to-joy', 'fresh-daily-song']);
+    expect(prepareEvent('song_open', { song: 'fresh-daily-song' }, songs)).toEqual({
+      name: 'song_open',
+      props: { song: 'fresh-daily-song' }
+    });
+    expect(prepareEvent('song_play', { song: 'fresh-daily-song', level: 'noob' }, songs)?.props).toEqual({
+      song: 'fresh-daily-song',
+      level: 'noob'
+    });
+    expect(prepareEvent('song_open', { song: 'fresh-daily-song' }, ['ode-to-joy'])).toBeNull();
+    expect(prepareEvent('song_open', { song: 'ada@example.com' }, songs)).toBeNull();
+    expect(prepareEvent('song_open', { song: 'Child_123' }, songs)).toBeNull();
+    expect(prepareEvent('song_open', { song: 'my diary' }, songs)).toBeNull();
+    expect(prepareEvent('song_complete', { song: 'a'.repeat(65), grade: 'S' }, ['a'.repeat(65)])).toBeNull();
   });
 
   it('maps public paths and refuses child and admin paths', () => {

@@ -13,28 +13,8 @@ export const BLOCKED_HOSTS = [
   'vitals.vercel-insights.com'
 ] as const;
 
-export const SONG_SLUGS = [
-  'mary-had-a-little-lamb',
-  'ode-to-joy',
-  'twinkle-twinkle',
-  'hot-cross-buns',
-  'row-row-row-your-boat',
-  'jingle-bells',
-  'london-bridge',
-  'old-macdonald',
-  'happy-birthday',
-  'frere-jacques',
-  'itsy-bitsy-spider',
-  'baa-baa-black-sheep',
-  'yankee-doodle',
-  'amazing-grace',
-  'when-the-saints',
-  'brahms-lullaby',
-  'minuet-in-g',
-  'camptown-races',
-  'oh-susanna',
-  'skip-to-my-lou'
-] as const;
+/** Song ids must look like catalog slugs. The player catalog still has to contain the id. */
+export const SONG_SLUG_PATTERN = /^[a-z0-9-]{1,64}$/;
 
 export const LESSON_IDS = Array.from({ length: 24 }, (_, index) => `L${String(index + 1).padStart(2, '0')}`);
 export const GRADES = ['S', 'A', 'B', 'C'] as const;
@@ -99,7 +79,6 @@ export type AnalyticsIngress = {
 
 const PAGE_VALUES = new Set(PAGE_ROWS.map((row) => row[1]));
 const LESSON_SET = new Set<string>(LESSON_IDS);
-const SONG_SET = new Set<string>(SONG_SLUGS);
 const GRADE_SET = new Set<string>(GRADES);
 const VIEW_SET = new Set<string>(VIEWS);
 const LEVEL_SET = new Set<string>(LEVELS);
@@ -112,6 +91,25 @@ export function trackingOptOut(signals: PrivacySignals): boolean {
   return signals.globalPrivacyControl === true;
 }
 
+/** Ids from the player catalog that are safe to send. Emails and free text are left out. */
+export function songIdsFromCatalog(catalog: readonly { id?: unknown }[]): string[] {
+  const ids: string[] = [];
+  for (const item of catalog) {
+    const id = item?.id;
+    if (typeof id === 'string' && SONG_SLUG_PATTERN.test(id)) ids.push(id);
+  }
+  return ids;
+}
+
+function songSet(songs: readonly string[] | undefined): Set<string> {
+  const set = new Set<string>();
+  if (!songs) return set;
+  for (const id of songs) {
+    if (typeof id === 'string' && SONG_SLUG_PATTERN.test(id)) set.add(id);
+  }
+  return set;
+}
+
 export function pageRecord(pathname: string): { page: string; path: string } | null {
   if (typeof pathname !== 'string' || pathname.length > 80 || !pathname.startsWith('/')) return null;
   if (pathname.includes('//') || pathname.includes('\\') || pathname.includes('%') || pathname.includes('?') || pathname.includes('#')) {
@@ -121,14 +119,14 @@ export function pageRecord(pathname: string): { page: string; path: string } | n
   return PAGE_BY_PATH.get(pathname) ?? PAGE_BY_PATH.get(trimmed) ?? null;
 }
 
-function propValue(key: string, value: unknown): string | null {
+function propValue(key: string, value: unknown, songs: ReadonlySet<string>): string | null {
+  if (key === 'song') return typeof value === 'string' && songs.has(value) ? value : null;
   if (typeof value !== 'string' || value.length < 1 || value.length > 40) return null;
   if (/\s/.test(value) || value.includes('@') || value.includes('/') || value.includes('\\') || value.includes('?') || value.includes('#')) {
     return null;
   }
   if (key === 'page' && PAGE_VALUES.has(value)) return value;
   if (key === 'lesson' && LESSON_SET.has(value)) return value;
-  if (key === 'song' && SONG_SET.has(value)) return value;
   if (key === 'grade' && GRADE_SET.has(value)) return value;
   if (key === 'view' && VIEW_SET.has(value)) return value;
   if (key === 'level' && LEVEL_SET.has(value)) return value;
@@ -141,13 +139,14 @@ function isPlain(value: unknown): value is Record<string, unknown> {
   return proto === Object.prototype || proto === null;
 }
 
-/** Returns null when the event or any prop is outside the allowlist. */
-export function prepareEvent(name: unknown, props?: unknown): PreparedEvent | null {
+/** Returns null when the event or any prop is outside the allowlist. `songs` is the player catalog ids. */
+export function prepareEvent(name: unknown, props?: unknown, songs?: readonly string[]): PreparedEvent | null {
   if (typeof name !== 'string') return null;
   const spec = EVENT_BY_NAME.get(name);
   if (!spec || spec.props.length > MAX_EVENT_PROPS) return null;
   if (props == null) return spec.required.length ? null : { name, props: {} };
   if (!isPlain(props)) return null;
+  const allowedSongs = songSet(songs);
   for (const key of Object.keys(props)) {
     if (!spec.props.includes(key)) return null;
   }
@@ -157,7 +156,7 @@ export function prepareEvent(name: unknown, props?: unknown): PreparedEvent | nu
       if (spec.required.includes(key)) return null;
       continue;
     }
-    const value = propValue(key, props[key]);
+    const value = propValue(key, props[key], allowedSongs);
     if (!value) return null;
     clean[key] = value;
   }
@@ -182,7 +181,7 @@ function coarseHref(url: URL, path: string): string {
 }
 
 /** Drops identify calls, query strings, and any page that is not on the path allowlist. */
-export function redactAnalyticsEvent(event: AnalyticsIngress | null, pageHref: string): AnalyticsIngress | null {
+export function redactAnalyticsEvent(event: AnalyticsIngress | null, pageHref: string, songs?: readonly string[]): AnalyticsIngress | null {
   if (!event || typeof event !== 'object' || Array.isArray(event)) return null;
   const type = event.type;
   if (type === 'identify' || type === 'group' || type === 'reset') return null;
@@ -198,7 +197,7 @@ export function redactAnalyticsEvent(event: AnalyticsIngress | null, pageHref: s
     const payload = event.payload;
     const name = payload && typeof payload === 'object' ? payload.name : undefined;
     const data = payload && typeof payload === 'object' ? payload.data : undefined;
-    const clean = prepareEvent(name, data);
+    const clean = prepareEvent(name, data, songs);
     if (!clean) return null;
     const next: AnalyticsIngress = { type: 'event', url, payload: { name: clean.name } };
     if (Object.keys(clean.props).length) next.payload = { name: clean.name, data: clean.props };

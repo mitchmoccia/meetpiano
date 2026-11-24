@@ -14,12 +14,12 @@ Allowed props are coarse and closed:
 | --- | --- |
 | `page` | `home`, `learn`, `songs`, `signup`, `signin`, `check_email`, `forgot_password`, `reset_password`, `play`, `family`, `family_welcome`, `family_account`, `family_child_new`, `verify` |
 | `lesson` | `L01`–`L24` |
-| `song` | a slug from the public-domain song catalog |
+| `song` | an id from `public/js/song-catalog.js` (the list the song player uses) that matches `^[a-z0-9-]{1,64}$` |
 | `view` | `keys`, `drop`, `sheet`, `legend` |
 | `level` | `noob`, `pro`, `expert` (the Level control, not the Beginner/Step-up filter) |
 | `grade` | `S`, `A`, `B`, `C` |
 
-Each event has at most two props so it fits Vercel Pro without the Web Analytics Plus add-on. An event with any other prop, or a value outside the list, is dropped. Query strings are removed. Pages that are not in the table (including `/family/children/[childId]` and `/admin`) do not load the script.
+Each event has at most two props so it fits Vercel Pro without the Web Analytics Plus add-on. An event with any other prop, or a value outside the list, is dropped. Song ids are read from the player catalog at runtime. Adding a song there does not require an analytics change. An id that is not in that catalog, or that is not a lowercase slug, is dropped, including emails, free text, and ids that someone might paste into the catalog. Query strings are removed. Pages that are not in the table (including `/family/children/[childId]` and `/admin`) do not load the script.
 
 `scripts/analytics-allowlist-check.mjs` compares `src/lib/analytics/events.ts` with `public/js/analytics.js` and checks every call site. `tests/analytics.test.ts` covers the same rules.
 

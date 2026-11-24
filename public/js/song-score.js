@@ -4,6 +4,9 @@
  * Parts: melody (Noob+), bass (Pro+), color (Expert). Hands: rh | lh.
  */
 
+import { SONG_CATALOG } from './song-catalog.js';
+
+export { SONG_CATALOG };
 export const VIEW_IDS = ['keys', 'drop', 'sheet', 'legend'];
 export const DIFFICULTY_IDS = ['noob', 'pro', 'expert'];
 
@@ -39,29 +42,6 @@ export const RESULT_COPY = {
   B: 'B rank. The tune is in your hands. One calmer pass and it shines.',
   C: 'C rank. You finished the song. That counts. Loop a phrase and try the tricky bit again.'
 };
-
-export const SONG_CATALOG = [
-  { id: 'mary-had-a-little-lamb', file: 'mary-had-a-little-lamb.json', title: 'Mary Had a Little Lamb' },
-  { id: 'ode-to-joy', file: 'ode-to-joy.json', title: 'Ode to Joy' },
-  { id: 'twinkle-twinkle', file: 'twinkle-twinkle.json', title: 'Twinkle Twinkle Little Star' },
-  { id: 'hot-cross-buns', file: 'hot-cross-buns.json', title: 'Hot Cross Buns' },
-  { id: 'row-row-row-your-boat', file: 'row-row-row-your-boat.json', title: 'Row, Row, Row Your Boat' },
-  { id: 'jingle-bells', file: 'jingle-bells.json', title: 'Jingle Bells' },
-  { id: 'london-bridge', file: 'london-bridge.json', title: 'London Bridge' },
-  { id: 'old-macdonald', file: 'old-macdonald.json', title: 'Old MacDonald' },
-  { id: 'happy-birthday', file: 'happy-birthday.json', title: 'Happy Birthday' },
-  { id: 'frere-jacques', file: 'frere-jacques.json', title: 'Are You Sleeping' },
-  { id: 'itsy-bitsy-spider', file: 'itsy-bitsy-spider.json', title: 'Itsy Bitsy Spider' },
-  { id: 'baa-baa-black-sheep', file: 'baa-baa-black-sheep.json', title: 'Baa, Baa, Black Sheep' },
-  { id: 'yankee-doodle', file: 'yankee-doodle.json', title: 'Yankee Doodle' },
-  { id: 'amazing-grace', file: 'amazing-grace.json', title: 'Amazing Grace' },
-  { id: 'when-the-saints', file: 'when-the-saints.json', title: 'When the Saints Go Marching In' },
-  { id: 'brahms-lullaby', file: 'brahms-lullaby.json', title: "Brahms' Lullaby" },
-  { id: 'minuet-in-g', file: 'minuet-in-g.json', title: 'Minuet in G' },
-  { id: 'camptown-races', file: 'camptown-races.json', title: 'Camptown Races' },
-  { id: 'oh-susanna', file: 'oh-susanna.json', title: 'Oh! Susanna' },
-  { id: 'skip-to-my-lou', file: 'skip-to-my-lou.json', title: 'Skip to My Lou' }
-];
 
 export function songTitle(id) {
   return SONG_CATALOG.find((item) => item.id === id)?.title || '';

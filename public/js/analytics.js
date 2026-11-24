@@ -1,9 +1,11 @@
 /**
  * Same-origin funnel beacon for static pages and the Next.js app.
  * Keep this file in step with src/lib/analytics/events.ts.
- * The allowlist check compares the two copies.
+ * Song ids come from ./song-catalog.js, the same list the song player uses.
  * Loads /_vercel/insights/script.js only. No third-party host, no inline bootstrap.
  */
+
+import { SONG_CATALOG } from './song-catalog.js';
 
 export const INSIGHTS_SCRIPT = '/_vercel/insights/script.js';
 export const MAX_EVENT_PROPS = 2;
@@ -14,28 +16,8 @@ export const BLOCKED_HOSTS = [
   'vitals.vercel-insights.com'
 ];
 
-export const SONG_SLUGS = [
-  'mary-had-a-little-lamb',
-  'ode-to-joy',
-  'twinkle-twinkle',
-  'hot-cross-buns',
-  'row-row-row-your-boat',
-  'jingle-bells',
-  'london-bridge',
-  'old-macdonald',
-  'happy-birthday',
-  'frere-jacques',
-  'itsy-bitsy-spider',
-  'baa-baa-black-sheep',
-  'yankee-doodle',
-  'amazing-grace',
-  'when-the-saints',
-  'brahms-lullaby',
-  'minuet-in-g',
-  'camptown-races',
-  'oh-susanna',
-  'skip-to-my-lou'
-];
+/** Song ids must look like catalog slugs. The player catalog still has to contain the id. */
+export const SONG_SLUG_PATTERN = /^[a-z0-9-]{1,64}$/;
 
 export const LESSON_IDS = Array.from({ length: 24 }, (_, index) => `L${String(index + 1).padStart(2, '0')}`);
 export const GRADES = ['S', 'A', 'B', 'C'];
@@ -83,7 +65,6 @@ export const EVENT_ROWS = [
 
 const PAGE_VALUES = new Set(PAGE_ROWS.map((row) => row[1]));
 const LESSON_SET = new Set(LESSON_IDS);
-const SONG_SET = new Set(SONG_SLUGS);
 const GRADE_SET = new Set(GRADES);
 const VIEW_SET = new Set(VIEWS);
 const LEVEL_SET = new Set(LEVELS);
@@ -98,6 +79,27 @@ export function trackingOptOut(signals) {
   return signals?.globalPrivacyControl === true;
 }
 
+/** Ids from the player catalog that are safe to send. Emails and free text are left out. */
+export function songIdsFromCatalog(catalog = SONG_CATALOG) {
+  const ids = [];
+  for (const item of catalog) {
+    const id = item?.id;
+    if (typeof id === 'string' && SONG_SLUG_PATTERN.test(id)) ids.push(id);
+  }
+  return ids;
+}
+
+const ACTIVE_SONG_IDS = songIdsFromCatalog();
+
+function songSet(songs) {
+  const set = new Set();
+  if (!songs) return set;
+  for (const id of songs) {
+    if (typeof id === 'string' && SONG_SLUG_PATTERN.test(id)) set.add(id);
+  }
+  return set;
+}
+
 export function pageRecord(pathname) {
   if (typeof pathname !== 'string' || pathname.length > 80 || !pathname.startsWith('/')) return null;
   if (pathname.includes('//') || pathname.includes('\\') || pathname.includes('%') || pathname.includes('?') || pathname.includes('#')) {
@@ -107,14 +109,14 @@ export function pageRecord(pathname) {
   return PAGE_BY_PATH.get(pathname) || PAGE_BY_PATH.get(trimmed) || null;
 }
 
-function propValue(key, value) {
+function propValue(key, value, songs) {
+  if (key === 'song') return typeof value === 'string' && songs.has(value) ? value : null;
   if (typeof value !== 'string' || value.length < 1 || value.length > 40) return null;
   if (/\s/.test(value) || value.includes('@') || value.includes('/') || value.includes('\\') || value.includes('?') || value.includes('#')) {
     return null;
   }
   if (key === 'page' && PAGE_VALUES.has(value)) return value;
   if (key === 'lesson' && LESSON_SET.has(value)) return value;
-  if (key === 'song' && SONG_SET.has(value)) return value;
   if (key === 'grade' && GRADE_SET.has(value)) return value;
   if (key === 'view' && VIEW_SET.has(value)) return value;
   if (key === 'level' && LEVEL_SET.has(value)) return value;
@@ -127,12 +129,13 @@ function isPlain(value) {
   return proto === Object.prototype || proto === null;
 }
 
-export function prepareEvent(name, props) {
+export function prepareEvent(name, props, songs = ACTIVE_SONG_IDS) {
   if (typeof name !== 'string') return null;
   const spec = EVENT_BY_NAME.get(name);
   if (!spec || spec.props.length > MAX_EVENT_PROPS) return null;
   if (props == null) return spec.required.length ? null : { name, props: {} };
   if (!isPlain(props)) return null;
+  const allowedSongs = songSet(songs);
   for (const key of Object.keys(props)) {
     if (!spec.props.includes(key)) return null;
   }
@@ -142,7 +145,7 @@ export function prepareEvent(name, props) {
       if (spec.required.includes(key)) return null;
       continue;
     }
-    const value = propValue(key, props[key]);
+    const value = propValue(key, props[key], allowedSongs);
     if (!value) return null;
     clean[key] = value;
   }
@@ -166,7 +169,7 @@ function coarseHref(url, path) {
   return next.href;
 }
 
-export function redactAnalyticsEvent(event, pageHref) {
+export function redactAnalyticsEvent(event, pageHref, songs = ACTIVE_SONG_IDS) {
   if (!event || typeof event !== 'object' || Array.isArray(event)) return null;
   const type = event.type;
   if (type === 'identify' || type === 'group' || type === 'reset') return null;
@@ -182,7 +185,7 @@ export function redactAnalyticsEvent(event, pageHref) {
     const payload = event.payload;
     const name = payload && typeof payload === 'object' ? payload.name : undefined;
     const data = payload && typeof payload === 'object' ? payload.data : undefined;
-    const clean = prepareEvent(name, data);
+    const clean = prepareEvent(name, data, songs);
     if (!clean) return null;
     const next = { type: 'event', url, payload: { name: clean.name } };
     if (Object.keys(clean.props).length) next.payload = { name: clean.name, data: clean.props };
