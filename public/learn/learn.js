@@ -1,3 +1,4 @@
+import { emit } from '../js/analytics.js';
 import { createAudio } from '../js/audio.js';
 import { bindInputs } from '../js/input.js';
 import { createPlayer } from '../js/player.js';
@@ -379,6 +380,8 @@ function resetRecords() {
 }
 
 function startLesson(id) {
+  emit('lesson_start', { lesson: id });
+  let analyticsPhase = null;
   if (grownupLink) grownupLink.hidden = true;
   applyPianoRange(id);
   const clock = createRhythmClock({
@@ -601,6 +604,8 @@ function startLesson(id) {
       if (phase === 'independent' || phase === 'transfer' || phase === 'review') player.startEasierWork();
     }
     const view = player.view();
+    if (analyticsPhase && analyticsPhase !== 'result' && view.phase === 'result') emit('lesson_complete', { lesson: id });
+    analyticsPhase = view.phase;
     const copy = phaseCopy(view);
     document.title = `${view.lessonSpec.title} · ${unitTitleFor(id)} · MeetPiano`;
     ui.label.innerHTML = `<span class="game-live-dot"></span> FIRST PIANO JOURNEY · ${id}`;
@@ -1736,6 +1741,7 @@ function startLesson(id) {
     if (!ok) return;
     stopDemo();
     player.restart();
+    emit('lesson_start', { lesson: id });
     lastFeedback = 'A new try. This one starts from the beginning.';
     paint();
   }

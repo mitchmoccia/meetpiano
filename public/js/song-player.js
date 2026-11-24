@@ -1,3 +1,4 @@
+import { emit } from './analytics.js';
 import { createAudio } from './audio.js';
 import { bindInputs } from './input.js';
 import { clearPressed, computerHelpFor, computerKeysForRange, renderPiano, setKeyCaptions, setPressed } from './piano.js';
@@ -508,10 +509,12 @@ function selectSong(id, { keepPractice = false } = {}) {
   if (!ui.drawer.hidden) renderSongList();
   announce(`${score.title} is ready.`);
   paintAt(take.cursor);
+  emit('song_open', { song: score.id });
 }
 
 function selectDifficulty(next) {
   if (!defaultsFor(next) || !score) return;
+  const changed = next !== difficulty;
   const cursor = take.cursor;
   difficulty = next;
   waitOn = defaultsFor(next).waitMode;
@@ -523,6 +526,7 @@ function selectDifficulty(next) {
   rebuildTake(cursor);
   savePrefs();
   paintAt(take.cursor);
+  if (changed) emit('level_change', { level: difficulty, song: score.id });
 }
 
 function selectOctaves(value) {
@@ -534,6 +538,7 @@ function selectOctaves(value) {
 }
 
 function selectView(view) {
+  const previous = session.view;
   const next = changeView({ view: session.view, cursor: take.cursor }, view);
   session = { view: next.view, cursor: next.cursor };
   if (next.cursor !== take.cursor) take.cursor = next.cursor;
@@ -541,6 +546,7 @@ function selectView(view) {
   layoutDirty = true;
   savePrefs();
   paintAt(displayCursor());
+  if (score && session.view !== previous) emit('view_change', { view: session.view, song: score.id });
   requestAnimationFrame(() => {
     layoutDirty = true;
     paintAt(displayCursor());
@@ -650,6 +656,7 @@ function setLoop(next, { silent = false } = {}) {
 
 function startPlay() {
   if (!score) return;
+  emit('song_play', { song: score.id, level: difficulty });
   hideResults();
   inputs.silence();
   if (waitOn) {
@@ -858,6 +865,7 @@ function openNoteInspect(hit) {
   placeNotePopover(hit);
   ui.noteClose.focus();
   playInspected(pitch);
+  if (score) emit('note_inspect_open', { song: score.id, view: session.view });
 }
 
 function pauseTransport() {
@@ -954,6 +962,10 @@ function frame(ts) {
   const pending = take.notes.some((note) => note.status === 'pending');
   if (step.ended || (!loop && !pending && take.cursor > 0)) {
     take.ended = true;
+    if (!loop && score) {
+      const grade = gradeTake(take, difficulty, null);
+      emit('song_complete', { song: score.id, grade: grade.letter });
+    }
     showResults();
     return;
   }
@@ -1164,8 +1176,10 @@ function showResults() {
     chips.push(item);
   }
   ui.resultsBars.replaceChildren(...chips);
+  const wasHidden = ui.results.hidden;
   ui.results.hidden = false;
   ui.resultsClose.focus();
+  if (wasHidden) emit('see_results_open', { song: score.id, grade: grade.letter });
   if (!ui.drawer.hidden) renderSongList();
 }
 

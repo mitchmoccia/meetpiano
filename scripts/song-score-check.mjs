@@ -185,7 +185,8 @@ assert(player.includes('function paintAt(cursor)'), 'one cursor paints the views
 const paint = player.slice(player.indexOf('function paintAt(cursor)'), player.indexOf('function paintAt(cursor)') + 400);
 assert(paint.includes('staffView.sync(cursor') && paint.includes('rollView.sync(cursor') && paint.includes('lightKeyboard(cursor'), 'sheet, falling notes, and keys share that cursor');
 assert(player.includes('meetpiano:song-player'), 'preferences stay on this device');
-assert(!/analytics|gtag|sentry|mixpanel/i.test(player), 'the song player adds no tracker');
+assert(!/gtag|sentry|mixpanel|googletagmanager|va\.vercel-scripts|cdn\.vercel-insights|vitals\.vercel-insights/i.test(player), 'the song player adds no third-party tracker');
+assert(player.includes("from './analytics.js'"), 'song events go through the allowlisted funnel module');
 assert(learn.includes('href="/songs/"'), 'Learn links to the song player');
 assert(hub.includes('id: \'song-player-entry\'') || hub.includes("id: 'song-player-entry'"), 'the journey hub has a song entry');
 assert(hub.includes('L01–L24') || hub.includes('twenty-four'), 'the hub still describes the lesson journey');

@@ -30,6 +30,7 @@
     "admin:revoke": "tsx scripts/db/admin.ts revoke"
   },
   "dependencies": {
+    "@vercel/analytics": "2.0.1",
     "@vercel/functions": "3.9.9",
     "better-auth": "1.7.7",
     "class-variance-authority": "0.7.1",
