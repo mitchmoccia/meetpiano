@@ -50,8 +50,9 @@ export const config = {
     {
       // Home, Learn, and Songs are static files with no nonce. Excluding them
       // leaves next.config.ts to send script-src 'self'. strict-dynamic would ignore 'self' and block those scripts.
+      // /_vercel/insights is the same-origin analytics collector and is not an app page.
       source:
-        '/((?!api/|_next/static|_next/image|assets/|js/|learn|songs|index\\.html|app\\.js|styles\\.css|llms\\.txt|robots\\.txt|sitemap\\.xml|favicon).+)',
+        '/((?!api/|_next/static|_next/image|assets/|js/|learn|songs|index\\.html|app\\.js|styles\\.css|llms\\.txt|robots\\.txt|sitemap\\.xml|favicon|_vercel/).+)',
       missing: [
         { type: 'header', key: 'next-router-prefetch' },
         { type: 'header', key: 'purpose', value: 'prefetch' }

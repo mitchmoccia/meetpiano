@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
 import { Field } from '@/components/field';
 import { Alert, Button } from '@/components/ui';
+import { trackProductEvent } from '@/lib/analytics/track';
 import { authClient } from '@/lib/auth/client';
 import { authErrorMessage, PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH, PENDING_EMAIL_KEY } from './messages';
 
@@ -20,6 +21,7 @@ export function SignUpForm() {
     const email = String(form.get('email') ?? '').trim().toLowerCase();
     const password = String(form.get('password') ?? '');
     if (password !== String(form.get('confirm') ?? '')) return setError('The two passwords do not match.');
+    trackProductEvent('signup_start');
     setPending(true);
     setError(null);
     const result = await authClient.signUp.email({ email, password, name: '', callbackURL: VERIFY_CALLBACK });
@@ -27,6 +29,7 @@ export function SignUpForm() {
       setPending(false);
       return setError(authErrorMessage(result.error, 'We could not create the account. Try again.'));
     }
+    trackProductEvent('signup_complete');
     sessionStorage.setItem(PENDING_EMAIL_KEY, email);
     router.push('/check-email');
   }

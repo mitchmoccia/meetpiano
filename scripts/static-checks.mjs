@@ -17,13 +17,15 @@ const checks = [
   'song-notation-check.mjs',
   'song-results-check.mjs',
   'song-note-inspect-check.mjs',
-  'csp-static-check.mjs'
+  'csp-static-check.mjs',
+  'analytics-allowlist-check.mjs'
 ];
 
 for (const file of jsFiles) execFileSync(process.execPath, ['--check', file], { stdio: 'inherit' });
 console.info(`syntax ok: ${jsFiles.length} files`);
 
 for (const check of checks) {
-  execFileSync(process.execPath, [`scripts/${check}`], { stdio: 'inherit' });
+  const args = check === 'analytics-allowlist-check.mjs' ? ['--experimental-strip-types', `scripts/${check}`] : [`scripts/${check}`];
+  execFileSync(process.execPath, args, { stdio: 'inherit' });
   console.info(`passed: ${check}`);
 }

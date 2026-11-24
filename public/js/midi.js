@@ -1,3 +1,5 @@
+import { emit } from './analytics.js';
+
 export const BLUR_POLICY = {
   id: 'blur-releases-sound-keeps-midi-holds',
   summary: 'Leaving the tab or window silences sound and clears on-screen pressed keys. Computer-key holds reset. MIDI notes that were already down stay locked so they cannot count again until a real note-off and a new note-on. Press again after you come back if you want the note to sound.'
@@ -270,6 +272,7 @@ export function createMidiSession({ onNote, onRelease, onStatus, requestMIDIAcce
   let previousIds = [];
   let previousPortIds = [];
   let requesting = false;
+  let midiNoted = false;
 
   function snapshot(extra = {}) {
     const supported = typeof (requestMIDIAccess || globalThis.navigator?.requestMIDIAccess) === 'function' || access != null;
@@ -282,8 +285,24 @@ export function createMidiSession({ onNote, onRelease, onStatus, requestMIDIAcce
     });
   }
 
+  function deliver(view) {
+    try {
+      if (view?.kind === 'connected') {
+        if (!midiNoted) {
+          midiNoted = true;
+          emit('midi_connect_success');
+        }
+      } else if (view?.kind === 'disconnected' || view?.kind === 'ready-empty' || view?.kind === 'denied' || view?.kind === 'unsupported') {
+        midiNoted = false;
+      }
+    } catch {
+      /* The page still hears the connection status. */
+    }
+    onStatus?.(view);
+  }
+
   function publish(extra) {
-    onStatus?.(snapshot(extra));
+    deliver(snapshot(extra));
   }
 
   function handleMessage(data, input) {
@@ -317,7 +336,7 @@ export function createMidiSession({ onNote, onRelease, onStatus, requestMIDIAcce
     });
     previousIds = view.devices.map((device) => device.id);
     previousPortIds = connected.map((item) => item.id);
-    onStatus?.(view);
+    deliver(view);
   }
 
   async function request() {

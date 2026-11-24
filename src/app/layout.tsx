@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { headers } from 'next/headers';
 import { connection } from 'next/server';
 import type { ReactNode } from 'react';
 import './globals.css';
@@ -15,6 +16,7 @@ export const viewport: Viewport = { themeColor: '#fffdf6' };
 export default async function RootLayout({ children }: { children: ReactNode }) {
   // The proxy's per-request CSP nonce only reaches Next.js scripts when pages render dynamically.
   await connection();
+  const nonce = (await headers()).get('x-nonce') ?? undefined;
   return (
     <html lang="en">
       <body className="min-h-dvh">
@@ -25,6 +27,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           Skip to content
         </a>
         {children}
+        <script type="module" src="/js/analytics.js" nonce={nonce} defer />
       </body>
     </html>
   );
