@@ -17,8 +17,8 @@
     "educator approved"
   ],
   "homeMustKeepParentPointer": "/learn/?view=grown-up",
-  "homeMustMarkCloudProfilesFuture": [
-    "cloud family profiles and progress views planned",
-    "Cloud family profiles and progress views are still planned"
+  "homeMustSayFamilyAccounts": [
+    "family accounts are available",
+    "free to start"
   ]
 }

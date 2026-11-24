@@ -50,11 +50,27 @@ assert(sitemap.includes('https://meetpiano.app/learn/'), 'sitemap lists the lear
 assert(!sitemap.includes('/learn/?'), 'sitemap does not list learn query URLs');
 assert(!sitemap.includes('?unit='), 'sitemap does not invent unit query routes');
 const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
-assert(locs.length === 2, 'sitemap lists only the two public indexable URLs');
-assert(locs[0] === 'https://meetpiano.app/' && locs[1] === 'https://meetpiano.app/learn/', 'sitemap URL order is home then learn');
+assert(locs.length === 3, 'sitemap lists the three public indexable URLs');
+assert(
+  locs[0] === 'https://meetpiano.app/' && locs[1] === 'https://meetpiano.app/learn/' && locs[2] === 'https://meetpiano.app/songs/',
+  'sitemap URL order is home, learn, then songs'
+);
+assert(!/disallow:\s*\/songs/i.test(robots), 'robots.txt does not block /songs');
 
 const home = read('public/index.html');
 const learn = read('public/learn/index.html');
+const songs = read('public/songs/index.html');
+assert(songs.includes('<title>Songs · MeetPiano</title>'), 'songs title is unique');
+assert(songs.includes('name="description"'), 'songs has a meta description');
+assert(songs.includes('<link rel="canonical" href="https://meetpiano.app/songs/">'), 'songs canonical ignores ?song= and points at /songs/');
+assert(songs.includes('property="og:title"') && songs.includes('property="og:description"') && songs.includes('property="og:url"'), 'songs has Open Graph tags');
+assert(songs.includes('name="twitter:card"') && songs.includes('name="twitter:title"') && songs.includes('name="twitter:description"'), 'songs has Twitter tags');
+assert(!/noindex/i.test(songs), 'songs page has no noindex robots meta');
+assert(!songs.toLowerCase().includes('prototype'), 'songs page does not say prototype');
+const headerFiles = ['next.config.ts', 'src/proxy.ts', 'vercel.json'];
+for (const file of headerFiles) {
+  assert(!/x-robots-tag/i.test(read(file)), `${file} does not send an X-Robots-Tag`);
+}
 const hubJs = read('public/js/learn-view.js');
 const overview = read('public/learn/index.md');
 

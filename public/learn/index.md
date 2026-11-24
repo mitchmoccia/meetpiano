@@ -2,7 +2,7 @@
 
 First Piano Journey is MeetPiano’s device-local beginner path at https://meetpiano.app/learn/.
 
-It is a free browser journey for younger beginners with a nearby grown-up helper. It is not a certified teacher, not a grade or exam program, and it does not claim learning effectiveness. Progress stays on this device and this browser only. A new browser will not have these records unless a grown-up uses the existing export, then import. There are no accounts, no cloud sync, and no automatic backup.
+It is a free browser journey for younger beginners with a nearby grown-up helper. It is not a certified teacher, not a grade or exam program, and it does not claim learning effectiveness. Guest practice stays on this device and this browser only. A new browser will not have these guest records unless a grown-up uses the existing export, then import. That guest record is not an account and has no automatic backup. Family accounts are available and free to start when a grown-up wants learner profiles saved with the family.
 
 A first-sit strip on the hub and L01 can wake sound, try one key, and optionally try MIDI. One heard note is enough. The strip is dismissible and hides after that success. Web MIDI is optional. Physical MIDI hardware is not verified from this site. On-screen keys are an exploration stand-in. MIDI reports pitch, time, and velocity if the keyboard sent them — never technique, hand choice, or coordination.
 

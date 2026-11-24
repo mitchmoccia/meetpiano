@@ -9,7 +9,8 @@
     "The full learning app, continuing curriculum, coaching, and family memberships are in development"
   ],
   "parentMustCiteGrownUpView": "/learn/?view=grown-up",
-  "membershipsMustMarkFuture": ["In the making", "Adventure", "Family"],
+  "membershipsMustSay": ["Free to start", "Family accounts are available", "Adventure", "Family"],
+  "membershipsMustNotSay": ["In the making", "paid plan", "Pricing will be announced", "$"],
   "membershipNoteMustNotSay": [
     "The full learning app is in development"
   ],
