@@ -1,0 +1,17 @@
+{
+  "name": "MeetPiano",
+  "install": "node --check dist/app.js",
+  "terminals": [
+    {
+      "name": "web",
+      "command": "python3 -m http.server 3000 --directory dist",
+      "description": "Serves the static MeetPiano site from dist/ at http://localhost:3000"
+    }
+  ],
+  "ports": [
+    {
+      "name": "web server",
+      "port": 3000
+    }
+  ]
+}
